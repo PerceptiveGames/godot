@@ -39,6 +39,7 @@ class PGB_GizmoBox : public EditorNode3DGizmoPlugin {
 	GDCLASS(PGB_GizmoBox, EditorNode3DGizmoPlugin);
 
 	Ref<PGB_GizmoBoxHelper> helper;
+	Dictionary children_initial_transforms;
 
 public:
 	//void update_gizmos();

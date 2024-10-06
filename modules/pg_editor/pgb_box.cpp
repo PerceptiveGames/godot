@@ -44,6 +44,10 @@ void PGB_Box::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_size"), &PGB_Box::get_size);
 
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR3, "size", PROPERTY_HINT_NONE, "suffix:m"), "set_size", "get_size");
+
+	ADD_SIGNAL(MethodInfo("begin_handle_moved"));
+	ADD_SIGNAL(MethodInfo("handle_moved"));
+	ADD_SIGNAL(MethodInfo("end_handle_moved"));
 }
 
 PGB_Box::PGB_Box() {

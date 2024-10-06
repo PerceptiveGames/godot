@@ -45,23 +45,11 @@ public:
 	void set_size(const Vector3 &p_size);
 	Vector3 get_size() const;
 
+	void begin_move_handle();
+
 protected:
 	static void _bind_methods();
 
-public:
-	//Vector3 get_origin();
-
-	//float get_length();
-	//float get_height();
-	//float get_depth();
-
-	//float get_pos(StringName &pos);
-	//float get_bot_pos();
-	//float get_top_pos();
-	//float get_left_pos();
-	//float get_right_pos();
-	//float get_near_pos();
-	//float get_far_pos();
 public:
 	PGB_Box();
 	~PGB_Box();

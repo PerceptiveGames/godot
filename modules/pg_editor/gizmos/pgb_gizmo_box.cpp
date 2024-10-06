@@ -38,24 +38,8 @@
 
 #include "editor/editor_log.h"
 #include "editor/editor_node.h"
+#include "scene/main/node.h"
 
-PGB_GizmoBox::PGB_GizmoBox() {
-	helper.instantiate();
-	const Color gizmo_color = SceneTree::get_singleton()->get_debug_collisions_color();
-	create_material("shape_material", gizmo_color);
-	create_handle_material("handles");
-
-	//version_btn->connect(SceneStringName(pressed), callable_mp(this, &PGB_GizmoBox::update_gizmos));
-	
-	//InspectorDock::get_inspector_singleton()->connect("property_edited", callable_mp(this, &PGB_GizmoBox::update_gizmos));
-}
-
-PGB_GizmoBox::~PGB_GizmoBox() {
-}
-
-//void PGB_GizmoBox::update_gizmos() {
-//	InspectorDock::get_inspector_singleton()->connect("property_edited", )
-//}
 
 bool PGB_GizmoBox::has_gizmo(Node3D *p_spatial) {
 	return Object::cast_to<PGB_Box>(p_spatial) != nullptr;
@@ -82,7 +66,19 @@ Variant PGB_GizmoBox::get_handle_value(const EditorNode3DGizmo *p_gizmo, int p_i
 }
 
 void PGB_GizmoBox::begin_handle_action(const EditorNode3DGizmo *p_gizmo, int p_id, bool p_secondary) {
-	helper->initialize_handle_action(get_handle_value(p_gizmo, p_id, p_secondary), p_gizmo->get_node_3d()->get_global_transform());
+	PGB_Box *box = Object::cast_to<PGB_Box>(p_gizmo->get_node_3d());
+
+	helper->initialize_handle_action(get_handle_value(p_gizmo, p_id, p_secondary), box->get_global_transform());
+
+	box->emit_signal("begin_handle_moved");
+
+	//PGB_Box *box = Object::cast_to<PGB_Box>(p_gizmo->get_node_3d());
+	//TypedArray<Node> children = box->get_children(false);
+	//for (int i = 0; i < box->get_child_count(false); i++) {
+	//	Node3D *node = cast_to<Node3D>(children[i]);
+	//	if (node)
+	//		children_initial_transforms[node] = node->get_global_position();
+	//}
 }
 
 void PGB_GizmoBox::set_handle(const EditorNode3DGizmo *p_gizmo, int p_id, bool p_secondary, Camera3D *p_camera, const Point2 &p_point) {
@@ -93,9 +89,23 @@ void PGB_GizmoBox::set_handle(const EditorNode3DGizmo *p_gizmo, int p_id, bool p
 
 	Vector3 size = box->get_size();
 	Vector3 position;
+	Vector3 offset;
 	helper->box_set_handle(sg, p_id, size, position);
 	box->set_size(size);
 	box->set_global_position(position);
+
+	box->emit_signal("handle_moved");
+
+	//TypedArray<Node> children = box->get_children(false);
+	//for (int i = 0; i < box->get_child_count(false); i++) {
+	//	Node3D *node = cast_to<Node3D>(children[i]);
+	//	if (node) {
+	//		if (children_initial_transforms.has(node)) {
+	//			node->set_global_position(children_initial_transforms[node]);
+	//		}
+	//	}
+	//}
+
 
 	// Added to allow refresh at each value change. Calls PGB_GizmoBox::redraw() down the line.
 	// https://github.com/godotengine/godot/issues/71979
@@ -105,6 +115,8 @@ void PGB_GizmoBox::set_handle(const EditorNode3DGizmo *p_gizmo, int p_id, bool p
 void PGB_GizmoBox::commit_handle(const EditorNode3DGizmo *p_gizmo, int p_id, bool p_secondary, const Variant &p_restore, bool p_cancel) {
 	PGB_Box *box = Object::cast_to<PGB_Box>(p_gizmo->get_node_3d());
 	helper->box_commit_handle(TTR("Change Box Shape Size"), p_cancel, box, box);
+
+	box->emit_signal("end_handle_moved");
 }
 
 void PGB_GizmoBox::redraw(EditorNode3DGizmo *p_gizmo) {
@@ -132,3 +144,22 @@ void PGB_GizmoBox::redraw(EditorNode3DGizmo *p_gizmo) {
 	p_gizmo->add_collision_segments(lines);
 	p_gizmo->add_handles(handles, handles_material);
 }
+
+
+PGB_GizmoBox::PGB_GizmoBox() {
+	helper.instantiate();
+	const Color gizmo_color = SceneTree::get_singleton()->get_debug_collisions_color();
+	create_material("shape_material", gizmo_color);
+	create_handle_material("handles");
+
+	//version_btn->connect(SceneStringName(pressed), callable_mp(this, &PGB_GizmoBox::update_gizmos));
+
+	//InspectorDock::get_inspector_singleton()->connect("property_edited", callable_mp(this, &PGB_GizmoBox::update_gizmos));
+}
+
+PGB_GizmoBox::~PGB_GizmoBox() {
+}
+
+//void PGB_GizmoBox::update_gizmos() {
+//	InspectorDock::get_inspector_singleton()->connect("property_edited", )
+//}
