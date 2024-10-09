@@ -53,6 +53,7 @@ PGB_Wall::~PGB_Wall() {
 
 PGB_WallCavity::PGB_WallCavity() :
 		PGB_Box() {
+	_has_x_handles = false;
 }
 
 PGB_WallCavity::~PGB_WallCavity() {

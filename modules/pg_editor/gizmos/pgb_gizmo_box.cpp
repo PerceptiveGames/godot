@@ -46,7 +46,7 @@ bool PGB_GizmoBox::has_gizmo(Node3D *p_spatial) {
 }
 
 String PGB_GizmoBox::get_gizmo_name() const {
-	return "PGB_Box";
+	return "PGB_Gizmo_Box";
 }
 
 int PGB_GizmoBox::get_priority() const {
@@ -138,7 +138,7 @@ void PGB_GizmoBox::redraw(EditorNode3DGizmo *p_gizmo) {
 		lines.push_back(b);
 	}
 
-	const Vector<Vector3> handles = helper->box_get_handles(box->get_size());
+	const Vector<Vector3> handles = helper->box_get_handles(box->get_size(), box->has_x_handles(), box->has_y_handles(), box->has_z_handles());
 
 	p_gizmo->add_lines(lines, material);
 	p_gizmo->add_collision_segments(lines);

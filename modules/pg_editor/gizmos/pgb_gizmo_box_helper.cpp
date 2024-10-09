@@ -54,32 +54,59 @@ void PGB_GizmoBoxHelper::get_segment(Camera3D *p_camera, const Point2 &p_point, 
 	r_segment[1] = gi.xform(ray_from + ray_dir * 4096);
 }
 
-Vector<Vector3> PGB_GizmoBoxHelper::box_get_handles(const Vector3 &p_box_size) {
+Vector<Vector3> PGB_GizmoBoxHelper::box_get_handles(const Vector3 &p_box_size, const bool has_x_handles, const bool has_y_handles, const bool has_z_handles) {
 	Vector<Vector3> handles;
 	Vector3 s = p_box_size;
 
-	handles.push_back(Vector3(0, s.y / 2, s.z / 2));
-	handles.push_back(Vector3(s.x, s.y / 2, s.z / 2));
-	handles.push_back(Vector3(s.x / 2, 0, s.z / 2));
-	handles.push_back(Vector3(s.x / 2, s.y, s.z / 2));
-	handles.push_back(Vector3(s.x / 2, s.y / 2, 0));
-	handles.push_back(Vector3(s.x / 2, s.y / 2, s.z));
+	if (has_x_handles) {
+		handles.push_back(Vector3(0, s.y / 2, s.z / 2));
+		handles.push_back(Vector3(s.x, s.y / 2, s.z / 2));
+	}
+	else {
+		handles.push_back(Vector3(100000, 100000, 100000));
+		handles.push_back(Vector3(100000, 100000, 100000));
+	}
+	if (has_y_handles) {
+		handles.push_back(Vector3(s.x / 2, 0, s.z / 2));
+		handles.push_back(Vector3(s.x / 2, s.y, s.z / 2));
+	} else {
+		handles.push_back(Vector3(100000, 100000, 100000));
+		handles.push_back(Vector3(100000, 100000, 100000));
+	}
+	if (has_z_handles) {
+		handles.push_back(Vector3(s.x / 2, s.y / 2, 0));
+		handles.push_back(Vector3(s.x / 2, s.y / 2, s.z));
+	} else {
+		handles.push_back(Vector3(100000, 100000, 100000));
+		handles.push_back(Vector3(100000, 100000, 100000));
+	}
 
 	return handles;
 }
 
 String PGB_GizmoBoxHelper::box_get_handle_name(int p_id) const {
-	switch (p_id) {
-		case 0:
-		case 1:
-			return "Size X";
-		case 2:
-		case 3:
-			return "Size Y";
-		case 4:
-		case 5:
-			return "Size Z";
-	}
+	//if (no_x_handles) {
+	//	switch (p_id) {
+	//		case 0:
+	//		case 1:
+	//			return "Size Y";
+	//		case 2:
+	//		case 3:
+	//			return "Size Z";
+	//	}
+	//} else {
+		switch (p_id) {
+			case 0:
+			case 1:
+				return "Size X";
+			case 2:
+			case 3:
+				return "Size Y";
+			case 4:
+			case 5:
+				return "Size Z";
+		}
+	//}
 	return "";
 }
 

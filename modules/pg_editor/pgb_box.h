@@ -40,12 +40,16 @@ class PGB_Box: public Node3D {
 protected:
 	AABB aabb;
 	Vector3 size = Vector3(5, 5, 5);
+	bool _has_x_handles = true;
+	bool _has_y_handles = true;
+	bool _has_z_handles = true;
 
 public:
 	void set_size(const Vector3 &p_size);
 	Vector3 get_size() const;
-
-	void begin_move_handle();
+	bool has_x_handles() const { return _has_x_handles; }
+	bool has_y_handles() const { return _has_y_handles; }
+	bool has_z_handles() const { return _has_z_handles; }
 
 protected:
 	static void _bind_methods();
