@@ -1,0 +1,57 @@
+#ifndef PG_PAIR_H
+#define PG_PAIR_H
+
+#include "core/object/object.h"
+#include "core/object/ref_counted.h"
+#include "modules/pg_g1/data/pg_macros.h"
+#include "modules/pg_g1/types/pg_typedefs.h"
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+class PG_Pair : public RefCounted {
+	GDCLASS(PG_Pair, RefCounted);
+	PG_BIND;
+
+
+//////////////////////////////////////////////////
+
+
+protected:
+	Vrt _v1;
+	Vrt _v2;
+
+
+public:
+	Vrt v1();
+	Vrt v2();
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	static Ref<PG_Pair> r(const Vrt &v1, const Vrt &v2);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	PG_Pair();
+
+
+	PG_Pair(const Vrt &v1, const Vrt &v2);
+
+
+	~PG_Pair();
+};
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+#endif // PG_PAIR_H

@@ -1,0 +1,83 @@
+#ifndef PG_STR_H
+#define PG_STR_H
+
+#include "core/object/object.h"
+#include "modules/pg_g1/data/pg_macros.h"
+#include "modules/pg_g1/types/pg_typedefs.h"
+
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+template <typename K, typename V>
+class VMap;
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+class PG_Str : public Object {
+	GDCLASS(PG_Str, Object);
+	PG_BIND;
+
+
+//////////////////////////////////////////////////
+
+
+	public:
+	PG_INLINE static bool is_str(const Vrt &v);
+
+
+//////////////////////////////////////////////////
+
+	
+public:
+	PG_INLINE static Str to_str(const Vrt &v);
+
+
+	static Str to_snake_case(Str st);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	PG_INLINE static Str substr_from_to(Str st, int from, int to);
+
+
+	static TA<Str> substr_bw_chars(Str st, Str bgn_c, Str end_c);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	static Str rm_rpt_chars(Str st, Str c, bool trim);
+
+
+	PG_INLINE static Str rm_bbcode(Str st);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	PG_INLINE static Str join_non_empty(PSA a, Str sep);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	static VMap<Str, Str> parse_kv_pairs(Str st, Str kv_sep = "=", Str pair_sep = "|");
+};
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+#endif // PG_STR_H

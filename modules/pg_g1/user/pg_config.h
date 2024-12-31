@@ -1,0 +1,63 @@
+#ifndef PG_CONFIG_H
+#define PG_CONFIG_H
+
+#include "core/object/object.h"
+#include "core/object/ref_counted.h"
+#include "modules/pg_g1/data/pg_macros.h"
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+class PG_FS;
+class PG_Input;
+class PG_Msgr;
+class PG_Profile;
+class PG_Sys;
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+class PG_Config : public RefCounted {
+	GDCLASS(PG_Config, RefCounted);
+	PG_BIND;
+
+
+//////////////////////////////////////////////////
+
+
+protected:
+	Ref<PG_Msgr> _msgr;
+
+	Ref<PG_FS> _fs;
+
+	Ref<PG_Profile> _prf;
+
+	
+//////////////////////////////////////////////////
+
+
+protected:
+	PG_Input *_input;
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	static Ref<PG_Config> mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf);
+
+	PG_Config() : _input(nullptr) {}
+	PG_Config(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf);
+	~PG_Config();
+};
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+#endif // PG_CONFIG_H

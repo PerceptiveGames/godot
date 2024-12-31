@@ -1,0 +1,13 @@
+# SCsub
+
+Import('env')
+
+env.add_source_files(env.modules_sources, "*.cpp") # Add all cpp files to the build
+
+# Chain load SCsubs
+SConscript("2d/SCsub")
+SConscript("core/SCsub")
+SConscript("data/SCsub")
+SConscript("exts/SCsub")
+SConscript("types/SCsub")
+SConscript("user/SCsub")

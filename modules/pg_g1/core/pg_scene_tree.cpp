@@ -1,0 +1,177 @@
+#include "core/object/ref_counted.h"
+#include "core/os/memory.h"
+#include "editor/editor_interface.h"
+#include "modules/pg_g1/core/pg_cmds.h"
+#include "modules/pg_g1/core/pg_fs.h"
+#include "modules/pg_g1/core/pg_msgr.h"
+#include "modules/pg_g1/core/pg_scene_tree.h"
+#include "modules/pg_g1/core/pg_sys.h"
+#include "modules/pg_g1/core/pg_time.h"
+#include "modules/pg_g1/core/pg_timers.h"
+#include "modules/pg_g1/data/pg_macros.h"
+#include "modules/pg_g1/data/pg_paths.h"
+#include "modules/pg_g1/exts/pg_num.h"
+#include "modules/pg_g1/exts/pg_raycast.h"
+#include "modules/pg_g1/exts/pg_rgx.h"
+#include "modules/pg_g1/types/pg_typedefs.h"
+#include "modules/pg_g1/user/pg_session.h"
+#include "scene/3d/camera_3d.h"
+#include "scene/main/node.h" // DOC: Needed for pg_get_root() return value.
+#include "scene/main/viewport.h"
+#include "scene/resources/3d/world_3d.h"
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+PG_SceneTree *PG_SceneTree::get_sng() {
+	return _singleton;
+}
+
+
+//////////////////////////////////////////////////
+
+
+PG_SceneTree *PG_SceneTree::get_PG_SceneTree() {
+	return _singleton;
+}
+
+
+Ref<PG_Sys> PG_SceneTree::get_PG_Sys() {
+	return _pg_sys;
+}
+
+
+Ref<PG_FS> PG_SceneTree::get_PG_FS() {
+	return _pg_fs;
+}
+
+
+PG_Time *PG_SceneTree::get_PG_Time() {
+	return _pg_time;
+}
+
+
+Ref<PG_Timers> PG_SceneTree::get_PG_Timers() {
+	return _pg_timers;
+}
+
+
+Ref<PG_Msgr> PG_SceneTree::get_PG_Msgr() {
+	return _pg_msgr;
+}
+
+
+Ref<PG_Cmds> PG_SceneTree::get_PG_Cmds() {
+	return _pg_cmds;
+}
+
+
+//////////////////////////////////////////////////
+
+
+Node *PG_SceneTree::pg_get_root() {
+	if (PG_IS_EDITOR) {
+		return get_edited_scene_root();
+	} else { // DOC: Explicit 'else' may help with compiler optimization here?
+		// TODO: Safe?
+		return (Node*)get_root();
+	}
+}
+
+
+bool PG_SceneTree::pg_is_paused() {
+	return is_paused();
+}
+
+
+//////////////////////////////////////////////////
+
+
+// DOC: Returns a SubViewport in GD, so we could retrieve the .size property.
+// Wasn't used in GD code anywhere tho. So maybe returning just a Viewport is ok.
+Viewport *PG_SceneTree::pg_get_viewport(int ed_idx) {
+	if (PG_IS_EDITOR) {
+		return EditorInterface::get_singleton()->get_editor_viewport_3d(ed_idx);
+	}
+	return pg_get_root()->get_viewport();
+}
+
+
+Ref<World3D> PG_SceneTree::get_world_3d(int ed_idx) {
+	return pg_get_viewport(ed_idx)->get_world_3d();
+}
+
+
+Camera3D *PG_SceneTree::get_main_cam(int ed_idx) {
+	return pg_get_viewport(ed_idx)->get_camera_3d();
+}
+
+
+V2 PG_SceneTree::get_mouse_pos(int ed_idx) {
+	return pg_get_viewport(ed_idx)->get_mouse_position();
+}
+
+
+//////////////////////////////////////////////////
+
+
+#ifdef PG_GD_FNS
+void PG_SceneTree::_bind_methods() {
+	// TODO: No longer static.
+	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("pg_get_viewport", "ed_idx"), &PG_SceneTree::pg_get_viewport, DEFVAL(0));
+	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_world_3d", "ed_idx"), &PG_SceneTree::get_world_3d, DEFVAL(0));
+	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_main_cam", "ed_idx"), &PG_SceneTree::get_main_cam, DEFVAL(0));
+	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_mouse_pos", "ed_idx"), &PG_SceneTree::get_mouse_pos, DEFVAL(0));
+}
+#endif
+
+
+PG_SceneTree::PG_SceneTree() {
+	// TODO:
+	// For each singleton s below
+	//   If in-editor singleton 'es' inheriting from s exists
+	//     Get singleton 'es' and assign it to the field assigned to s
+	//   Else
+	//     Assign s like below
+	// 
+	// Since 'es' does not exist at this point in the ctor, either (1) defer assignment of 'es' to s,
+	// or (2) init below, and then init 'es' and assign vars from s to 'es', and then get rid of s.
+
+	// TODO: Maybe have sys, fs, time, timers, msgr, cmds not be singletons and be members of 'sys' or new 'core'
+	// singleton instead. rgx, num can be members of a new exts singleton.
+
+	_singleton = this;
+
+	// DOC: Keep as high in the list as possible because it needs to run signals as early as possible.
+	_pg_sys = PG_Sys::mk(this);
+
+	_pg_time = memnew(PG_Time)->init(this); // TODO: Attach node to ST
+
+	_pg_msgr = PG_Msgr::mk();
+
+	_pg_timers = PG_Timers::mk(this, _pg_time, _pg_msgr);
+
+	_pg_fs = PG_FS::mk(_pg_msgr, _pg_timers);
+
+	_pg_cmds = PG_Cmds::mk();
+
+	_pg_session = PG_Session::mk(_pg_msgr, _pg_fs, _pg_cmds);
+
+	// DOC: It's more logical to me to call a function that is setting 'msgr' from here,
+	// rather than have each class access the PG_SceneTree singleton.
+	PG_Num::init();
+	PG_Paths::set_fs(_pg_fs);
+	PG_Rgx::set_msgr(_pg_msgr);
+	PG_Raycast::set_stree(this);
+}
+
+
+PG_SceneTree::~PG_SceneTree() {
+	memdelete(_pg_time);
+}
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
