@@ -40,7 +40,7 @@ class PGN_GenericEditorPlugin : public EditorPlugin {
 
 
 public:
-	virtual String get_name() const override { return "PGN_GenericEditorPlugin"; }
+	//virtual String get_name() const override { return "PGN_GenericEditorPlugin"; }
 
 	PGN_GenericEditorPlugin();
 };
