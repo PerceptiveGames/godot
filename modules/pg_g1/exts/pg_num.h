@@ -54,6 +54,12 @@ public:
 //////////////////////////////////////////////////
 
 
+	PG_INLINE static TA<int> to_arr_of_int(const Arr &a);
+
+
+//////////////////////////////////////////////////
+
+
 protected:
 	static Ref<RandomNumberGenerator> _rng;
 

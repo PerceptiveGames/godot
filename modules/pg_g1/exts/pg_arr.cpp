@@ -42,11 +42,6 @@ Arr PG_Arr::to_arr(const Vrt &v) {
 }
 
 
-TA<int> PG_Arr::to_arr_of_int(const Arr &a) {
-	return assign<int>(a);
-}
-
-
 TA<V2> PG_Arr::to_arr_of_v2(const Arr &a) {
 	return assign<V2>(a);
 }
@@ -64,7 +59,7 @@ TA<Str> PG_Arr::to_arr_of_str(const Arr &a) {
 
 TA<Node3D> PG_Arr::to_arr_of_node_3d(const Arr &a) {
 	return assign<Node3D>(a);
-}
+}  
 
 
 Vec<Key> PG_Arr::to_arr_of_valid_keycodes(const Vrt &v) {
@@ -454,26 +449,26 @@ void PG_Arr::_bind_methods() {
 	ClassDB::bind_static_method("PG_Arr", D_METHOD("get_by_idx", "a", "idx", "def"), &PG_Arr::_gd_get_by_idx, DEFVAL(Vrt::NIL));
 	ClassDB::bind_static_method("PG_Arr", D_METHOD("get_by_idx_wrap", "a", "idx", "def"), &PG_Arr::_gd_get_by_idx_wrap, DEFVAL(Vrt::NIL));
 
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("last", "a", "def"), &PG_Arr::_gd_last, DEFVAL(Vrt::NIL));
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("penultimate", "a", "def"), &PG_Arr::_gd_penultimate, DEFVAL(Vrt::NIL));
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("last", "a", "def"), &PG_Arr::_gd_last, DEFVAL(Vrt::NIL));
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("penultimate", "a", "def"), &PG_Arr::_gd_penultimate, DEFVAL(Vrt::NIL));
 
-	// TODO: CHECK IF IT WORKS WITH THIS TEMPLATE. ADD OTHERS IF SO.
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("find_idxs", "a", "v"), &PG_Arr::find_idxs);
+	//// TODO: CHECK IF IT WORKS WITH THIS TEMPLATE. ADD OTHERS IF SO.
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("find_idxs", "a", "v"), &PG_Arr::find_idxs);
 
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("has_any_in_common", "a1", "a2"), &PG_Arr::has_any_in_common);
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("get_approx_v_idx", "a", "v"), &PG_Arr::get_approx_v_idx);
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("has_any_in_common", "a1", "a2"), &PG_Arr::has_any_in_common);
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("get_approx_v_idx", "a", "v"), &PG_Arr::get_approx_v_idx);
 
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("set_last", "a", "v", "add_if_empty"), &PG_Arr::set_last, DEFVAL(true));
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("append_if_diff_from_last", "a", "v"), &PG_Arr::append_if_diff_from_last);
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("set_last", "a", "v", "add_if_empty"), &PG_Arr::set_last, DEFVAL(true));
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("append_if_diff_from_last", "a", "v"), &PG_Arr::append_if_diff_from_last);
 
-	// TODO: CHECK IF IT WORKS HERE, WHERE IT USES IMPLICIT TYPES IN TEMPLATE. ADD OTHERS IF SO.
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("first_f", "a", "f", "def"), &PG_Arr::_gd_first_f, DEFVAL(Vrt::NIL));
+	//// TODO: CHECK IF IT WORKS HERE, WHERE IT USES IMPLICIT TYPES IN TEMPLATE. ADD OTHERS IF SO.
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("first_f", "a", "f", "def"), &PG_Arr::_gd_first_f, DEFVAL(Vrt::NIL));
 
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("rm_all_v", "a", "v"), &PG_Arr::rm_all_v);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("rm_adj_dupes", "a"), &PG_Arr::rm_adj_dupes);
-	ClassDB::bind_static_method("PG_Arr", D_METHOD("mk_unique", "a"), &PG_Arr::mk_unique);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("resize_until_item", "a", "item", "pop_found_item"), &PG_Arr::_gd_resize_until_item);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("assign", "from", "to"), &PG_Arr::_gd_assign);
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("rm_all_v", "a", "v"), &PG_Arr::rm_all_v);
+	////ClassDB::bind_static_method("PG_Arr", D_METHOD("rm_adj_dupes", "a"), &PG_Arr::rm_adj_dupes);
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("mk_unique", "a"), &PG_Arr::mk_unique);
+	////ClassDB::bind_static_method("PG_Arr", D_METHOD("resize_until_item", "a", "item", "pop_found_item"), &PG_Arr::_gd_resize_until_item);
+	////ClassDB::bind_static_method("PG_Arr", D_METHOD("assign", "from", "to"), &PG_Arr::_gd_assign);
 }
 #endif
 

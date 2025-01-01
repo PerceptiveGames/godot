@@ -1,9 +1,11 @@
 #include "core/math/random_number_generator.h"
 #include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
+#include "core/variant/typed_array.h"
 #include "core/variant/variant.h"
 #include "core/variant/variant_utility.h"
 #include "modules/pg_g1/data/pg_macros.h"
+#include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_num.h"
 #include "modules/pg_g1/exts/pg_rgx.h"
 #include "modules/pg_g1/types/pg_typedefs.h"
@@ -56,6 +58,14 @@ int PG_Num::to_int_if_gte(const Vrt &v, const int i) {
 
 int PG_Num::to_int_if_bw(const Vrt &v, const int min_incl, const int max_incl) {
 	return is_int(v) && to_int(v) >= min_incl && to_int(v) <= max_incl ? to_int(v) : -1;
+}
+
+
+//////////////////////////////////////////////////
+
+
+TA<int> PG_Num::to_arr_of_int(const Arr &a) {
+	return PG_Arr::assign<int>(a);
 }
 
 

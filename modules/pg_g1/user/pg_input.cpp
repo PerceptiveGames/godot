@@ -4,6 +4,7 @@
 #include "core/input/input_map.h"
 #include "core/io/config_file.h"
 #include "core/io/file_access.h"
+#include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "core/os/keyboard.h"
 #include "core/os/memory.h"
@@ -13,12 +14,14 @@
 #include "core/variant/typed_dictionary.h"
 #include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/core/pg_msgr.h"
+#include "modules/pg_g1/core/pg_scene_tree.h"
 #include "modules/pg_g1/data/pg_const.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/data/pg_paths.h"
 #include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_num.h"
 #include "modules/pg_g1/exts/pg_vec.h"
+#include "modules/pg_g1/sgns/pg_sgns_user.h"
 #include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/types/pgw.h"
@@ -312,7 +315,7 @@ bool PG_Input::get_cursor_visible() {
 
 void PG_Input::input(const Ref<InputEvent> &e) {
 	if (e->is_action_pressed("console_show")) {
-		emit_signal("console_show_pressed");
+		PG_I(PG_SgnsUser)->emit_signal("console_show_pressed");
 		get_viewport()->set_input_as_handled();
 		// TODO: Add "show pause menu", etc.. here
 	}
@@ -324,7 +327,7 @@ void PG_Input::input(const Ref<InputEvent> &e) {
 
 #ifdef PG_GD_FNS
 void PG_Input::_bind_methods() {
-	ADD_SIGNAL(MethodInfo("console_show_pressed"));
+	//ADD_SIGNAL(MethodInfo("console_show_pressed"));
 }
 #endif
 

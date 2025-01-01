@@ -28,6 +28,7 @@
 #include "modules/pg_g1/user/pg_input.h"
 #include "modules/pg_g1/user/pg_profile.h"
 #include "modules/pg_g1/user/pg_session.h"
+#include "modules/pg_g1/sgns/pg_sgns_user.h"
 #include "modules/pg_g1/user/pg_ui.h"
 #include "modules/register_module_types.h"
 #include "register_types.h"
@@ -95,6 +96,8 @@ void initialize_pg_g1_module(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<PG_Profile>();
 		ClassDB::register_class<PG_Session>();
 		ClassDB::register_class<PG_UI>();
+
+		ClassDB::register_class<PG_SgnsUser>();
 	}
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
 		//ClassDB::register_class<PGV<TypedArray<String>>();

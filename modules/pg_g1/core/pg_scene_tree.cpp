@@ -13,6 +13,7 @@
 #include "modules/pg_g1/exts/pg_num.h"
 #include "modules/pg_g1/exts/pg_raycast.h"
 #include "modules/pg_g1/exts/pg_rgx.h"
+#include "modules/pg_g1/sgns/pg_sgns_user.h"
 #include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/user/pg_session.h"
 #include "scene/3d/camera_3d.h"
@@ -65,6 +66,11 @@ Ref<PG_Msgr> PG_SceneTree::get_PG_Msgr() {
 
 Ref<PG_Cmds> PG_SceneTree::get_PG_Cmds() {
 	return _pg_cmds;
+}
+
+
+Ref<PG_SgnsUser> PG_SceneTree::get_PG_SgnsUser() {
+	return _pg_sgns_user;
 }
 
 
@@ -158,6 +164,9 @@ PG_SceneTree::PG_SceneTree() {
 	_pg_cmds = PG_Cmds::mk();
 
 	_pg_session = PG_Session::mk(_pg_msgr, _pg_fs, _pg_cmds);
+
+	_pg_sgns_user = PG_SgnsUser::mk();
+
 
 	// DOC: It's more logical to me to call a function that is setting 'msgr' from here,
 	// rather than have each class access the PG_SceneTree singleton.

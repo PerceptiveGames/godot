@@ -94,7 +94,7 @@ class PG_SceneTree;
 // TODO: Move to another file, so it can stay at the top.
 #define PG_BUILD_LEVEL PG_DEBUG_EDITOR
 // DOC: Include GDScript versions of functions.
-//#define PG_GD_FNS 1
+#define PG_GD_FNS 1
 
 #define ENABLE_INLINE 0
 

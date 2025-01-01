@@ -50,7 +50,6 @@ public:
 	PG_INLINE static Arr to_arr(const Vrt &v);
 
 
-	PG_INLINE static TA<int> to_arr_of_int(const Arr &a);
 
 
 	PG_INLINE static TA<V2> to_arr_of_v2(const Arr &a);

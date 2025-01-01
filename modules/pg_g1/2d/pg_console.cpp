@@ -1,18 +1,20 @@
 #include "core/error/error_list.h"
 #include "core/input/input_event.h"
 #include "core/object/callable_method_pointer.h"
+#include "core/object/class_db.h"
+#include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "core/typedefs.h"
+#include "modules/pg_g1/2d/pg_console.h"
 #include "modules/pg_g1/core/pg_cmds.h"
 #include "modules/pg_g1/core/pg_msgr.h"
+#include "modules/pg_g1/core/pg_scene_tree.h"
 #include "modules/pg_g1/core/pg_timers.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/exts/pg_vec.h"
+#include "modules/pg_g1/sgns/pg_sgns_user.h"
 #include "modules/pg_g1/types/pg_typedefs.h"
-
-#include "core/object/object.h"
-#include "modules/pg_g1/2d/pg_console.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/rich_text_label.h"
 
@@ -112,6 +114,11 @@ void PG_Console::_text_submitted(Str t) {
 
 #ifdef PG_GD_FNS
 void PG_Console::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("show_console"), &PG_Console::_show_console);
+	ClassDB::bind_method(D_METHOD("hide_console"), &PG_Console::_hide_console);
+	ClassDB::bind_method(D_METHOD("show_history_prev"), &PG_Console::_show_history_prev);
+	ClassDB::bind_method(D_METHOD("show_history_next"), &PG_Console::_show_history_next);
+	ClassDB::bind_method(D_METHOD("set_caret_to_end"), &PG_Console::_set_caret_to_end);
 }
 #endif
 
@@ -123,7 +130,7 @@ PG_Console::PG_Console(Ref<PG_Msgr> msgr, Ref<PG_Timers> timers, Ref<PG_Cmds> cm
 
 	set_process_input(false);
 
-	// 	PG_User._input.console_show_pressed.connect(_show_console)
+	PG_I(PG_SgnsUser)->connect("console_show_pressed", callable_mp(this, &PG_Console::_show_console));
 
 	//_output->set_unique_name_in_owner(true);
 	//_input->set_unique_name_in_owner(true);

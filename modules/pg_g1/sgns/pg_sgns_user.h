@@ -1,5 +1,5 @@
-#ifndef PG_TEMPLATE_H
-#define PG_TEMPLATE_H
+#ifndef PG_SGNS_USER_H
+#define PG_SGNS_USER_H
 
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
@@ -10,8 +10,8 @@
 //////////////////////////////////////////////////
 
 
-class PG_Template : public RefCounted {
-	GDCLASS(PG_Template, RefCounted);
+class PG_SgnsUser : public RefCounted {
+	GDCLASS(PG_SgnsUser, RefCounted);
 	PG_BIND;
 
 
@@ -19,9 +19,12 @@ class PG_Template : public RefCounted {
 
 
 public:
-	PG_Template();
+	static Ref<PG_SgnsUser> mk();
 
-	~PG_Template();
+
+	PG_SgnsUser();
+
+	~PG_SgnsUser();
 };
 
 
@@ -29,4 +32,4 @@ public:
 //////////////////////////////////////////////////
 
 
-#endif // PG_TEMPLATE_H
+#endif // PG_SGNS_USER_H
