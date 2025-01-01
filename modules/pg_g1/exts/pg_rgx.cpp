@@ -16,7 +16,7 @@
 
 Ref<PG_Msgr> PG_Rgx::_msgr;
 
-VMap<SN, Ref<RegEx>> PG_Rgx::_rgxs;
+VMap<StringName, Ref<RegEx>> PG_Rgx::_rgxs;
 
 
 //////////////////////////////////////////////////
@@ -31,11 +31,11 @@ void PG_Rgx::set_msgr(Ref<PG_Msgr> msgr) {
 //////////////////////////////////////////////////
 
 
-Ref<RegEx> PG_Rgx::mk(Str ptrn) {
+Ref<RegEx> PG_Rgx::mk(String ptrn) {
 	Ref<RegEx> r;
 	r.instantiate();
 	if (Error e = r->compile(ptrn)) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, SNV(), "RGX_COMPILE", e, ptrn));
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, Vector<StringName>(), "RGX_COMPILE", e, ptrn));
 	}
 	return r;
 }
@@ -44,7 +44,7 @@ Ref<RegEx> PG_Rgx::mk(Str ptrn) {
 //////////////////////////////////////////////////
 
 
-bool PG_Rgx::has(SN k, Str st) {
+bool PG_Rgx::has(StringName k, String st) {
 	if (_rgxs.is_empty()) {
 		_init();
 	}
@@ -52,7 +52,7 @@ bool PG_Rgx::has(SN k, Str st) {
 }
 
 
-Ref<RegEx> PG_Rgx::get(SN k) {
+Ref<RegEx> PG_Rgx::get(StringName k) {
 	if (_rgxs.is_empty()) {
 		_init();
 	}
@@ -60,7 +60,7 @@ Ref<RegEx> PG_Rgx::get(SN k) {
 }
 
 
-Str PG_Rgx::sub(SN k, Str st, Str c) {
+String PG_Rgx::sub(StringName k, String st, String c) {
 	if (_rgxs.is_empty()) {
 		_init();
 	}
@@ -71,15 +71,15 @@ Str PG_Rgx::sub(SN k, Str st, Str c) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Rgx::_bind_methods() {
+#ifdef PG_GD_FNS
 	ClassDB::bind_static_method("PG_Rgx", D_METHOD("mk", "ptrn"), &PG_Rgx::mk);
 
 	ClassDB::bind_static_method("PG_Rgx", D_METHOD("has", "k", "st"), &PG_Rgx::has);
 	ClassDB::bind_static_method("PG_Rgx", D_METHOD("get", "k"), &PG_Rgx::get);
 	ClassDB::bind_static_method("PG_Rgx", D_METHOD("sub", "k", "st", "c"), &PG_Rgx::get);
-}
 #endif
+}
 
 
 void PG_Rgx::_init() {

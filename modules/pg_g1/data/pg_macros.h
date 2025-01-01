@@ -43,22 +43,22 @@
 ////////////////////////////////////////////////////
 //
 //
-//typedef Variant Vrt;
-//typedef VariantUtilityFunctions VUF;
-//typedef String Str;
-//typedef StringName SN;
-//typedef PackedStringArray PSA;
-//typedef Vector<SN> SNV;
+//typedef Variant Variant;
+//typedef VariantUtilityFunctions VariantUtilityFunctions;
+//typedef String String;
+//typedef StringName StringName;
+//typedef Vector<String> Vector<String>;
+//typedef Vector<StringName> Vector<StringName>;
 //
 //template <typename T>
 ////using Vct = Vector<T>;
 //using Vec = Vector<T>;
 //
-//typedef Array Arr;
+//typedef Array Array;
 //template <typename T>
 //using TA = TypedArray<T>;
 //
-//using Dict = Dictionary;
+//using Dictionary = Dictionary;
 //template <typename K, typename V>
 //using TD = TypedDictionary<K, V>;
 //
@@ -75,7 +75,7 @@
 
 
 class PG_SceneTree;
-//class PSA;
+//class Vector<String>;
 
 
 //////////////////////////////////////////////////
@@ -131,17 +131,17 @@ class PG_SceneTree;
 
 
 	protected:
-		static PSA _st;
+		static Vector<String> _st;
 
 
 	public:
-		static PSA get_st();
+		static Vector<String> get_st();
 
-		static bool push_back(Str file, Str fn, int line);
+		static bool push_back(String file, String fn, int line);
 
 		static void pop_back();
 
-		static Str join();
+		static String join();
 	};
 
 
@@ -194,13 +194,9 @@ class PG_SceneTree;
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
-	#define PG_BIND \
-		protected: \
-		static void _bind_methods();
-#else
-	#define PG_BIND
-#endif
+#define PG_BIND \
+	protected: \
+	static void _bind_methods();
 
 
 //////////////////////////////////////////////////

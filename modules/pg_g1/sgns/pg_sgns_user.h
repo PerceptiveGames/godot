@@ -21,7 +21,6 @@ class PG_SgnsUser : public RefCounted {
 public:
 	static Ref<PG_SgnsUser> mk();
 
-
 	PG_SgnsUser();
 
 	~PG_SgnsUser();

@@ -6,10 +6,10 @@
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_UI::_bind_methods() {
-}
+#ifdef PG_GD_FNS
 #endif
+}
 
 
 PG_UI::PG_UI() {}

@@ -11,10 +11,10 @@
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Config::_bind_methods() {
-}
+#ifdef PG_GD_FNS
 #endif
+}
 
 
 Ref<PG_Config> PG_Config::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {

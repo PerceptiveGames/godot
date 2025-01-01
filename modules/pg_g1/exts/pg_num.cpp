@@ -1,6 +1,8 @@
 #include "core/math/random_number_generator.h"
 #include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
+#include "core/string/ustring.h"
+#include "core/variant/array.h"
 #include "core/variant/typed_array.h"
 #include "core/variant/variant.h"
 #include "core/variant/variant_utility.h"
@@ -8,7 +10,6 @@
 #include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_num.h"
 #include "modules/pg_g1/exts/pg_rgx.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/regex/regex.h"
 
@@ -24,17 +25,17 @@ Ref<RandomNumberGenerator> PG_Num::_rng;
 //////////////////////////////////////////////////
 
 
-bool PG_Num::is_int(const Vrt &v) {
-	return v.get_type() == Vrt::INT;
+bool PG_Num::is_int(const Variant &v) {
+	return v.get_type() == Variant::INT;
 }
 
 
-bool PG_Num::is_only_digits(Str st) {
+bool PG_Num::is_only_digits(String st) {
 	return PG_Rgx::get("only_digits")->search(st) != nullptr;
 }
 
 
-bool PG_Num::is_int_in_rng(Vrt v, int min_incl, int max_incl) {
+bool PG_Num::is_int_in_rng(Variant v, int min_incl, int max_incl) {
 	if (!PG_Num::is_int(v)) {
 		return false;
 	}
@@ -46,17 +47,17 @@ bool PG_Num::is_int_in_rng(Vrt v, int min_incl, int max_incl) {
 //////////////////////////////////////////////////
 
 
-int PG_Num::to_int(const Vrt &v) {
-	return VUF::type_convert(v, Vrt::INT);
+int PG_Num::to_int(const Variant &v) {
+	return VariantUtilityFunctions::type_convert(v, Variant::INT);
 }
 
 
-int PG_Num::to_int_if_gte(const Vrt &v, const int i) {
+int PG_Num::to_int_if_gte(const Variant &v, const int i) {
 	return is_int(v) && to_int(v) >= i ? to_int(v) : -1;
 }
 
 
-int PG_Num::to_int_if_bw(const Vrt &v, const int min_incl, const int max_incl) {
+int PG_Num::to_int_if_bw(const Variant &v, const int min_incl, const int max_incl) {
 	return is_int(v) && to_int(v) >= min_incl && to_int(v) <= max_incl ? to_int(v) : -1;
 }
 
@@ -64,7 +65,20 @@ int PG_Num::to_int_if_bw(const Vrt &v, const int min_incl, const int max_incl) {
 //////////////////////////////////////////////////
 
 
-TA<int> PG_Num::to_arr_of_int(const Arr &a) {
+bool PG_Num::is_i32vec(const Variant &v) {
+	return v.get_type() == Variant::PACKED_INT32_ARRAY;
+}
+
+
+bool PG_Num::is_i64vec(const Variant &v) {
+	return v.get_type() == Variant::PACKED_INT64_ARRAY;
+}
+
+
+//////////////////////////////////////////////////
+
+
+TypedArray<int> PG_Num::to_arr_of_int(const Array &a) {
 	return PG_Arr::assign<int>(a);
 }
 
@@ -85,8 +99,8 @@ int PG_Num::get_rnd_int(int min_incl, int max_incl) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Num::_bind_methods() {
+#ifdef PG_GD_FNS
 	ClassDB::bind_static_method("PG_Num", D_METHOD("is_int", "v"), &PG_Num::is_int);
 	ClassDB::bind_static_method("PG_Num", D_METHOD("is_only_digits", "st"), &PG_Num::is_only_digits);
 	ClassDB::bind_static_method("PG_Num", D_METHOD("is_int_in_rng", "v", "min_incl", "max_incl"), &PG_Num::is_int_in_rng);
@@ -96,8 +110,8 @@ void PG_Num::_bind_methods() {
 	ClassDB::bind_static_method("PG_Num", D_METHOD("to_int_if_bw", "v", "min_incl", "max_incl"), &PG_Num::to_int_if_bw);
 
 	ClassDB::bind_static_method("PG_Num", D_METHOD("get_rnd_int", "min_incl", "max_incl"), &PG_Num::get_rnd_int);
-}
 #endif
+}
 
 
 void PG_Num::init() {

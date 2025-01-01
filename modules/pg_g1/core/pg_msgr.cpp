@@ -6,18 +6,20 @@
 #include "core/variant/typed_array.h"
 #include "core/variant/variant.h"
 #include "core/variant/variant_utility.h"
+#include "modules/pg_g1/core/pg_msgr.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_arr.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
-#include "modules/pg_g1/core/pg_msgr.h"
+#include "core/string/string_name.h"
+#include "core/templates/vector.h"
+#include "core/string/ustring.h"
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
 
-Str PGE_MsgLevelStr(PGE_MsgLevel lvl) {
+String PGE_MsgLevelStr(PGE_MsgLevel lvl) {
 	if (lvl == 1) { return "INPUT"; }
 	if (lvl == 2) { return "INFO"; }
 	if (lvl == 3) { return "WARNING"; }
@@ -34,7 +36,7 @@ Str PGE_MsgLevelStr(PGE_MsgLevel lvl) {
 //////////////////////////////////////////////////
 
 
-Str PG_Msgs::get(SN k) const {
+String PG_Msgs::get(StringName k) const {
 	if (_m.has(k)) {
 		return _m[k];
 	}
@@ -51,11 +53,10 @@ Ref<PG_Msgs> PG_Msgs::mk() {
 
 
 PG_Msgs::PG_Msgs() {
-
 	// TODO: Maybe: "MAKE SURE THAT THE FILE IS NOT OPEN IN ANY PROGRAM..."
-	const Str file_perms = "MAKE SURE THAT NO OTHER PROGRAM (SUCH AS NOTEPAD) IS USING THE FILE AND THAT YOU HAVE WRITE PERMISSIONS ON THE FOLDER.";
-	const Str dir_perms = "MAKE SURE THAT NO OTHER PROGRAM IS USING THE FOLDER AND THAT YOU HAVE WRITE PERMISSIONS ON THE FOLDER.";
-	const Str parent_dir_perms = "MAKE SURE THAT NO OTHER PROGRAM IS USING THE FOLDER AND THAT YOU HAVE WRITE PERMISSIONS ON THE PARENT FOLDER.";
+	const String file_perms = "MAKE SURE THAT NO OTHER PROGRAM (SUCH AS NOTEPAD) IS USING THE FILE AND THAT YOU HAVE WRITE PERMISSIONS ON THE FOLDER.";
+	const String dir_perms = "MAKE SURE THAT NO OTHER PROGRAM IS USING THE FOLDER AND THAT YOU HAVE WRITE PERMISSIONS ON THE FOLDER.";
+	const String parent_dir_perms = "MAKE SURE THAT NO OTHER PROGRAM IS USING THE FOLDER AND THAT YOU HAVE WRITE PERMISSIONS ON THE PARENT FOLDER.";
 
 	_m["FILE_NOT_EXIST"] = "FILE '{arg}' DOES NOT EXIST.";
 	_m["MK_FILE"] = "UNABLE TO CREATE FILE '{arg}'. ERROR: '{err}'. " + file_perms;
@@ -104,6 +105,8 @@ PG_Msgs::PG_Msgs() {
 
 	_m["RGX_COMPILE"] = "REGEX COMPILATION FAILED. REGEX: -> {arg} <-. ERROR: {err}.";
 
+	_m["SGN_CONNECT"] = "COULD NOT CONNECT METHOD '{arg}' TO SIGNAL '{arg}'. ERROR: {err}.";
+
 	_m["STACK_TRACE"] = "STACK TRACE:\n{arg}";
 }
 
@@ -112,7 +115,7 @@ PG_Msgs::PG_Msgs() {
 //////////////////////////////////////////////////
 
 
-Ref<PG_MsgrTgt> PG_Msgr::mk_tgt(SN id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled) {
+Ref<PG_MsgrTgt> PG_Msgr::mk_tgt(StringName id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled) {
 	return PG_MsgrTgt::mk(id, f, min_lvl, max_lvl, is_enabled);
 }
 
@@ -120,14 +123,14 @@ Ref<PG_MsgrTgt> PG_Msgr::mk_tgt(SN id, const Callable &f, int min_lvl, int max_l
 //////////////////////////////////////////////////
 
 
-Ref<PG_Msg> PG_Msgr::mk_msg(PGE_MsgLevel lvl, Str tgt, SN id, Str txt, Error e) {
-	SNV t = (tgt[0] == '-') ? PG_Arr::mk_snv("-", tgt.substr(1)) : PG_Arr::mk_snv(tgt);
+Ref<PG_Msg> PG_Msgr::mk_msg(PGE_MsgLevel lvl, String tgt, StringName id, String txt, Error e) {
+	Vector<StringName> t = (tgt[0] == '-') ? PG_Arr::mk_snv("-", tgt.substr(1)) : PG_Arr::mk_snv(tgt);
 	return mk_msg(lvl, t, id, txt, e);
 }
 
 
 // TODO: Try to create PG_Msg ctor, then use instantiate() with args.
-Ref<PG_Msg> PG_Msgr::mk_msg(PGE_MsgLevel lvl, SNV tgts, SN id, Str txt, Error e) {
+Ref<PG_Msg> PG_Msgr::mk_msg(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, String txt, Error e) {
 	Ref<PG_Msg> r;
 	r.instantiate();
 	r->lvl = lvl;
@@ -149,9 +152,9 @@ Ref<PG_Msg> PG_Msgr::mk_msg(PGE_MsgLevel lvl, SNV tgts, SN id, Str txt, Error e)
 // TODO: Keep track of repetitions to avoid outputting the same msgs hundreds of times.
 // Simple "Too many errors. Reliability of game state not guaranteed going forward." messages that stays on screen at all times, after like 20 messages.
 // Maybe allow x times the same id over a period of time.
-Ref<PG_Msg> PG_Msgr::build(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<Str> strs) {
-	//Str prefix = _is_ready_for_pg_logging ? "[EARLY CODE] " : "";
-	Str txt = _msgs->get(id);
+Ref<PG_Msg> PG_Msgr::build(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs) {
+	//String prefix = _is_ready_for_pg_logging ? "[EARLY CODE] " : "";
+	String txt = _msgs->get(id);
 
 	if (id == "OPEN_DIR") {
 		e = DirAccess::get_open_error();
@@ -159,14 +162,12 @@ Ref<PG_Msg> PG_Msgr::build(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<Str> s
 		e = FileAccess::get_open_error();
 	}
 
-	if (strs.size() == 1) {
-		txt = txt.replace_first("{arg}", strs[0]);
-	} else {
-		txt = txt.replace_first("{arg}", strs[0]).replace_first("{arg}", strs[1]).replace_first("{arg}", strs[2]).replace_first("{arg}", strs[3]);
+	for (int i = 0; i < strs.size(); ++i) {
+		txt = txt.replace_first("{arg}", strs[i]);
 	}
 
 	if (e != Error::OK) {
-		txt = txt.replace("{err}", VUF::error_string(e));
+		txt = txt.replace("{err}", VariantUtilityFunctions::error_string(e));
 	}
 	txt = txt.replace(" ERROR: '{err}'.", "");
 
@@ -181,46 +182,45 @@ Ref<PG_Msg> PG_Msgr::build(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<Str> s
 }
 
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, SN id) {
-	return bcast(build(lvl, SNV(), id, Error::OK, TA<Str>()));
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id) {
+	return bcast(build(lvl, Vector<StringName>(), id, Error::OK, TypedArray<String>()));
 }
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, SN id, Str str) {
-	return bcast(build(lvl, SNV(), id, Error::OK, PG_Arr::mk_ta_str(str)));
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, String str) {
+	return bcast(build(lvl, Vector<StringName>(), id, Error::OK, PG_Arr::mk_ta_str(str)));
 }
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, SN id, Error e, Str str) {
-	return bcast(build(lvl, SNV(), id, e, PG_Arr::mk_ta_str(str)));
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, Error e, String str) {
+	return bcast(build(lvl, Vector<StringName>(), id, e, PG_Arr::mk_ta_str(str)));
 }
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, Str tgt, SN id, Error e, Str str) {
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, String tgt, StringName id, Error e, String str) {
 	return bcast(build(lvl, PG_Arr::mk_snv(tgt), id, e, PG_Arr::mk_ta_str(str)));
 }
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, Str str) {
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, String str) {
 	return bcast(build(lvl, tgts, id, e, PG_Arr::mk_ta_str(str)));
 }
 
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, SN id, TA<Str> strs) {
-	return bcast(build(lvl, SNV(), id, Error::OK, strs));
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, TypedArray<String> strs) {
+	return bcast(build(lvl, Vector<StringName>(), id, Error::OK, strs));
 }
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, SN id, Error e, TA<Str> strs) {
-	return bcast(build(lvl, SNV(), id, e, strs));
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, Error e, TypedArray<String> strs) {
+	return bcast(build(lvl, Vector<StringName>(), id, e, strs));
 }
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, Str tgt, SN id, Error e, TA<Str> strs) {
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, String tgt, StringName id, Error e, TypedArray<String> strs) {
 	return bcast(build(lvl, PG_Arr::mk_snv(tgt), id, e, strs));
 }
 
-Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<Str> strs) {
+Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs) {
 	return bcast(build(lvl, tgts, id, e, strs));
 }
 
 
 Ref<PG_Msg> PG_Msgr::bcast(Ref<PG_Msg> msg) {
-	typedef KV<SN, Ref<PG_MsgrTgt>> Tgt;
 	if (msg->tgts.is_empty()) {
 		for (int i = 0; i < _tgts.size(); ++i) {
 			_tgts.getv(i)->send(msg);
@@ -241,7 +241,7 @@ Ref<PG_Msg> PG_Msgr::bcast(Ref<PG_Msg> msg) {
 
 
 #ifdef PG_GD_FNS
-Ref<PG_Msg> PG_Msgr::_gd_bcast(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<Str> strs) {
+Ref<PG_Msg> PG_Msgr::_gd_bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs) {
 	return bcast(lvl, tgts, id, e, strs);
 }
 #endif
@@ -250,12 +250,12 @@ Ref<PG_Msg> PG_Msgr::_gd_bcast(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<St
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Msgr::_bind_methods() {
+#ifdef PG_GD_FNS
 	// TODO: UNCOMMENT AND FIX.
 	//ClassDB::bind_static_method("PG_Msgr", D_METHOD("bcast", "lvl", "id", "str", "e", "vrt"), &PG_Msgr::_gd_bcast, DEFVAL(""), DEFVAL(Error::OK), DEFVAL(Variant::NIL));
-}
 #endif
+}
 
 
 Ref<PG_Msgr> PG_Msgr::mk() {
@@ -292,19 +292,20 @@ void PG_MsgrTgt::send(Ref<PG_Msg> msg) {
 //////////////////////////////////////////////////
 
 
-Ref<PG_MsgrTgt> PG_MsgrTgt::mk(SN id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled) {
+Ref<PG_MsgrTgt> PG_MsgrTgt::mk(StringName id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled) {
 	return PG_Types::mk_ref<PG_MsgrTgt>(id, f, min_lvl, max_lvl, is_enabled);
 }
 
 
 PG_MsgrTgt::PG_MsgrTgt() :
-		_id(SN()),
+		_id(StringName()),
 		_f(nullptr),
 		_min_lvl(-1),
 		_max_lvl(-1),
 		_is_enabled(false) {}
 
-PG_MsgrTgt::PG_MsgrTgt(SN id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled) :
+
+PG_MsgrTgt::PG_MsgrTgt(StringName id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled) :
 		_id(id),
 		_f(f),
 		_min_lvl(min_lvl),

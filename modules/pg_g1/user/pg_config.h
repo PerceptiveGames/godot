@@ -30,10 +30,8 @@ class PG_Config : public RefCounted {
 
 
 protected:
-	Ref<PG_Msgr> _msgr;
-
 	Ref<PG_FS> _fs;
-
+	Ref<PG_Msgr> _msgr;
 	Ref<PG_Profile> _prf;
 
 	

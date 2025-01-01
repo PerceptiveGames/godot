@@ -4,7 +4,13 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+class Variant;
 
 
 //////////////////////////////////////////////////
@@ -20,7 +26,7 @@ class PG_Types : public Object {
 
 
 public:
-	PG_INLINE static bool to_bool(const Vrt &v);
+	PG_INLINE static bool to_bool(const Variant &v);
 
 
 //////////////////////////////////////////////////
@@ -38,7 +44,6 @@ public:
 	template <typename T, typename TR>
 	PG_INLINE static TR trn_eq(T lhs, T v0, TR r0, T v1, TR r1, T v2, TR r2, TR df);
 
-
 	template <typename T, typename TR>
 	PG_INLINE static TR trn_eq(T lhs, T v0, TR r0, T v1, TR r1, T v2, TR r2, T v3, TR r3, TR df);
 
@@ -54,12 +59,14 @@ public:
 		return r;
 	}
 
+
 	template <typename T>
 	PG_INLINE static Ref<T> mk_ref_from_ptr(T *o) {
 		Ref<T> r;
 		r.reference_ptr(o);
 		return r;
 	}
+
 
 	template <typename T>
 	PG_INLINE static T unref(T o) {

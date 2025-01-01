@@ -19,10 +19,10 @@ void PG_Session::mk_profile() {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Session::_bind_methods() {
-}
+#ifdef PG_GD_FNS
 #endif
+}
 
 
 Ref<PG_Session> PG_Session::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds) {

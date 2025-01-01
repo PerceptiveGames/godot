@@ -4,7 +4,6 @@
 #include "core/variant/variant.h"
 #include "core/variant/variant_utility.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 
 
@@ -12,8 +11,8 @@
 //////////////////////////////////////////////////
 
 
-bool PG_Types::to_bool(const Vrt &v) {
-	return VUF::type_convert(v, Vrt::BOOL);
+bool PG_Types::to_bool(const Variant &v) {
+	return VariantUtilityFunctions::type_convert(v, Variant::BOOL);
 }
 
 
@@ -65,11 +64,11 @@ TR PG_Types::trn_eq(T lhs, T v0, TR r0, T v1, TR r1, T v2, TR r2, T v3, TR r3, T
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Types::_bind_methods() {
+#ifdef PG_GD_FNS
 	ClassDB::bind_static_method("PG_Types", D_METHOD("to_bool", "v"), &PG_Types::to_bool);
-}
 #endif
+}
 
 
 //////////////////////////////////////////////////

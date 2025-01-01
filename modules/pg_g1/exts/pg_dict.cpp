@@ -1,4 +1,5 @@
 #include "core/object/class_db.h"
+#include "core/object/ref_counted.h"
 #include "core/templates/pair.h"
 #include "core/templates/vmap.h"
 #include "core/variant/callable.h"
@@ -15,34 +16,35 @@
 //////////////////////////////////////////////////
 
 
-bool PG_Dict::is_dict(const Vrt &v) {
-	return v.get_type() == Vrt::DICTIONARY;
+bool PG_Dict::is_dict(const Variant &v) {
+	return v.get_type() == Variant::DICTIONARY;
 }
 
 
 //////////////////////////////////////////////////
 
 
-Dict PG_Dict::to_dict(const Vrt &v) {
-	return VUF::type_convert(v, Vrt::DICTIONARY);
+Dictionary PG_Dict::to_dict(const Variant &v) {
+	return VariantUtilityFunctions::type_convert(v, Variant::DICTIONARY);
 }
 
 
 template <typename K, typename V>
-TD<K, V> PG_Dict::from_arr(const Arr &a, const Callable &f) {
+TypedDictionary<K, V> PG_Dict::from_arr(const Array &a, const Callable &f) {
 	// TODO: Maybe replace Pair with PG_Pair.
-	TD<K, V> r;
-	for (const Vrt &v : a) {
+	TypedDictionary<K, V> r;
+	for (const Variant &v : a) {
 		Pair<K, V> e = f.call(v);
 		r[e.first] = e.second;
 	}
 	return r;
 }
 
+
 #ifdef PG_GD_FNS
-Dict PG_Dict::_gd_from_arr(const Arr &a, const Callable &f) {
-	Dict r;
-	for (const Vrt &v : a) {
+Dictionary PG_Dict::_gd_from_arr(const Array &a, const Callable &f) {
+	Dictionary r;
+	for (const Variant &v : a) {
 		Ref<PG_Pair> e = f.call(v);
 		r[e->v1()] = e->v2();
 	}
@@ -52,9 +54,9 @@ Dict PG_Dict::_gd_from_arr(const Arr &a, const Callable &f) {
 
 
 template <typename DV, typename K, typename HMV>
-TD<K, DV> PG_Dict::from_vmap(const VMap<K, HMV> &hm) {
-	TD<K, DV> r;
-	for (KV<K, HMV> kv : hm) {
+TypedDictionary<K, DV> PG_Dict::from_vmap(const VMap<K, HMV> &hm) {
+	TypedDictionary<K, DV> r;
+	for (KeyValue<K, HMV> kv : hm) {
 		// TODO: Why asterisk before?
 		//r[kv.key] = *kv.value;
 		r[kv.key] = kv.value;
@@ -66,25 +68,26 @@ TD<K, DV> PG_Dict::from_vmap(const VMap<K, HMV> &hm) {
 //////////////////////////////////////////////////
 
 
-bool PG_Dict::idx_ok(const Dict &a, int i) {
+bool PG_Dict::idx_ok(const Dictionary &a, int i) {
 	return i >= 0 && i < a.size();
 }
 
 
 template <typename K, typename V>
-Pair<K, V> PG_Dict::get_by_idx(const TD<K, V> &d, int idx) {
+Pair<K, V> PG_Dict::get_by_idx(const TypedDictionary<K, V> &d, int idx) {
 	if (!idx_ok(d, idx)) {
 		return nullptr;
 	}
 	return Pair<K, V>(d.get_key_at_index(idx), d.get_value_at_index(idx));
 }
 
+
 #ifdef PG_GD_FNS
-Dict PG_Dict::_gd_get_by_idx(const Dict &d, int idx) {
+Dictionary PG_Dict::_gd_get_by_idx(const Dictionary &d, int idx) {
 	if (!idx_ok(d, idx)) {
-		return Dict();
+		return Dictionary();
 	}
-	Dict r;
+	Dictionary r;
 	r[d.get_key_at_index(idx)] = d.get_value_at_index(idx);
 	return r;
 }
@@ -95,8 +98,8 @@ Dict PG_Dict::_gd_get_by_idx(const Dict &d, int idx) {
 
 
 template <typename K, typename V>
-TD<K, V> PG_Dict::filter(const TD<K, V> &d, const Callable &f) {
-	TD<K, V> r;
+TypedDictionary<K, V> PG_Dict::filter(const TypedDictionary<K, V> &d, const Callable &f) {
+	TypedDictionary<K, V> r;
 	for (const K &k : d) {
 		if (f.call(k, d[k])) {
 			r[k] = d[k];
@@ -105,12 +108,13 @@ TD<K, V> PG_Dict::filter(const TD<K, V> &d, const Callable &f) {
 	return r;
 }
 
+
 #ifdef PG_GD_FNS
-Dict PG_Dict::_gd_filter(const Dict &d, const Callable &f) {
-	Dict r;
-	Arr ks = d.keys();
+Dictionary PG_Dict::_gd_filter(const Dictionary &d, const Callable &f) {
+	Dictionary r;
+	Array ks = d.keys();
 	for (int i = 0; i < d.size(); i++) {
-		Vrt &k = ks[i];
+		Variant &k = ks[i];
 		if (f.call(k, d[k])) {
 			r[k] = d[k];
 		}

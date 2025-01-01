@@ -12,7 +12,9 @@
 //////////////////////////////////////////////////
 
 
-//class PG_FS;
+class String;
+class StringName;
+class Variant;
 
 
 //////////////////////////////////////////////////
@@ -39,34 +41,32 @@ public:
 
 		
 public:
-	static Str modules_dir_path();
+	static String modules_dir_path();
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static Str audio_ext();
+	static String audio_ext();
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static Str npcs_dir_path();
+	static String npcs_dir_path();
 
+	static String npc_file_path(String file_name, String file_ext, Variant npc_id);
 
-	static Str npc_file_path(Str file_name, Str file_ext, Vrt npc_id);
-
-
-	static Str npc_dialogues_file_path(Vrt npc_id);
+	static String npc_dialogues_file_path(Variant npc_id);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static Str file_path_with_new_ext(Str file_path, Str new_ext);
+	static String file_path_with_new_ext(String file_path, String new_ext);
 
 
 //////////////////////////////////////////////////
@@ -77,24 +77,23 @@ public:
 
 	static Ref<PGW_Str> log_file_path();
 
-
-	static Ref<PGW_Str> old_log_file_path(Str dt);
-
-
-//////////////////////////////////////////////////
-
-
-public:
-	static Ref<PGW_Str> input_file_path(SN profile_id);
-
-	static Ref<PGW_Str> _gd_input_file_path(SN profile_id);
+	static Ref<PGW_Str> old_log_file_path(String dt);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static Str add_ts_sfx(Str fp);
+	static Ref<PGW_Str> input_file_path(StringName profile_id);
+
+	static Ref<PGW_Str> _gd_input_file_path(StringName profile_id);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	static String add_ts_sfx(String fp);
 };
 
 

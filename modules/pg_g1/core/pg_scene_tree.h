@@ -4,7 +4,6 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "scene/main/scene_tree.h"
 
 
@@ -63,19 +62,12 @@ public:
 
 protected:
 	Ref<PG_Sys> _pg_sys;
-
 	Ref<PG_FS> _pg_fs;
-
 	PG_Time *_pg_time;
-
 	Ref<PG_Timers> _pg_timers;
-
 	Ref<PG_Msgr> _pg_msgr;
-
 	Ref<PG_Cmds> _pg_cmds;
-
 	Ref<PG_Session> _pg_session;
-
 	Ref<PG_SgnsUser> _pg_sgns_user;
 
 
@@ -131,7 +123,7 @@ public:
 
 	Camera3D *get_main_cam(int ed_idx = 0);
 
-	V2 get_mouse_pos(int ed_idx = 0);
+	Vector2 get_mouse_pos(int ed_idx = 0);
 
 
 //////////////////////////////////////////////////

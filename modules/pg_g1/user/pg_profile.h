@@ -11,6 +11,9 @@
 //////////////////////////////////////////////////
 
 
+class String;
+class StringName;
+
 class PG_Cheats;
 class PG_Cmds;
 class PG_Config;
@@ -23,7 +26,6 @@ class PG_Profile;
 //////////////////////////////////////////////////
 
 
-
 class PG_Profile : public RefCounted {
 	GDCLASS(PG_Profile, RefCounted);
 	PG_BIND;
@@ -31,20 +33,14 @@ class PG_Profile : public RefCounted {
 
 //////////////////////////////////////////////////
 
-//protected:
-
-
-//////////////////////////////////////////////////
-
 
 protected:
-	Str _name; // DOC: Displayed name.
-
-	SN _id; // DOC: Folder name, snake_case and sanitized.
+	String _name; // DOC: Displayed name.
+	StringName _id; // DOC: Folder name, snake_case and sanitized.
 
 
 public:
-	SN get_id();
+	StringName get_id();
 
 
 //////////////////////////////////////////////////
@@ -52,7 +48,6 @@ public:
 
 protected:
 	Ref<PG_Config> _config;
-
 	Ref<PG_Cheats> _cheats;
 
 
@@ -62,9 +57,7 @@ protected:
 public:
 	static Ref<PG_Profile> mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
 
-
 	PG_Profile();
-
 	PG_Profile(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
 	~PG_Profile();
 };

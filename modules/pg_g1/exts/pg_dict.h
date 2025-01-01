@@ -11,7 +11,13 @@
 //////////////////////////////////////////////////
 
 
+class Array;
 class Callable;
+class Dictionary;
+class Variant;
+
+template <typename K, typename V>
+class TypedDictionary;
 
 template <typename K, typename V>
 struct Pair;
@@ -33,43 +39,40 @@ class PG_Dict : public RefCounted {
 
 
 public:
-	PG_INLINE static bool is_dict(const Vrt &v);
+	PG_INLINE static bool is_dict(const Variant &v);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	PG_INLINE static Dict to_dict(const Vrt &v);
-
+	PG_INLINE static Dictionary to_dict(const Variant &v);
 
 	// DOC: f takes a value1 as input and outputs a pair of two elements: key2 and value2.
 	template <typename K, typename V>
-	static TD<K, V> from_arr(const Arr &a, const Callable &f);
+	static TypedDictionary<K, V> from_arr(const Array &a, const Callable &f);
 
 #ifdef PG_GD_FNS
 	// DOC: f takes a variant value1 as input and outputs a Ref<PG_Pair> of two elements: key2 and value2.
-	static Dict _gd_from_arr(const Arr &a, const Callable &f);
+	static Dictionary _gd_from_arr(const Array &a, const Callable &f);
 #endif
 
-
 	template <typename DV, typename K, typename HMV>
-	static TD<K, DV> from_vmap(const VMap<K, HMV> &hm); // NOTE: Was ref_to_dict().
+	static TypedDictionary<K, DV> from_vmap(const VMap<K, HMV> &hm); // NOTE: Was ref_to_dict().
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	PG_INLINE static bool idx_ok(const Dict &a, int i);
-
+	PG_INLINE static bool idx_ok(const Dictionary &a, int i);
 
 	// NOTE: There was also get_key_by_idx() and get_value_by_idx().
 	template <typename K, typename V>
-	static Pair<K, V> get_by_idx(const TD<K, V> &d, int idx);
+	static Pair<K, V> get_by_idx(const TypedDictionary<K, V> &d, int idx);
 
 #ifdef PG_GD_FNS
-	static Dict _gd_get_by_idx(const Dict &d, int idx);
+	static Dictionary _gd_get_by_idx(const Dictionary &d, int idx);
 #endif
 
 
@@ -79,10 +82,10 @@ public:
 public:
 	// TODO: Create a by_ref version if necessary.
 	template<typename K, typename V>
-	static TD<K, V> filter(const TD<K, V> &d, const Callable &f);
+	static TypedDictionary<K, V> filter(const TypedDictionary<K, V> &d, const Callable &f);
 
 #ifdef PG_GD_FNS
-	static Dict _gd_filter(const Dict &d, const Callable &f);
+	static Dictionary _gd_filter(const Dictionary &d, const Callable &f);
 #endif
 };
 

@@ -11,6 +11,13 @@
 //////////////////////////////////////////////////
 
 
+class String;
+
+template <typename T>
+class Vector;
+
+class Variant;
+
 class PG_Cheats;
 class PG_Cmds;
 
@@ -37,17 +44,17 @@ protected:
 protected:
 	bool _god;
 
-	//void _god_send(PSA args, VMap<SN, Ref<PG_Cmd>> deps);
-	void _god_send(PSA args);
+	//void _god_send(Vector<String> args, VMap<StringName, Ref<PG_Cmd>> deps);
+	void _god_send(Vector<String> args);
 
-	Vrt _god_get() const;
+	Variant _god_get() const;
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	//void _god_send(PSA args, PG_TDDeps deps);
+	//void _god_send(Vector<String> args, PG_TDDeps deps);
 
 	static Ref<PG_Cheats> mk(Ref<PG_Cmds> cmds);
 

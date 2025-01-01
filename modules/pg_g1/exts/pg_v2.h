@@ -10,6 +10,18 @@
 //////////////////////////////////////////////////
 
 
+class Array;
+class Vector2;
+class Vector3;
+
+template <typename T>
+class TypedArray;
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
 class PG_V2 : public Object {
 	GDCLASS(PG_V2, Object);
 	PG_BIND;
@@ -19,33 +31,40 @@ class PG_V2 : public Object {
 
 
 public:
-	static V2 &neg_x(V2 &v);
-	static V2 &neg_y(V2 &v);
+	static Vector2 &neg_x(Vector2 &v);
+	static Vector2 &neg_y(Vector2 &v);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static V2 &set_x(V2 &v, const float x);
-	static V2 &set_y(V2 &v, const float y);
+	static Vector2 &set_x(Vector2 &v, const float x);
+	static Vector2 &set_y(Vector2 &v, const float y);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static V2 set_from_v3_xy(V3 &xy);
-	static V2 set_from_v3_xz(V3 &xz);
-	static V2 set_from_v3_yz(V3 &yz);
+	static Vector2 set_from_v3_xy(Vector3 &xy);
+	static Vector2 set_from_v3_xz(Vector3 &xz);
+	static Vector2 set_from_v3_yz(Vector3 &yz);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static V2 sum(const TA<V2> &a);
-	static V2 avg(const TA<V2> &a);
+	static Vector2 sum(const TypedArray<Vector2> &a);
+	static Vector2 avg(const TypedArray<Vector2> &a);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	PG_INLINE static TypedArray<Vector2> to_arr_of_v2(const Array &a);
 };
 
 

@@ -1,7 +1,6 @@
 #ifndef PG_MSGR_H
 #define PG_MSGR_H
 
-//#include "core/error/error_list.h"
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "core/templates/vmap.h"
@@ -18,18 +17,29 @@
 // and two level requirements (e.g. sv_cheats) to be get or set.
 // Maybe write those classes at relevant location each time.
 // TODO: Make friend classes instead of everything public.
-// TODO: Maybe turn 'TA<Str> strs' arg type into 'Vec<Str>'.
+// TODO: Maybe turn 'TypedArray<String> strs' arg type into 'Vector<String>'.
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
-
-class PG_Msg;
-class PG_MsgrTgt;
 
 class Callable;
 enum Error : int;
+class String;
+class StringName;
+
+template <typename T>
+class TypedArray;
+
+template <typename T>
+class Vector;
+
+template <typename K, typename V>
+class VMap;
+
+class PG_Msg;
+class PG_MsgrTgt;
 
 
 //////////////////////////////////////////////////
@@ -47,8 +57,7 @@ enum PGE_MsgLevel {
 	FATAL = 8,
 };
 
-
-Str PGE_MsgLevelStr(PGE_MsgLevel lvl);
+String PGE_MsgLevelStr(PGE_MsgLevel lvl);
 
 
 //////////////////////////////////////////////////
@@ -63,11 +72,11 @@ class PG_Msgs : public RefCounted {
 
 
 protected:
-	VMap<SN, Str> _m;
+	VMap<StringName, String> _m;
 
 
 public:
-	Str get(SN k) const;
+	String get(StringName k) const;
 
 
 //////////////////////////////////////////////////
@@ -95,57 +104,44 @@ class PG_Msgr : public RefCounted {
 protected:
 	Ref<PG_Msgs> _msgs;
 
-	VMap<SN, Ref<PG_MsgrTgt>> _tgts;
+	VMap<StringName, Ref<PG_MsgrTgt>> _tgts;
 
 
 //////////////////////////////////////////////////
 
 	
 public:
-	Ref<PG_MsgrTgt> mk_tgt(SN id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled);
+	Ref<PG_MsgrTgt> mk_tgt(StringName id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	Ref<PG_Msg> mk_msg(PGE_MsgLevel lvl, Str tgt, SN id, Str txt, Error e);
-
-	Ref<PG_Msg> mk_msg(PGE_MsgLevel lvl, SNV tgts, SN id, Str txt, Error e);
+	Ref<PG_Msg> mk_msg(PGE_MsgLevel lvl, String tgt, StringName id, String txt, Error e);
+	Ref<PG_Msg> mk_msg(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, String txt, Error e);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	Ref<PG_Msg> build(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<Str> strs);
-
+	Ref<PG_Msg> build(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs);
 
 	Ref<PG_Msg> bcast(Ref<PG_Msg> msg);
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, StringName id);
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, StringName id, String str);
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, StringName id, Error e, String str);
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, String tgt, StringName id, Error e, String str);
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, String str);
 
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, SN id);
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, SN id, Str str);
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, SN id, Error e, Str str);
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, Str tgt, SN id, Error e, Str str);
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, Str str);
-
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, SN id, TA<Str> strs);
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, SN id, Error e, TA<Str> strs);
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, Str tgt, SN id, Error e, TA<Str> strs);
-
-	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<Str> strs);
-
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, StringName id, TypedArray<String> strs);
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, StringName id, Error e, TypedArray<String> strs);
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, String tgt, StringName id, Error e, TypedArray<String> strs);
+	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs);
 
 #ifdef PG_GD_FNS
-	Ref<PG_Msg> _gd_bcast(PGE_MsgLevel lvl, SNV tgts, SN id, Error e, TA<Str> strs);
+	Ref<PG_Msg> _gd_bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs);
 #endif
 
 
@@ -154,7 +150,6 @@ public:
 
 public:
 	static Ref<PG_Msgr> mk();
-
 
 	PG_Msgr();
 };
@@ -172,11 +167,12 @@ class PG_MsgrTgt : public RefCounted {
 
 
 protected:
-	SN _id;
+	StringName _id;
 
 	Callable _f;
 
-	int _min_lvl, _max_lvl;
+	int _min_lvl;
+	int _max_lvl;
 
 	bool _is_enabled;
 
@@ -199,13 +195,10 @@ public:
 
 
 public:
-	static Ref<PG_MsgrTgt> mk(SN id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled);
-
+	static Ref<PG_MsgrTgt> mk(StringName id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled);
 
 	PG_MsgrTgt();
-
-
-	PG_MsgrTgt(SN id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled);
+	PG_MsgrTgt(StringName id, const Callable &f, int min_lvl, int max_lvl, bool is_enabled);
 };
 
 
@@ -221,12 +214,12 @@ class PG_Msg : public RefCounted {
 
 
 public:
-	SN id;
+	StringName id;
 	PGE_MsgLevel lvl;
-	Str txt;
+	String txt;
 	Error e;
-	PSA st;
-	SNV tgts;
+	Vector<String> st;
+	Vector<StringName> tgts;
 
 
 //////////////////////////////////////////////////

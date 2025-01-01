@@ -75,9 +75,7 @@ public:
 public:
 	PG_RaycastResult();
 
-
 	PG_RaycastResult(const PhysicsDirectSpaceState3D::RayResult r);
-
 
 	PG_RaycastResult(const Vector3 _position, const Vector3 _normal,
 			const RID _rid, const ObjectID _collider_id,

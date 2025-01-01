@@ -39,10 +39,8 @@ class PG_Session : public RefCounted {
 
 
 protected:
-	Ref<PG_Msgr> _msgr;
-
 	Ref<PG_FS> _fs;
-
+	Ref<PG_Msgr> _msgr;
 	Ref<PG_Cmds> _cmds;
 
 

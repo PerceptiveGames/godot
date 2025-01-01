@@ -20,7 +20,6 @@ class PG_UI : public RefCounted {
 
 public:
 	PG_UI();
-
 	~PG_UI();
 };
 

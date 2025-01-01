@@ -1,3 +1,4 @@
+#include "core/object/callable_method_pointer.h"
 #include "core/object/ref_counted.h"
 #include "core/templates/vector.h"
 #include "core/variant/callable.h"
@@ -8,7 +9,6 @@
 #include "modules/pg_g1/core/pg_time.h"
 #include "modules/pg_g1/core/pg_timers.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "scene/main/node.h"
 #include <cmath>
@@ -29,7 +29,7 @@
 //////////////////////////////////////////////////
 
 
-Ref<PG_TimerUnit> PG_TimerUnit::_start(int pass_time, int pass_count, const Callable &pass_f, bool call_f_on_start, Vrt time_scale_id) {
+Ref<PG_TimerUnit> PG_TimerUnit::_start(int pass_time, int pass_count, const Callable &pass_f, bool call_f_on_start, Variant time_scale_id) {
 	_pass_time = pass_time;
 	_pass_count = pass_count;
 	_pass_f = pass_f;
@@ -49,7 +49,7 @@ Ref<PG_TimerUnit> PG_TimerUnit::_start(int pass_time, int pass_count, const Call
 // DOC: Returns 'false' when we're at the last loop.
 //Ref<PG_TimerUnit> PG_TimerUnit::_update(int delta) {
 bool PG_TimerUnit::_update(PG_Time *time, int delta) {
-	_pass_time_left -= VUF::roundi(delta * time->get_time_scale(_time_scale_id));
+	_pass_time_left -= VariantUtilityFunctions::roundi(delta * time->get_time_scale(_time_scale_id));
 	if (_pass_time_left <= 0) {
 		if (_pass_count_left > 0) {
 			_pass_count_left--;
@@ -81,7 +81,7 @@ Ref<PG_Timer> PG_Timer::initial_delay(float initial_delay) {
 }
 
 
-Ref<PG_Timer> PG_Timer::time_scale_id(Vrt time_scale_id) {
+Ref<PG_Timer> PG_Timer::time_scale_id(Variant time_scale_id) {
 	_time_scale_id = time_scale_id;
 	return this;
 }
@@ -460,10 +460,10 @@ void PG_Timers::process(int delta) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Timers::_bind_methods() {
-}
+#ifdef PG_GD_FNS
 #endif
+}
 
 
 Ref<PG_Timers> PG_Timers::mk(PG_SceneTree *stree, PG_Time *time, Ref<PG_Msgr> msgr) {
@@ -476,6 +476,7 @@ PG_Timers::PG_Timers() :
 		_time(nullptr) {}
 
 
+
 PG_Timers::PG_Timers(PG_SceneTree *stree, PG_Time *time, Ref<PG_Msgr> msgr) {
 	// DOC: Inserts the first two indices in vector '_timers';
 	// Add more if we need a more granular order of execution.
@@ -484,7 +485,7 @@ PG_Timers::PG_Timers(PG_SceneTree *stree, PG_Time *time, Ref<PG_Msgr> msgr) {
 	_stree = stree;
 	_time = time;
 	_msgr = msgr;
-	time->connect_to_ticker(this, &PG_Timers::process);
+	time->connect_to_ticker(callable_mp(this, &PG_Timers::process));
 }
 
 

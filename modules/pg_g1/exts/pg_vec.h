@@ -3,7 +3,18 @@
 
 #include "core/object/object.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+class Callable;
+enum class Key;
+class Variant;
+
+template <typename T>
+class Vector;
 
 
 //////////////////////////////////////////////////
@@ -19,10 +30,28 @@ class PG_Vec : public Object {
 
 
 public:
-	PG_INLINE static bool is_i32a(const Vrt &v);
+	template <typename T>
+	PG_INLINE static bool idx_ok(const Vector<T> &v, int i);
 
 
-	PG_INLINE static bool is_i64a(const Vrt &v);
+//////////////////////////////////////////////////
+
+
+public:
+	template <typename T>
+	PG_INLINE static T get_by_idx(const Vector<T> &v, int idx, T &def);
+
+	template <typename T>
+	PG_INLINE static T get_by_idx_wrap(const Vector<T> &v, int idx, T &def);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	// DOC: Use T = *P if Array is made of Objects. Should also be able to use Ref<T>.
+	template <typename T>
+	static T first_f(const Vector<T> &v, const Callable &f, T &def);
 
 
 //////////////////////////////////////////////////
@@ -32,7 +61,11 @@ public:
 	// TODO: Maybe return a PGW.
 	// TODO: Test with pointer and reference types.
 	template <typename T>
-	static T last(Vec<T> &v);
+	static T last(Vector<T> &v);
+
+	// DOC: Same as Array::back() except it doesn't generate an error if array is empty.
+	template <class T>
+	PG_INLINE static T last(const Vector<T> &v, T &def);
 
 
 //////////////////////////////////////////////////
@@ -40,7 +73,7 @@ public:
 
 public:
 	template <typename T>
-	static T pop_back(Vec<T> &v);
+	static T pop_back(Vector<T> &v);
 
 
 //////////////////////////////////////////////////
@@ -48,7 +81,22 @@ public:
 
 public:
 	template <typename T>
-	static int rm_adj_dupes(Vec<T> &v);
+	static int rm_adj_dupes(Vector<T> &v);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	template <typename T>
+	static int resize_until_item(Vector<T> &v, const T &item, bool pop_found_item);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	static Vector<Key> to_arr_of_valid_keycodes(const Variant &v);
 };
 
 

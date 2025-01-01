@@ -1,9 +1,9 @@
 #include "core/object/ref_counted.h"
+#include "core/string/string_name.h"
 #include "modules/pg_g1/core/pg_cmds.h"
 #include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/core/pg_msgr.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/user/pg_cheats.h"
 #include "modules/pg_g1/user/pg_config.h"
@@ -14,7 +14,7 @@
 //////////////////////////////////////////////////
 
 
-SN PG_Profile::get_id() {
+StringName PG_Profile::get_id() {
 	return _id;
 }
 
@@ -22,10 +22,10 @@ SN PG_Profile::get_id() {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Profile::_bind_methods() {
-}
+#ifdef PG_GD_FNS
 #endif
+}
 
 
 Ref<PG_Profile> PG_Profile::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds) {

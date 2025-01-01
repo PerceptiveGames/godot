@@ -9,11 +9,11 @@
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_SgnsUser::_bind_methods() {
+#ifdef PG_GD_FNS
 	ADD_SIGNAL(MethodInfo("console_show_pressed"));
-}
 #endif
+}
 
 
 Ref<PG_SgnsUser> PG_SgnsUser::mk() {

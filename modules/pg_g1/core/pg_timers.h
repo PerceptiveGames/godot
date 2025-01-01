@@ -5,7 +5,6 @@
 #include "core/object/ref_counted.h"
 #include "core/variant/variant.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "scene/main/node.h"
 
 
@@ -44,7 +43,7 @@ protected:
 	int _pass_time;
 	int _pass_count;
 	Callable _pass_f;
-	Vrt _time_scale_id;
+	Variant _time_scale_id;
 
 	int _pass_time_left;
 	int _pass_count_left;
@@ -54,8 +53,7 @@ protected:
 
 
 protected:
-	Ref<PG_TimerUnit> _start(int pass_time, int pass_count, const Callable &pass_f, bool call_f_on_start, Vrt time_scale_id = Vrt::NIL);
-
+	Ref<PG_TimerUnit> _start(int pass_time, int pass_count, const Callable &pass_f, bool call_f_on_start, Variant time_scale_id = Variant::NIL);
 
 	bool _update(PG_Time *time, int delta);
 
@@ -100,7 +98,7 @@ protected:
 	bool _persistent;
 	bool _safeguard;
 
-	Vrt _time_scale_id;
+	Variant _time_scale_id;
 
 	Node::ProcessMode _process_mode;
 	Node *_process_mode_parent;
@@ -119,7 +117,7 @@ protected:
 public:
 	Ref<PG_Timer> initial_delay(float initial_delay);
 
-	Ref<PG_Timer> time_scale_id(Vrt time_scale_id);
+	Ref<PG_Timer> time_scale_id(Variant time_scale_id);
 
 	Ref<PG_Timer> process_mode(Node::ProcessMode process_mode);
 
@@ -327,7 +325,7 @@ protected:
 
 
 protected:
-	Vec<Vec<Ref<PG_Timer>>> _timers;
+	Vector<Vector<Ref<PG_Timer>>> _timers;
 
 	Ref<PG_Timer> _add(int grp, const Ref<PG_Timer> timer);
 
@@ -383,10 +381,7 @@ public:
 public:
 	static Ref<PG_Timers> mk(PG_SceneTree *stree, PG_Time *time, Ref<PG_Msgr> msgr);
 
-
 	PG_Timers();
-
-
 	PG_Timers(PG_SceneTree *stree, PG_Time *time, Ref<PG_Msgr> msgr);
 };
 

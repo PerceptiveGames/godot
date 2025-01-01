@@ -25,19 +25,19 @@ float PG_Node3DEditor::get_snap_scale() {
 
 
 void PG_Node3DEditor::set_snap_translate(real_t v) {
-	Dict d;
+	Dictionary d;
 	d["translate_snap"] = v;
 	Node3DEditor::get_singleton()->set_state(d);
 }
 
 void PG_Node3DEditor::set_snap_rotate(real_t v) {
-	Dict d;
+	Dictionary d;
 	d["rotate_snap"] = v;
 	Node3DEditor::get_singleton()->set_state(d);
 }
 
 void PG_Node3DEditor::set_snap_scale(real_t v) {
-	Dict d;
+	Dictionary d;
 	d["scale_snap"] = v;
 	Node3DEditor::get_singleton()->set_state(d);
 }

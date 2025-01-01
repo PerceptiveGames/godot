@@ -3,13 +3,23 @@
 
 #include "core/object/object.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
-
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
+
+class Array;
+class String;
+class Variant;
+class Vector2;
+class Vector3;
+
+template <typename T>
+class TypedArray;
+
+template <typename T>
+class Vector;
 
 template <typename K, typename V>
 class VMap;
@@ -27,52 +37,73 @@ class PG_Str : public Object {
 //////////////////////////////////////////////////
 
 
-	public:
-	PG_INLINE static bool is_str(const Vrt &v);
+public:
+	PG_INLINE static bool is_str(const Variant &v);
 
 
 //////////////////////////////////////////////////
 
 	
 public:
-	PG_INLINE static Str to_str(const Vrt &v);
+	PG_INLINE static String to_str(const Variant &v);
 
-
-	static Str to_snake_case(Str st);
-
-
-//////////////////////////////////////////////////
-
-
-public:
-	PG_INLINE static Str substr_from_to(Str st, int from, int to);
-
-
-	static TA<Str> substr_bw_chars(Str st, Str bgn_c, Str end_c);
+	static String to_snake_case(String st);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static Str rm_rpt_chars(Str st, Str c, bool trim);
+	PG_INLINE static String substr_from_to(String st, int from, int to);
 
-
-	PG_INLINE static Str rm_bbcode(Str st);
-
-
-//////////////////////////////////////////////////
-
-
-public:
-	PG_INLINE static Str join_non_empty(PSA a, Str sep);
+	static TypedArray<String> substr_bw_chars(String st, String bgn_c, String end_c);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static VMap<Str, Str> parse_kv_pairs(Str st, Str kv_sep = "=", Str pair_sep = "|");
+	static String rm_rpt_chars(String st, String c, bool trim);
+
+	PG_INLINE static String rm_bbcode(String st);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	PG_INLINE static String join_non_empty(Vector<String> a, String sep);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	static VMap<String, String> parse_kv_pairs(String st, String kv_sep = "=", String pair_sep = "|");
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	PG_INLINE static bool is_arr_of_str(const Variant &v);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	PG_INLINE static TypedArray<String> to_arr_of_str(const Array &a);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	static TypedArray<String> mk_ta_str(String s0);
+	static TypedArray<String> mk_ta_str(String s0, String s1);
+	static TypedArray<String> mk_ta_str(String s0, String s1, String s2);
+	static TypedArray<String> mk_ta_str(String s0, String s1, String s2, String s3);
 };
 
 

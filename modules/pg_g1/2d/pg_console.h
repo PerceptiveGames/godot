@@ -4,8 +4,6 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
-
 #include "scene/gui/panel_container.h"
 
 
@@ -14,8 +12,13 @@
 
 
 // TODO: Init as early as possible, just after file logger.
+class InputEvent;
 class LineEdit;
 class RichTextLabel;
+class String;
+
+template <typename T>
+class Vector;
 
 class PG_Cmds;
 class PG_Msgr;
@@ -47,7 +50,7 @@ protected:
 	RichTextLabel *_output;
 	LineEdit *_input;
 
-	PSA _history;
+	Vector<String> _history;
 	int _history_idx;
 
 
@@ -72,7 +75,7 @@ public:
 
 
 protected:
-	void _text_submitted(Str t);
+	void _text_submitted(String t);
 
 
 //////////////////////////////////////////////////

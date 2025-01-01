@@ -1,9 +1,11 @@
 #include "core/object/ref_counted.h"
+#include "core/string/string_name.h"
+#include "core/string/ustring.h"
+#include "core/templates/vector.h"
 #include "core/templates/vmap.h"
 #include "core/variant/callable.h"
 #include "core/variant/variant.h"
 #include "modules/pg_g1/core/pg_cmds.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 
 
@@ -20,7 +22,7 @@
 //////////////////////////////////////////////////
 
 
-Ref<PG_Cmd> PG_Cmds::mk_cmd(Str id, const Callable &f_send, const Callable &f_get) {
+Ref<PG_Cmd> PG_Cmds::mk_cmd(String id, const Callable &f_send, const Callable &f_get) {
 	_commands[id] = PG_Types::mk_ref<PG_Cmd>(id, f_send, f_get);
 	return _commands[id];
 }
@@ -30,14 +32,14 @@ Ref<PG_Cmd> PG_Cmds::mk_cmd(Str id, const Callable &f_send, const Callable &f_ge
 
 
 // TODO: Sanitize 'cmd'. Replace tabs, maybe non-ascii chars (wait, used for e.g. names?), etc.
-void PG_Cmds::send(Str cmd) {
+void PG_Cmds::send(String cmd) {
 	if (cmd.is_empty()) {
 		return;
 	}
-	PSA a = cmd.split(" ", false, 1);
+	Vector<String> a = cmd.split(" ", false, 1);
 
-	SN id = a[0];
-	PSA args = a.size() > 1 ? a[1].split(" ", false) : PSA();
+	StringName id = a[0];
+	Vector<String> args = a.size() > 1 ? a[1].split(" ", false) : Vector<String>();
 
 	if (!_commands.has(id)) {
 		return;
@@ -49,8 +51,8 @@ void PG_Cmds::send(Str cmd) {
 }
 
 
-Vrt PG_Cmds::get(Str id) {
-	return _commands[id]->call_get();
+Variant PG_Cmds::receive(String id) {
+	return _commands[id]->call_receive();
 }
 
 
@@ -66,12 +68,12 @@ Ref<PG_Cmds> PG_Cmds::mk() {
 //////////////////////////////////////////////////
 
 
-void PG_Cmd::call_send(const PSA &args) const {
+void PG_Cmd::call_send(const Vector<String> &args) const {
 	_f_send.call(args);
 }
 
 
-Vrt PG_Cmd::call_get() const {
+Variant PG_Cmd::call_receive() const {
 	return _f_get.call();
 }
 
@@ -80,16 +82,14 @@ Vrt PG_Cmd::call_get() const {
 
 
 PG_Cmd::PG_Cmd() :
-	_case_sensitive(false)
-	{}
+	_case_sensitive(false) {}
 
 
-PG_Cmd::PG_Cmd(Str id, const Callable &f_send, const Callable &f_get) :
+PG_Cmd::PG_Cmd(String id, const Callable &f_send, const Callable &f_get) :
 	_id(id),
 	_f_send(f_send),
 	_f_get(f_get),
-	_case_sensitive(false)
-	{}
+	_case_sensitive(false) {}
 
 
 //////////////////////////////////////////////////

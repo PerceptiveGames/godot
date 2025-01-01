@@ -24,13 +24,13 @@ void PG_Sys::force_quit() {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Sys::_bind_methods() {
+#ifdef PG_GD_FNS
 	// TODO: Not static anymore
 	//ClassDB::bind_static_method("PG_Sys", D_METHOD("quit"), &PG_Sys::quit);
 	//ClassDB::bind_static_method("PG_Sys", D_METHOD("force_quit"), &PG_Sys::force_quit);
-}
 #endif
+}
 
 
 Ref<PG_Sys> PG_Sys::mk(PG_SceneTree *stree) {

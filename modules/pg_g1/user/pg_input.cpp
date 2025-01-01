@@ -113,7 +113,7 @@ bool PG_Input::_try_create_file() {
 		return false;
 	}
 	if (FileAccess::exists(fp->r())) {
-		Str nn = PG_Paths::add_ts_sfx(fp->r());
+		String nn = PG_Paths::add_ts_sfx(fp->r());
 		_st_(_msgr->bcast(PGE_MsgLevel::WARNING_VIP, "INPUT_CFG_RN_OR_RM", PG_Arr::mk_ta_str(fp->r(), nn, fp->r())));
 		_if_st_(!_fs->rn_or_rm(fp->r(), nn)) {
 			return false;
@@ -158,18 +158,18 @@ bool PG_Input::_write_file() {
 //////////////////////////////////////////////////
 
 
-Vec<Key> PG_Input::_get_keycodes(SN act) {
-	Vrt v = _file->get_value("keyboard", act, false);
+Vector<Key> PG_Input::_get_keycodes(StringName act) {
+	Variant v = _file->get_value("keyboard", act, false);
 	if (!v) {
-		return Vec<Key>();
+		return Vector<Key>();
 	}
 	return PG_Arr::to_arr_of_valid_keycodes(v);
 }
 
 
-void PG_Input::_add_to_binds(SN act, SN dev, Key k) {
+void PG_Input::_add_to_binds(StringName act, StringName dev, Key k) {
 	if (!_binds.has(act)) {
-		_binds[act] = Vec<PG_InputBind>();
+		_binds[act] = Vector<PG_InputBind>();
 	}
 	_binds[act].append(PG_InputBind(dev, k));
 }
@@ -180,7 +180,7 @@ void PG_Input::_set_custom_binds() {
 	// TODO: Do something with it.
 	int ver = PG_Num::to_int(_file->get_value("meta", "parser_version", -1));
 
-	for (SN act : _actions["bindable"]) {
+	for (StringName act : _actions["bindable"]) {
 		for (Key k : _get_keycodes(act)) {
 			_add_to_binds(act, "keyboard", k);
 		}
@@ -194,7 +194,7 @@ void PG_Input::_set_custom_binds() {
 
 // DOC: Run this after reading and parsing from config file.
 void PG_Input::_set_default_binds() {
-	VMap<SN, Key> kb;
+	VMap<StringName, Key> kb;
 
 	kb["menu_up"] = Key::UP;
 	kb["menu_down"] = Key::DOWN;
@@ -227,8 +227,8 @@ void PG_Input::_set_default_binds() {
 
 //////////////////////////////////////////////////
 
-Arr PG_Input::_get_keys_as_vec(Vec<PG_InputBind> v) {
-	Arr r;
+Array PG_Input::_get_keys_as_vec(Vector<PG_InputBind> v) {
+	Array r;
 	for (PG_InputBind b : v) {
 		r.append(b.key);
 	}
@@ -250,9 +250,9 @@ void PG_Input::_filter_out_invalid_binds() {
 //////////////////////////////////////////////////
 
 
-void PG_Input::_load_keybind_set(SN new_set) {
-	Vec<SN> as = _actions[new_set];
-	for (SN a : as) {
+void PG_Input::_load_keybind_set(StringName new_set) {
+	Vector<StringName> as = _actions[new_set];
+	for (StringName a : as) {
 		PG_S(InputMap)->add_action(a); // TODO: add optional deadzone
 		for (PG_InputBind b : _binds[a]) {
 			if (b.device == "keyboard") {
@@ -270,12 +270,12 @@ void PG_Input::_load_keybind_set(SN new_set) {
 
 // DOC: 'cur_set' arg is an optional safety mechanism.
 // If current_set is set, makes sure it matches the active keybind set.
-void PG_Input::_unload_keybind_set(SN cur_set) {
-	SN back_set = PG_Vec::pop_back(_stack);
+void PG_Input::_unload_keybind_set(StringName cur_set) {
+	StringName back_set = PG_Vec::pop_back(_stack);
 	if (!cur_set.is_empty() && back_set != cur_set) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_WRONG_UNLOAD", PG_Arr::mk_ta_str(back_set, cur_set)));
 	}
-	SN new_set = PG_Vec::last(_stack);
+	StringName new_set = PG_Vec::last(_stack);
 	if (new_set == "") {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_NO_SET"));
 	} else {
@@ -288,8 +288,8 @@ void PG_Input::_clear_system_input_map() {
 	// TODO : Eventually, just remove all custom InputMap entries in Project Settings
 	// TODO : and use 'InputMap.load_from_project_settings()'.
 	// TODO : This way, only the "ui_*" actions will remain.
-	for (SN a : PG_S(InputMap)->get_actions()) {
-		if (!Str(a).begins_with("ui_")) {
+	for (StringName a : PG_S(InputMap)->get_actions()) {
+		if (!String(a).begins_with("ui_")) {
 			PG_S(InputMap)->erase_action(a);
 		}
 	}
@@ -351,7 +351,7 @@ PG_Input::PG_Input(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
 	_if_st_(_read_file_and_load_binds()) {
 		_set_custom_binds();
 	}
-	List<Str> ks;
+	List<String> ks;
 	if (_file->has_section("keyboard")) {
 		_file->get_section_keys("keyboard", &ks);
 	}

@@ -4,7 +4,11 @@
 #include "core/object/class_db.h"
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
+#include "core/string/string_name.h"
+#include "core/string/ustring.h"
+#include "core/templates/vector.h"
 #include "core/typedefs.h"
+#include "core/variant/typed_array.h"
 #include "modules/pg_g1/2d/pg_console.h"
 #include "modules/pg_g1/core/pg_cmds.h"
 #include "modules/pg_g1/core/pg_msgr.h"
@@ -14,7 +18,6 @@
 #include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/exts/pg_vec.h"
 #include "modules/pg_g1/sgns/pg_sgns_user.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/rich_text_label.h"
 
@@ -91,7 +94,7 @@ void PG_Console::input(const Ref<InputEvent> &e) {
 }
 
 
-void PG_Console::_text_submitted(Str t) {
+void PG_Console::_text_submitted(String t) {
 	t = PG_Str::rm_rpt_chars(t, " ", true);
 	if (t.is_empty()) {
 		return;
@@ -103,7 +106,7 @@ void PG_Console::_text_submitted(Str t) {
 	_history_idx = _history.size() - 1;
 	_input->set_text("");
 
-	_st_(_msgr->bcast(PGE_MsgLevel::INPUT, SNV(), t, Error::OK, TA<Str>()));
+	_msgr->bcast(PGE_MsgLevel::INPUT, Vector<StringName>(), t, Error::OK, TypedArray<String>());
 
 	_cmds->send(t);
 }
@@ -112,15 +115,15 @@ void PG_Console::_text_submitted(Str t) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Console::_bind_methods() {
+#ifdef PG_GD_FNS
 	ClassDB::bind_method(D_METHOD("show_console"), &PG_Console::_show_console);
 	ClassDB::bind_method(D_METHOD("hide_console"), &PG_Console::_hide_console);
 	ClassDB::bind_method(D_METHOD("show_history_prev"), &PG_Console::_show_history_prev);
 	ClassDB::bind_method(D_METHOD("show_history_next"), &PG_Console::_show_history_next);
 	ClassDB::bind_method(D_METHOD("set_caret_to_end"), &PG_Console::_set_caret_to_end);
-}
 #endif
+}
 
 
 PG_Console::PG_Console(Ref<PG_Msgr> msgr, Ref<PG_Timers> timers, Ref<PG_Cmds> cmds) {
@@ -141,8 +144,7 @@ PG_Console::PG_Console(Ref<PG_Msgr> msgr, Ref<PG_Timers> timers, Ref<PG_Cmds> cm
 }
 
 
-PG_Console::~PG_Console() {
-}
+PG_Console::~PG_Console() {}
 
 
 //////////////////////////////////////////////////

@@ -4,20 +4,20 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
-
-
-class PG_Msgr;
 
 
 class RegEx;
+class String;
+class StringName;
 
 template <typename K, typename V>
 class VMap;
+
+class PG_Msgr;
 
 
 //////////////////////////////////////////////////
@@ -44,25 +44,25 @@ public:
 
 
 protected:
-	static VMap<SN, Ref<RegEx>> _rgxs;
+	static VMap<StringName, Ref<RegEx>> _rgxs;
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static Ref<RegEx> mk(Str ptrn);
+	static Ref<RegEx> mk(String ptrn);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static bool has(SN k, Str st);
+	static bool has(StringName k, String st);
 
-	static Ref<RegEx> get(SN k);
+	static Ref<RegEx> get(StringName k);
 
-	static Str sub(SN k, Str st, Str c);
+	static String sub(StringName k, String st, String c);
 
 
 //////////////////////////////////////////////////

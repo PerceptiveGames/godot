@@ -34,16 +34,16 @@ class InputEvent;
 
 
 struct PG_InputBind {
-	SN device;
+	StringName device;
 	Key key;
 
 
 	PG_InputBind() :
-			device(SN()),
+			device(StringName()),
 			key(Key::NONE) {}
 
 
-	PG_InputBind(SN n_device, Key n_key) :
+	PG_InputBind(StringName n_device, Key n_key) :
 			device(n_device),
 			key(n_key) {}
 };
@@ -93,13 +93,13 @@ protected:
 
 
 protected:
-	VMap<SN, Vec<PG_InputBind>> _binds;
+	VMap<StringName, Vector<PG_InputBind>> _binds;
 
-	VMap<SN, SNV> _actions;
+	VMap<StringName, Vector<StringName>> _actions;
 
-	VMap<SN, PG_InputParams> _params;
+	VMap<StringName, PG_InputParams> _params;
 
-	SNV _stack;
+	Vector<StringName> _stack;
 
 
 //////////////////////////////////////////////////
@@ -112,13 +112,13 @@ protected:
 
 	bool _try_create_file();
 
-	Vec<Key> _get_keycodes(SN act);
+	Vector<Key> _get_keycodes(StringName act);
 
-	void _add_to_binds(SN act, SN dev, Key k);
+	void _add_to_binds(StringName act, StringName dev, Key k);
 
 	bool _read_file_and_load_binds();
 
-	Arr _get_keys_as_vec(Vec<PG_InputBind> v);
+	Array _get_keys_as_vec(Vector<PG_InputBind> v);
 
 	void _filter_out_invalid_binds();
 
@@ -154,9 +154,9 @@ public:
 
 
 protected:
-	void _load_keybind_set(SN new_set);
+	void _load_keybind_set(StringName new_set);
 
-	void _unload_keybind_set(SN cur_set = "");
+	void _unload_keybind_set(StringName cur_set = "");
 
 	void _clear_system_input_map();
 

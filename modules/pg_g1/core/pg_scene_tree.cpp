@@ -14,10 +14,9 @@
 #include "modules/pg_g1/exts/pg_raycast.h"
 #include "modules/pg_g1/exts/pg_rgx.h"
 #include "modules/pg_g1/sgns/pg_sgns_user.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/user/pg_session.h"
 #include "scene/3d/camera_3d.h"
-#include "scene/main/node.h" // DOC: Needed for pg_get_root() return value.
+#include "scene/main/node.h"
 #include "scene/main/viewport.h"
 #include "scene/resources/3d/world_3d.h"
 
@@ -115,7 +114,7 @@ Camera3D *PG_SceneTree::get_main_cam(int ed_idx) {
 }
 
 
-V2 PG_SceneTree::get_mouse_pos(int ed_idx) {
+Vector2 PG_SceneTree::get_mouse_pos(int ed_idx) {
 	return pg_get_viewport(ed_idx)->get_mouse_position();
 }
 
@@ -123,15 +122,15 @@ V2 PG_SceneTree::get_mouse_pos(int ed_idx) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_SceneTree::_bind_methods() {
+#ifdef PG_GD_FNS
 	// TODO: No longer static.
 	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("pg_get_viewport", "ed_idx"), &PG_SceneTree::pg_get_viewport, DEFVAL(0));
 	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_world_3d", "ed_idx"), &PG_SceneTree::get_world_3d, DEFVAL(0));
 	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_main_cam", "ed_idx"), &PG_SceneTree::get_main_cam, DEFVAL(0));
 	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_mouse_pos", "ed_idx"), &PG_SceneTree::get_mouse_pos, DEFVAL(0));
-}
 #endif
+}
 
 
 PG_SceneTree::PG_SceneTree() {
@@ -152,19 +151,12 @@ PG_SceneTree::PG_SceneTree() {
 
 	// DOC: Keep as high in the list as possible because it needs to run signals as early as possible.
 	_pg_sys = PG_Sys::mk(this);
-
 	_pg_time = memnew(PG_Time)->init(this); // TODO: Attach node to ST
-
 	_pg_msgr = PG_Msgr::mk();
-
 	_pg_timers = PG_Timers::mk(this, _pg_time, _pg_msgr);
-
 	_pg_fs = PG_FS::mk(_pg_msgr, _pg_timers);
-
 	_pg_cmds = PG_Cmds::mk();
-
 	_pg_session = PG_Session::mk(_pg_msgr, _pg_fs, _pg_cmds);
-
 	_pg_sgns_user = PG_SgnsUser::mk();
 
 

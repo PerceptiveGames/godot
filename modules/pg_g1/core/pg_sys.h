@@ -34,7 +34,6 @@ protected:
 
 public:
 	void quit();
-
 	void force_quit();
 
 
@@ -44,10 +43,7 @@ public:
 public:
 	static Ref<PG_Sys> mk(PG_SceneTree *stree);
 
-
 	PG_Sys();
-
-
 	PG_Sys(PG_SceneTree *stree);
 };
 

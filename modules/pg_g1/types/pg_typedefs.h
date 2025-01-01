@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
-
+/*
 class Array;
 
 using Arr = Array;
@@ -61,35 +61,11 @@ using TD = TypedDictionary<K, V>;
 //////////////////////////////////////////////////
 
 
-//template <typename T, typename, typename>
-//class HashSet;
-//
-//template <typename T, typename, typename>
-//using HS = HashSet<T>;
-
-
-//////////////////////////////////////////////////
-
-
-//template <typename K, typename V, typename, typename, typename>
-//class VMap;
-//
-//template <typename K, typename V, typename, typename, typename>
-//using HM = VMap<K, V>;
-
-
-//////////////////////////////////////////////////
-
-
 template <typename K, typename V>
 struct KeyValue;
 
 template <typename K, typename V>
 using KV = KeyValue<K, V>;
-
-
-//template <typename K, typename V>
-//struct Pair;
 
 
 //////////////////////////////////////////////////
@@ -147,19 +123,27 @@ template <typename K>
 class Vector;
 
 typedef Vector<String> PSA;
-typedef Vector<SN> SNV;
+typedef Vector<StringName> SNV;
 
 template <typename T>
 using Vec = Vector<T>;
-
+*/
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
+
+
+class Variant;
+class String;
+class Array;
+class Dictionary;
+
+template <typename T>
+class TypedArray;
 
 
 template <typename T>
 class PGW;
-
 
 // DOC: For each specialization, add call to set_msgr() in PG_SceneTree.
 typedef PGW<Variant> PGW_Vrt;

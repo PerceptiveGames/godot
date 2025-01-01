@@ -1,8 +1,7 @@
-#ifndef PG_NODE_3D_H
-#define PG_NODE_3D_H
+#ifndef PG_SN_H
+#define PG_SN_H
 
 #include "core/object/object.h"
-#include "core/object/ref_counted.h"
 #include "modules/pg_g1/data/pg_macros.h"
 
 
@@ -10,20 +9,18 @@
 //////////////////////////////////////////////////
 
 
-class Array;
-class Callable;
-class Node3D;
+class StringName;
 
 template <typename T>
-class TypedArray;
+class Vector;
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
 
-class PG_Node3D : public RefCounted {
-	GDCLASS(PG_Node3D, RefCounted);
+class PG_SN : public Object {
+	GDCLASS(PG_SN, Object);
 	PG_BIND;
 
 
@@ -31,14 +28,10 @@ class PG_Node3D : public RefCounted {
 
 
 public:
-	static void sort_children(Node3D &p, const Callable &f);
-
-
-//////////////////////////////////////////////////
-
-
-public:
-	PG_INLINE static TypedArray<Node3D> to_arr_of_node_3d(const Array &a);
+	static Vector<StringName> mk_vec_sn(StringName sn0);
+	static Vector<StringName> mk_vec_sn(StringName sn0, StringName sn1);
+	static Vector<StringName> mk_vec_sn(StringName sn0, StringName sn1, StringName sn2);
+	static Vector<StringName> mk_vec_sn(StringName sn0, StringName sn1, StringName sn2, StringName sn3);
 };
 
 
@@ -46,4 +39,4 @@ public:
 //////////////////////////////////////////////////
 
 
-#endif // PG_NODE_3D_H
+#endif // PG_SN_H

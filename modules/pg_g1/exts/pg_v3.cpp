@@ -1,47 +1,48 @@
 #include "core/math/vector2.h"
 #include "core/math/vector3.h"
 #include "core/object/class_db.h"
+#include "core/variant/array.h"
 #include "core/variant/typed_array.h"
 #include "modules/pg_g1/data/pg_macros.h"
+#include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_v3.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
 
-V3 &PG_V3::neg_x(V3 &v) {
+Vector3 &PG_V3::neg_x(Vector3 &v) {
 	v.x = -v.x;
 	return v;
 }
 
 
-V3 &PG_V3::neg_y(V3 &v) {
+Vector3 &PG_V3::neg_y(Vector3 &v) {
 	v.y = -v.y;
 	return v;
 }
 
 
-V3 &PG_V3::neg_z(V3 &v) {
+Vector3 &PG_V3::neg_z(Vector3 &v) {
 	v.z = -v.z;
 	return v;
 }
 
 
-V3 &PG_V3::set_x(V3 &v, const float x) {
+Vector3 &PG_V3::set_x(Vector3 &v, const float x) {
 	v.x = x;
 	return v;
 }
 
 
-V3 &PG_V3::set_y(V3 &v, const float y) {
+Vector3 &PG_V3::set_y(Vector3 &v, const float y) {
 	v.y = y;
 	return v;
 }
 
 
-V3 &PG_V3::set_z(V3 &v, const float z) {
+Vector3 &PG_V3::set_z(Vector3 &v, const float z) {
 	v.z = z;
 	return v;
 }
@@ -50,41 +51,41 @@ V3 &PG_V3::set_z(V3 &v, const float z) {
 //////////////////////////////////////////////////
 
 
-V3 PG_V3::set_xz_from_v2(V2 &xz, const float y) {
-	return V3(xz.x, y, xz.y);
+Vector3 PG_V3::set_xz_from_v2(Vector2 &xz, const float y) {
+	return Vector3(xz.x, y, xz.y);
 }
 
 
-V3 PG_V3::set_yz_from_v2(V2 &yz, const float x) {
-	return V3(x, yz.x, yz.y);
+Vector3 PG_V3::set_yz_from_v2(Vector2 &yz, const float x) {
+	return Vector3(x, yz.x, yz.y);
 }
 
 
-V3 PG_V3::set_zy_from_v2(V2 &zy, const float x) {
-	return V3(x, zy.y, zy.x);
+Vector3 PG_V3::set_zy_from_v2(Vector2 &zy, const float x) {
+	return Vector3(x, zy.y, zy.x);
 }
 
 
 //////////////////////////////////////////////////
 
 
-V3 PG_V3::sum(const TA<V3> &a) {
-	V3 r;
-	for (const V3 &v : a) {
+Vector3 PG_V3::sum(const TypedArray<Vector3> &a) {
+	Vector3 r;
+	for (const Vector3 &v : a) {
 		r += v;
 	}
 	return r;
 }
 
 
-V3 PG_V3::avg(const TA<V3> &a) {
+Vector3 PG_V3::avg(const TypedArray<Vector3> &a) {
 	return sum(a) / a.size();
 }
 
 
 // DOC : Vertices must be clockwise
 // DOC : https://computergraphics.stackexchange.com/a/4032
-V3 PG_V3::nrm(const V3 &p0, const V3 &p1, const V3 &p2) {
+Vector3 PG_V3::nrm(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2) {
 	return (p2 - p0).cross(p1 - p0).normalized();
 }
 
@@ -92,7 +93,15 @@ V3 PG_V3::nrm(const V3 &p0, const V3 &p1, const V3 &p2) {
 //////////////////////////////////////////////////
 
 
-//V3 &V3::operator+=(const V3 &p_v) {
+TypedArray<Vector3> PG_V3::to_arr_of_v3(const Array &a) {
+	return PG_Arr::assign<Vector3>(a);
+}
+
+
+//////////////////////////////////////////////////
+
+
+//Vector3 &Vector3::operator+=(const Vector3 &p_v) {
 //	x += p_v.x;
 //	y += p_v.y;
 //	z += p_v.z;
@@ -103,8 +112,8 @@ V3 PG_V3::nrm(const V3 &p0, const V3 &p1, const V3 &p2) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_V3::_bind_methods() {
+#ifdef PG_GD_FNS
 	// TODO: UNCOMMENT AND COMPILE.
 	//ClassDB::bind_static_method("PG_V3", D_METHOD("set_x", "v", "x"), &PG_V3::set_x);
 	//ClassDB::bind_static_method("PG_V3", D_METHOD("set_y", "v", "y"), &PG_V3::set_y);
@@ -117,8 +126,8 @@ void PG_V3::_bind_methods() {
 	//ClassDB::bind_static_method("PG_V3", D_METHOD("sum", "a"), &PG_V3::sum);
 	//ClassDB::bind_static_method("PG_V3", D_METHOD("avg", "a"), &PG_V3::avg);
 	//ClassDB::bind_static_method("PG_V3", D_METHOD("nrm", "p0", "p1", "p2"), &PG_V3::nrm);
-}
 #endif
+}
 
 
 //////////////////////////////////////////////////

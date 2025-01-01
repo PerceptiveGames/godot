@@ -4,14 +4,19 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
 
+class Array;
 class RandomNumberGenerator;
+class String;
+class Variant;
+
+template <typename T>
+class TypedArray;
 
 
 //////////////////////////////////////////////////
@@ -27,34 +32,44 @@ class PG_Num : public Object {
 
 
 public:
-	PG_INLINE static bool is_int(const Vrt &v);
+	PG_INLINE static bool is_int(const Variant &v);
 
 
-	static bool is_only_digits(Str s);
+	static bool is_only_digits(String s);
 
 
-	static bool is_int_in_rng(Vrt v, int min_incl, int max_incl);
+	static bool is_int_in_rng(Variant v, int min_incl, int max_incl);
 
 
 //////////////////////////////////////////////////
 
 	
 public:
-	PG_INLINE static int to_int(const Vrt &v);
+	PG_INLINE static int to_int(const Variant &v);
 
 
 	// DOC: Returns -1 if v is not greater than or equal to i.
-	PG_INLINE static int to_int_if_gte(const Vrt &v, const int i);
+	PG_INLINE static int to_int_if_gte(const Variant &v, const int i);
 
 
 	// DOC: Returns -1 if v is not between min_incl and max_incl, inclusive.
-	PG_INLINE static int to_int_if_bw(const Vrt &v, const int min_incl, const int max_incl);
+	PG_INLINE static int to_int_if_bw(const Variant &v, const int min_incl, const int max_incl);
+
+
+//////////////////////////////////////////////////
+	
+
+public:
+	PG_INLINE static bool is_i32vec(const Variant &v);
+
+	PG_INLINE static bool is_i64vec(const Variant &v);
 
 
 //////////////////////////////////////////////////
 
 
-	PG_INLINE static TA<int> to_arr_of_int(const Arr &a);
+public:
+	PG_INLINE static TypedArray<int> to_arr_of_int(const Array &a);
 
 
 //////////////////////////////////////////////////

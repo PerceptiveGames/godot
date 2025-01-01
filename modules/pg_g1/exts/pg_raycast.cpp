@@ -8,7 +8,6 @@
 #include "modules/pg_g1/core/pg_scene_tree.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_raycast.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "scene/3d/camera_3d.h"
 #include "servers/physics_server_3d.h"
@@ -38,7 +37,7 @@ Ref<PG_RaycastResult> PG_Raycast::from_cursor(float len, const Camera3D *cam) {
 
 //	PG_Debug.draw_line_absolute("any", from, to, Color.WHITE, 10)
 
-	const Ref<PhysicsRayQueryParameters3D> q = PhysicsRayQueryParameters3D::create(from, to, UINT32_MAX, TA<RID>());
+	const Ref<PhysicsRayQueryParameters3D> q = PhysicsRayQueryParameters3D::create(from, to, UINT32_MAX, TypedArray<RID>());
 
 	// DOC: Uses global coordinates, not local to node.
 	PhysicsDirectSpaceState3D::RayResult r;

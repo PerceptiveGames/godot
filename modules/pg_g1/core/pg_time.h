@@ -4,7 +4,6 @@
 #include "core/object/object.h"
 #include "core/variant/typed_dictionary.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "scene/main/node.h"
 
 
@@ -12,8 +11,11 @@
 //////////////////////////////////////////////////
 
 
-class PG_SceneTree;
+class Callable;
 enum Error : int;
+class Variant;
+
+class PG_SceneTree;
 
 
 //////////////////////////////////////////////////
@@ -31,7 +33,11 @@ class PG_Time : public Node {
 
 
 //////////////////////////////////////////////////
-	
+
+
+protected:
+	PG_SceneTree *_stree;
+
 
 protected:
 	int _prev_usec = 0;
@@ -47,24 +53,25 @@ public:
 
 
 public:
-	template <typename T>
-	Error connect_to_ticker(T *instance, void (T::*method)(int));
+	//template <typename T>
+	//Error connect_to_ticker(T *instance, void (T::*method)(int));
+	Error connect_to_ticker(const Callable &f);
 
 
-	template <typename T>
-	Error exec_at_next_frame_start(int grp, T *instance, void (T::*method)());
+	//template <typename T>
+	//Error exec_at_next_frame_start(int grp, T *instance, void (T::*method)());
 
 
 //////////////////////////////////////////////////
 
 
 protected:
-	TD<Vrt, float> _time_scales;
+	TypedDictionary<Variant, float> _time_scales;
 
 
 public:
-	float get_time_scale(Vrt id);
-	float set_time_scale(Vrt id, float v);
+	float get_time_scale(Variant id);
+	float set_time_scale(Variant id, float v);
 
 
 //////////////////////////////////////////////////

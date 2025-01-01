@@ -4,19 +4,24 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "core/templates/vmap.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
-
-class PG_Cmd;
 
 class Callable;
+class String;
+class StringName;
+class Variant;
+
+template <typename T>
+class Vector;
 
 template <typename K, typename V>
 class VMap;
+
+class PG_Cmd;
 
 
 //////////////////////////////////////////////////
@@ -31,21 +36,19 @@ class PG_Cmds : public RefCounted {
 
 
 protected:
-	VMap<SN, Ref<PG_Cmd>> _commands;
+	VMap<StringName, Ref<PG_Cmd>> _commands;
 
 
 public:
-	Ref<PG_Cmd> mk_cmd(Str id, const Callable &f_send, const Callable &f_get);
+	Ref<PG_Cmd> mk_cmd(String id, const Callable &f_send, const Callable &f_get);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	void send(Str cmd);
-
-	// TODO: Rename to avoid clash?
-	Vrt get(Str id);
+	void send(String cmd);
+	Variant receive(String id);
 
 
 //////////////////////////////////////////////////
@@ -68,11 +71,11 @@ class PG_Cmd : public RefCounted {
 
 
 protected:
-	SN _id;
-	Vec<Str> _args;
-	Str _title;
-	Str _desc;
-	Str _help;
+	StringName _id;
+	Vector<String> _args;
+	String _title;
+	String _desc;
+	String _help;
 
 	bool _case_sensitive;
 
@@ -81,10 +84,8 @@ protected:
 
 
 public:
-	void call_send(const PSA &args) const;
-
-
-	Vrt call_get() const;
+	void call_send(const Vector<String> &args) const;
+	Variant call_receive() const;
 
 
 //////////////////////////////////////////////////
@@ -92,8 +93,7 @@ public:
 
 public:
 	PG_Cmd();
-
-	PG_Cmd(Str id, const Callable &f_send, const Callable &f_get);
+	PG_Cmd(String id, const Callable &f_send, const Callable &f_get);
 };
 
 

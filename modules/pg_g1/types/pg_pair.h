@@ -4,7 +4,6 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 
 
 //////////////////////////////////////////////////
@@ -20,20 +19,20 @@ class PG_Pair : public RefCounted {
 
 
 protected:
-	Vrt _v1;
-	Vrt _v2;
+	Variant _v1;
+	Variant _v2;
 
 
 public:
-	Vrt v1();
-	Vrt v2();
+	Variant v1();
+	Variant v2();
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	static Ref<PG_Pair> r(const Vrt &v1, const Vrt &v2);
+	static Ref<PG_Pair> r(const Variant &v1, const Variant &v2);
 
 
 //////////////////////////////////////////////////
@@ -43,7 +42,7 @@ public:
 	PG_Pair();
 
 
-	PG_Pair(const Vrt &v1, const Vrt &v2);
+	PG_Pair(const Variant &v1, const Variant &v2);
 
 
 	~PG_Pair();

@@ -1,8 +1,9 @@
 #include "core/object/callable_method_pointer.h"
 #include "core/object/ref_counted.h"
+#include "core/variant/variant.h"
 #include "modules/pg_g1/core/pg_cmds.h"
+#include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_num.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/user/pg_cheats.h"
 
@@ -11,7 +12,7 @@
 //////////////////////////////////////////////////
 
 
-void PG_Cheats::_god_send(PSA args) {
+void PG_Cheats::_god_send(Vector<String> args) {
 	if (PG_Num::to_int(_cmds->get("sv_cheats")) <= 0) {
 		return;
 	}
@@ -23,7 +24,7 @@ void PG_Cheats::_god_send(PSA args) {
 }
 
 
-Vrt PG_Cheats::_god_get() const {
+Variant PG_Cheats::_god_get() const {
 	return _god;
 }
 
@@ -31,10 +32,10 @@ Vrt PG_Cheats::_god_get() const {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Cheats::_bind_methods() {
-}
+#ifdef PG_GD_FNS
 #endif
+}
 
 
 Ref<PG_Cheats> PG_Cheats::mk(Ref<PG_Cmds> cmds) {
@@ -48,8 +49,7 @@ PG_Cheats::PG_Cheats(Ref<PG_Cmds> cmds) {
 }
 
 
-PG_Cheats::~PG_Cheats() {
-}
+PG_Cheats::~PG_Cheats() {}
 
 
 //////////////////////////////////////////////////

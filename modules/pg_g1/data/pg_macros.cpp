@@ -10,20 +10,20 @@
 //////////////////////////////////////////////////
 
 
-PSA PG_ST::_st;
+Vector<String> PG_ST::_st;
 
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
 
-PSA PG_ST::get_st() {
+Vector<String> PG_ST::get_st() {
 	return _st;
 }
 
 
 // TODO: Check if better with a single fixed-size buffer. Maybe one long string with fixed size.
-bool PG_ST::push_back(Str file, Str fn, int line) {
+bool PG_ST::push_back(String file, String fn, int line) {
 	_st.append(vformat("%s:%s:%d", file.replace(PG_Paths::modules_dir_path(), ""), fn, line));
 	return true;
 }
@@ -36,8 +36,8 @@ void PG_ST::pop_back() {
 }
 
 
-Str PG_ST::join() {
-	return "    " + Str("\n    ").join(_st);
+String PG_ST::join() {
+	return "    " + String("\n    ").join(_st);
 }
 
 
