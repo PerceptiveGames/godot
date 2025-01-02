@@ -133,25 +133,24 @@ using Vec = Vector<T>;
 //////////////////////////////////////////////////
 
 
-class Variant;
-class String;
-class Array;
-class Dictionary;
-
-template <typename T>
-class TypedArray;
-
-
-template <typename T>
-class PGW;
-
-// DOC: For each specialization, add call to set_msgr() in PG_SceneTree.
-typedef PGW<Variant> PGW_Vrt;
-typedef PGW<int> PGW_Int;
-typedef PGW<String> PGW_Str;
-typedef PGW<Array> PGW_Arr;
-typedef PGW<TypedArray<String>> PGW_ArrStr;
-typedef PGW<Dictionary> PGW_Dict;
+//class Variant;
+//class String;
+//class Array;
+//class Dictionary;
+//
+//template <typename T>
+//class TypedArray;
+//
+//template <typename T>
+//class PGW;
+//
+//// DOC: For each specialization, add call to set_msgr() in PG_SceneTree.
+//typedef PGW<Variant> PGW_Vrt;
+//typedef PGW<int> PGW_Int;
+//typedef PGW<String> PGW_Str;
+//typedef PGW<Array> PGW_Arr;
+//typedef PGW<TypedArray<String>> PGW_ArrStr;
+//typedef PGW<Dictionary> PGW_Dict;
 
 
 //////////////////////////////////////////////////

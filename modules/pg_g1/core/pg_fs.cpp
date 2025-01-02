@@ -21,7 +21,7 @@
 #include "modules/pg_g1/data/pg_paths.h"
 #include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_rgx.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
+#include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/types/pgw.h"
 #include "scene/resources/packed_scene.h"
@@ -151,11 +151,11 @@ Ref<PGW_Str> PG_FS::mk_dir(String path) {
 
 bool PG_FS::rn_or_rm(String fp, String nn) {
 	if (_open_files.has(fp)) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RN_FILE_OPEN", PG_Arr::mk_ta_str(fp, nn)));
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RN_FILE_OPEN", PG_Str::mk_ta_str(fp, nn)));
 		return false;
 	}
 	if (Error e = DirAccess::rename_absolute(fp, nn)) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RN_OR_TRASH_FILE", e, PG_Arr::mk_ta_str(fp, nn)));
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RN_OR_TRASH_FILE", e, PG_Str::mk_ta_str(fp, nn)));
 		// DOC: move_to_trash() only returns a generic Error::FAILED, so no need to retrieve error to display it in error message.
 		if (e = PG_S(OS)->move_to_trash(fp)) {
 			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "TRASH_OR_RM_FILE", fp));

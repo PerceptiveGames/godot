@@ -5,6 +5,7 @@
 #include "core/variant/typed_array.h" // DOC: Is used in retval of PG_Str::to_arr_of_str().
 #include "core/variant/variant.h"
 #include "modules/pg_g1/data/pg_macros.h"
+#include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/exts/pg_vec.h"
 

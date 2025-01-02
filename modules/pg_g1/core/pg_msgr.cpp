@@ -2,6 +2,9 @@
 #include "core/io/dir_access.h"
 #include "core/io/file_access.h"
 #include "core/object/ref_counted.h"
+#include "core/string/string_name.h"
+#include "core/string/ustring.h"
+#include "core/templates/vector.h"
 #include "core/variant/callable.h"
 #include "core/variant/typed_array.h"
 #include "core/variant/variant.h"
@@ -9,10 +12,9 @@
 #include "modules/pg_g1/core/pg_msgr.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_arr.h"
+#include "modules/pg_g1/exts/pg_sn.h"
 #include "modules/pg_g1/types/pg_types.h"
-#include "core/string/string_name.h"
-#include "core/templates/vector.h"
-#include "core/string/ustring.h"
+#include "modules/pg_g1/exts/pg_str.h"
 
 
 //////////////////////////////////////////////////
@@ -124,7 +126,7 @@ Ref<PG_MsgrTgt> PG_Msgr::mk_tgt(StringName id, const Callable &f, int min_lvl, i
 
 
 Ref<PG_Msg> PG_Msgr::mk_msg(PGE_MsgLevel lvl, String tgt, StringName id, String txt, Error e) {
-	Vector<StringName> t = (tgt[0] == '-') ? PG_Arr::mk_snv("-", tgt.substr(1)) : PG_Arr::mk_snv(tgt);
+	Vector<StringName> t = (tgt[0] == '-') ? PG_SN::mk_vec_sn("-", tgt.substr(1)) : PG_SN::mk_vec_sn(tgt);
 	return mk_msg(lvl, t, id, txt, e);
 }
 
@@ -187,19 +189,19 @@ Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id) {
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, String str) {
-	return bcast(build(lvl, Vector<StringName>(), id, Error::OK, PG_Arr::mk_ta_str(str)));
+	return bcast(build(lvl, Vector<StringName>(), id, Error::OK, PG_Str::mk_ta_str(str)));
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, Error e, String str) {
-	return bcast(build(lvl, Vector<StringName>(), id, e, PG_Arr::mk_ta_str(str)));
+	return bcast(build(lvl, Vector<StringName>(), id, e, PG_Str::mk_ta_str(str)));
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, String tgt, StringName id, Error e, String str) {
-	return bcast(build(lvl, PG_Arr::mk_snv(tgt), id, e, PG_Arr::mk_ta_str(str)));
+	return bcast(build(lvl, PG_SN::mk_vec_sn(tgt), id, e, PG_Str::mk_ta_str(str)));
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, String str) {
-	return bcast(build(lvl, tgts, id, e, PG_Arr::mk_ta_str(str)));
+	return bcast(build(lvl, tgts, id, e, PG_Str::mk_ta_str(str)));
 }
 
 
@@ -212,7 +214,7 @@ Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, Error e, TypedArray<
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, String tgt, StringName id, Error e, TypedArray<String> strs) {
-	return bcast(build(lvl, PG_Arr::mk_snv(tgt), id, e, strs));
+	return bcast(build(lvl, PG_SN::mk_vec_sn(tgt), id, e, strs));
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs) {

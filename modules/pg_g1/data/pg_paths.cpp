@@ -8,7 +8,7 @@
 #include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/data/pg_paths.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
+#include "modules/pg_g1/types/pgw.h"
 #include <cstdint>
 
 

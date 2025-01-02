@@ -25,7 +25,7 @@ class Node3D;
 enum class Key;
 
 template <typename K, typename V>
-class Pair;
+struct Pair;
 
 template <typename T>
 class TypedArray;
@@ -143,7 +143,12 @@ public:
 
 public:
 	template <typename T>
-	static TypedArray<T> assign(const Array &a);
+	static TypedArray<T> assign(const Array &a) {
+		TypedArray<T> r;
+		r.assign(a);
+		return r;
+	}
+
 
 	// DOC: Has _gd prefix to differentiate from native method and to be able to bind to GD.
 	// DOC: It can still be used in C++.

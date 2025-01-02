@@ -216,14 +216,6 @@ int PG_Arr::_gd_resize_until_item(Array &a, const Variant &item, bool pop_found_
 //////////////////////////////////////////////////
 
 
-template <typename T>
-TypedArray<T> PG_Arr::assign(const Array &a) {
-	TypedArray<T> r;
-	r.assign(a);
-	return r;
-}
-
-
 Array PG_Arr::_gd_assign(const Array &from, Array &to) {
 	to.assign(from);
 	return to;

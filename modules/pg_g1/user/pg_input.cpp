@@ -8,10 +8,14 @@
 #include "core/object/ref_counted.h"
 #include "core/os/keyboard.h"
 #include "core/os/memory.h"
+#include "core/string/string_name.h"
 #include "core/string/ustring.h"
 #include "core/templates/list.h"
+#include "core/templates/vector.h"
 #include "core/templates/vmap.h"
+#include "core/variant/array.h"
 #include "core/variant/typed_dictionary.h"
+#include "core/variant/variant.h"
 #include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/core/pg_msgr.h"
 #include "modules/pg_g1/core/pg_scene_tree.h"
@@ -20,9 +24,10 @@
 #include "modules/pg_g1/data/pg_paths.h"
 #include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_num.h"
+#include "modules/pg_g1/exts/pg_sn.h" // DOC: Used by template instantiation.
+#include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/exts/pg_vec.h"
 #include "modules/pg_g1/sgns/pg_sgns_user.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/types/pgw.h"
 #include "modules/pg_g1/user/pg_input.h"
@@ -93,7 +98,7 @@ bool PG_Input::_try_read_file_and_load_binds() {
 	Error e = _file->load(fp->r());
 	if (e) {
 		if (FileAccess::exists(fp->r())) {
-			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_CFG_PARSE", e, PG_Arr::mk_ta_str(fp->r())));
+			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_CFG_PARSE", e, PG_Str::mk_ta_str(fp->r())));
 		}
 		return false;
 	}
@@ -114,7 +119,7 @@ bool PG_Input::_try_create_file() {
 	}
 	if (FileAccess::exists(fp->r())) {
 		String nn = PG_Paths::add_ts_sfx(fp->r());
-		_st_(_msgr->bcast(PGE_MsgLevel::WARNING_VIP, "INPUT_CFG_RN_OR_RM", PG_Arr::mk_ta_str(fp->r(), nn, fp->r())));
+		_st_(_msgr->bcast(PGE_MsgLevel::WARNING_VIP, "INPUT_CFG_RN_OR_RM", PG_Str::mk_ta_str(fp->r(), nn, fp->r())));
 		_if_st_(!_fs->rn_or_rm(fp->r(), nn)) {
 			return false;
 		}
@@ -163,7 +168,7 @@ Vector<Key> PG_Input::_get_keycodes(StringName act) {
 	if (!v) {
 		return Vector<Key>();
 	}
-	return PG_Arr::to_arr_of_valid_keycodes(v);
+	return PG_Vec::to_arr_of_valid_keycodes(v);
 }
 
 
@@ -263,7 +268,7 @@ void PG_Input::_load_keybind_set(StringName new_set) {
 		}
 	}
 	set_cursor_visible(_params[new_set].mouse_vis);
-	PG_Arr::resize_until_item(_stack, new_set, true);
+	PG_Vec::resize_until_item(_stack, new_set, true);
 	_stack.append(new_set);
 }
 
@@ -273,7 +278,7 @@ void PG_Input::_load_keybind_set(StringName new_set) {
 void PG_Input::_unload_keybind_set(StringName cur_set) {
 	StringName back_set = PG_Vec::pop_back(_stack);
 	if (!cur_set.is_empty() && back_set != cur_set) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_WRONG_UNLOAD", PG_Arr::mk_ta_str(back_set, cur_set)));
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_WRONG_UNLOAD", PG_Str::mk_ta_str(back_set, cur_set)));
 	}
 	StringName new_set = PG_Vec::last(_stack);
 	if (new_set == "") {

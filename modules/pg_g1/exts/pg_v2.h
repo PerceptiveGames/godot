@@ -11,8 +11,8 @@
 
 
 class Array;
-class Vector2;
-class Vector3;
+struct Vector2;
+struct Vector3;
 
 template <typename T>
 class TypedArray;
