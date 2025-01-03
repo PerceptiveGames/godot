@@ -1,4 +1,5 @@
 #include "core/os/keyboard.h"
+#include "core/string/string_name.h"
 #include "core/string/ustring.h"
 #include "core/templates/vector.h"
 #include "core/variant/callable.h"
@@ -8,6 +9,18 @@
 #include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/exts/pg_vec.h"
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+// TODO: Prefer to put these in classes corresponding to the template type,
+// e.g. pg_sn.cpp for PG_Vec::last<StringName>(). Look up "extern template".
+// It's better to include just PG_Vec in each of those files, rather than include them ALL in PG_Vec.
+template StringName PG_Vec::last<StringName>(Vector<StringName> &v);
+template StringName PG_Vec::pop_back<StringName>(Vector<StringName> &v);
+template int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
 
 
 //////////////////////////////////////////////////

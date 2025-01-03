@@ -10,15 +10,6 @@
 //////////////////////////////////////////////////
 
 
-template StringName PG_Vec::last(Vector<StringName> &v);
-template StringName PG_Vec::pop_back(Vector<StringName> &v);
-template int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
-
-
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
-
-
 Vector<StringName> PG_SN::mk_vec_sn(StringName sn0) {
 	Vector<StringName> v;
 	v.append(sn0);

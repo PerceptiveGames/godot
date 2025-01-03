@@ -65,6 +65,14 @@
 //////////////////////////////////////////////////
 
 
+template<> int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
+extern template int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
 void PG_Input::_set_actions() {
 	_actions["bindable"] = { "move_forward", "move_backwards", "move_left", "move_right", "jump", "crouch", "prone", "interact", "console_show",
 		"menu_up", "menu_down", "menu_left", "menu_right", "menu_validate", "menu_cancel", "menu_reset",
