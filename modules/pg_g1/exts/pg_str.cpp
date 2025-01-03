@@ -173,6 +173,11 @@ TypedArray<String> PG_Str::mk_ta_str(String s0, String s1, String s2, String s3)
 
 void PG_Str::_bind_methods() {
 #ifdef PG_GD_FNS
+
+
+	//ClassDB::bind_static_method("PG_Arr", D_METHOD("is_arr_of_str", "v"), &PG_Arr::is_arr_of_str);
+
+
 	ClassDB::bind_static_method("PG_Str", D_METHOD("is_str", "v"), &PG_Str::is_str);
 
 	ClassDB::bind_static_method("PG_Str", D_METHOD("to_str", "v"), &PG_Str::to_str);

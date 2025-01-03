@@ -67,6 +67,10 @@ public:
 	template <class T>
 	PG_INLINE static T last(const Vector<T> &v, T &def);
 
+	
+	template <class T>
+	PG_INLINE static T penultimate(const Vector<T> &v, T &def);
+
 
 //////////////////////////////////////////////////
 
@@ -97,6 +101,14 @@ public:
 
 public:
 	static Vector<Key> to_arr_of_valid_keycodes(const Variant &v);
+
+
+//////////////////////////////////////////////////
+
+
+public:
+	template <typename T>
+	static Vector<T> get_interleaved(const Vector<T> &v, const T &item, bool also_if_empty = false);
 };
 
 

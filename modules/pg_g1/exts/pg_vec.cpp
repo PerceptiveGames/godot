@@ -80,6 +80,12 @@ T PG_Vec::last(const Vector<T> &v, T &def) {
 }
 
 
+template <class T>
+T PG_Vec::penultimate(const Vector<T> &v, T &def) {
+	return v.size() > 1 ? v[-2] : def;
+}
+
+
 //////////////////////////////////////////////////
 
 
@@ -133,6 +139,29 @@ Vector<Key> PG_Vec::to_arr_of_valid_keycodes(const Variant &v) {
 		Key k = find_keycode(s);
 		if (k != Key::NONE) {
 			r.append(k);
+		}
+	}
+	return r;
+}
+
+
+//////////////////////////////////////////////////
+
+
+template <typename T>
+Vector<T> PG_Vec::get_interleaved(const Vector<T> &v, const T &item, bool also_if_empty) {
+	Vector<T> r;
+	if (v.is_empty()) {
+		if (also_if_empty) {
+			r.append(item);
+		}
+		return r;
+	}
+	r.resize(2 * v.size() - 1);
+	r.fill(item);
+	for (int i : r.size()) {
+		if (i % 2 == 0) {
+			r[i] = v[i / 2];
 		}
 	}
 	return r;

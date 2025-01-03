@@ -1,8 +1,11 @@
 #include "core/math/math_funcs.h"
 #include "core/object/class_db.h"
 #include "core/os/keyboard.h"
+#include "core/string/ustring.h"
 #include "core/templates/pair.h"
+#include "core/variant/array.h"
 #include "core/variant/callable.h"
+#include "core/variant/typed_array.h"
 #include "core/variant/variant.h"
 #include "core/variant/variant_utility.h"
 #include "modules/pg_g1/data/pg_macros.h"
@@ -10,7 +13,14 @@
 #include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/types/pg_typedefs.h"
 #include "scene/3d/node_3d.h"
-#include "core/string/ustring.h"
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+// DOC: GD functions cannot take 'Array &a' as argument.
+// Needs to be either 'const Array &a' or 'Array a'.
 
 
 //////////////////////////////////////////////////
@@ -49,40 +59,27 @@ bool PG_Arr::idx_ok(const Array &a, int i) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
-Variant PG_Arr::_gd_get_by_idx(const Array &a, int idx, const Variant &def) {
+Variant PG_Arr::get_by_idx(const Array &a, int idx, const Variant &def) {
 	return PG_Arr::idx_ok(a, idx) ? a[idx] : def;
 }
-#endif
 
 
-#ifdef PG_GD_FNS
-Variant PG_Arr::_gd_get_by_idx_wrap(const Array &a, int idx, const Variant &def) {
+Variant PG_Arr::get_by_idx_wrap(const Array &a, int idx, const Variant &def) {
 	return !a.is_empty() ? a[idx % a.size()] : def;
 }
-#endif
 
 
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
-Variant PG_Arr::_gd_last(const Array &a, const Variant &def) {
+Variant PG_Arr::last(const Array &a, const Variant &def) {
 	return !a.is_empty() ? a[-1] : def;
 }
-#endif
 
 
-template <class T>
-T PG_Arr::penultimate(const Array &v, T &def) {
-	return v.size() > 1 ? v[-2] : def;
-}
-
-#ifdef PG_GD_FNS
-Variant PG_Arr::_gd_penultimate(const Array &a, const Variant &def) {
+Variant PG_Arr::penultimate(const Array &a, const Variant &def) {
 	return a.size() > 1 ? a[-2] : def;
 }
-#endif
 
 
 //////////////////////////////////////////////////
@@ -135,6 +132,13 @@ bool PG_Arr::set_last(Array &a, const Variant &v, bool add_if_empty) {
 }
 
 
+#ifdef PG_GD_FNS
+bool PG_Arr::_gd_set_last(Array a, const Variant &v, bool add_if_empty) {
+	return set_last(a, v, add_if_empty);
+}
+#endif
+
+
 bool PG_Arr::append_if_diff_from_last(Array &a, const Variant &v) {
 	if (a.back() != v) {
 		a.append(v);
@@ -144,11 +148,17 @@ bool PG_Arr::append_if_diff_from_last(Array &a, const Variant &v) {
 }
 
 
+#ifdef PG_GD_FNS
+bool PG_Arr::_gd_append_if_diff_from_last(Array a, const Variant &v) {
+	return append_if_diff_from_last(a, v);
+}
+#endif
+
+
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
-Variant PG_Arr::_gd_first_f(const Array &a, const Callable &f, const Variant &def) {
+Variant PG_Arr::first_f(const Array &a, const Callable &f, const Variant &def) {
 	for (const Variant &e : a) {
 		if (f.call(e)) {
 			return e;
@@ -156,7 +166,6 @@ Variant PG_Arr::_gd_first_f(const Array &a, const Callable &f, const Variant &de
 	}
 	return def;
 }
-#endif
 
 
 //////////////////////////////////////////////////
@@ -175,6 +184,13 @@ int PG_Arr::rm_all_v(Array &a, const Variant &v) {
 }
 
 
+#ifdef PG_GD_FNS
+int PG_Arr::_gd_rm_all_v(Array a, const Variant &v) {
+	return rm_all_v(a, v);
+}
+#endif
+
+
 int PG_Arr::rm_adj_dupes(Array &a) {
 	int r = 0;
 	for (int i = 1; i < a.size(); i++) {
@@ -186,6 +202,13 @@ int PG_Arr::rm_adj_dupes(Array &a) {
 	}
 	return r;
 }
+
+
+#ifdef PG_GD_FNS
+int PG_Arr::_gd_rm_adj_dupes(Array a) {
+	return rm_adj_dupes(a);
+}
+#endif
 
 
 int PG_Arr::mk_unique(Array &a) {
@@ -204,7 +227,14 @@ int PG_Arr::mk_unique(Array &a) {
 }
 
 
-int PG_Arr::_gd_resize_until_item(Array &a, const Variant &item, bool pop_found_item) {
+#ifdef PG_GD_FNS
+int PG_Arr::_gd_mk_unique(Array a) {
+	return mk_unique(a);
+}
+#endif
+
+
+int PG_Arr::resize_until_item(Array &a, const Variant &item, bool pop_found_item) {
 	int i = a.rfind(item);
 	if (i > -1) {
 		a.resize(i + !pop_found_item);
@@ -213,21 +243,28 @@ int PG_Arr::_gd_resize_until_item(Array &a, const Variant &item, bool pop_found_
 }
 
 
+#ifdef PG_GD_FNS
+int PG_Arr::_gd_resize_until_item(Array a, const Variant &item, bool pop_found_item) {
+	return resize_until_item(a, item, pop_found_item);
+}
+#endif
+
+
 //////////////////////////////////////////////////
 
 
-Array PG_Arr::_gd_assign(const Array &from, Array &to) {
+Array PG_Arr::_gd_assign(const Array &from, Array to) {
 	to.assign(from);
 	return to;
+	return from;
 }
 
 
 //////////////////////////////////////////////////
 
 
-template <typename T>
-TypedArray<T> PG_Arr::get_interleaved(const TypedArray<T> &a, const T &item, bool also_if_empty) {
-	TypedArray<T> r;
+Array PG_Arr::get_interleaved(const Array &a, const Variant &item, bool also_if_empty) {
+	Array r;
 	if (a.is_empty()) {
 		if (also_if_empty) {
 			r.append(item);
@@ -236,7 +273,7 @@ TypedArray<T> PG_Arr::get_interleaved(const TypedArray<T> &a, const T &item, boo
 	}
 	r.resize(2 * a.size() - 1);
 	r.fill(item);
-	for (int i : r.size()) {
+	for (int i = 0; i < r.size(); ++i) {
 		if (i % 2 == 0) {
 			r[i] = a[i / 2];
 		}
@@ -248,62 +285,23 @@ TypedArray<T> PG_Arr::get_interleaved(const TypedArray<T> &a, const T &item, boo
 //////////////////////////////////////////////////
 
 
-template <typename T>
-TypedArray<T> PG_Arr::args_to_arr(const T &arg0, const T &arg1, const T &arg2, const T &arg3, const T &arg4, const T &arg5) {
-	TypedArray<T> r;
-	r.resize(6);
-	r[0] = arg0;
-	r[1] = arg1;
-	r[2] = arg2;
-	r[3] = arg3;
-	r[4] = arg4;
-	r[5] = arg5;
-	return r;
+template <typename T, typename... P>
+TypedArray<T> PG_Arr::args_to_arr(TypedArray<T> &a, const T &v) {
+	a.append(v);
 }
 
 
-template <typename T>
-TypedArray<T> PG_Arr::args_to_arr(const T &arg0, const T &arg1, const T &arg2, const T &arg3, const T &arg4) {
-	TypedArray<T> r;
-	r.resize(5);
-	r[0] = arg0;
-	r[1] = arg1;
-	r[2] = arg2;
-	r[3] = arg3;
-	r[4] = arg4;
-	return r;
+template <typename T, typename... P>
+TypedArray<T> PG_Arr::args_to_arr(TypedArray<T> &a, const T &v, P... args) {
+	a.append(v);
+	args_to_arr(a, args);
 }
 
 
-template <typename T>
-TypedArray<T> PG_Arr::args_to_arr(const T &arg0, const T &arg1, const T &arg2, const T &arg3) {
+template <typename T, typename... P>
+TypedArray<T> PG_Arr::args_to_arr(P... args) {
 	TypedArray<T> r;
-	r.resize(4);
-	r[0] = arg0;
-	r[1] = arg1;
-	r[2] = arg2;
-	r[3] = arg3;
-	return r;
-}
-
-
-template <typename T>
-TypedArray<T> PG_Arr::args_to_arr(const T &arg0, const T &arg1, const T &arg2) {
-	TypedArray<T> r;
-	r.resize(3);
-	r[0] = arg0;
-	r[1] = arg1;
-	r[2] = arg2;
-	return r;
-}
-
-
-template <typename T>
-TypedArray<T> PG_Arr::args_to_arr(const T &arg0, const T &arg1) {
-	TypedArray<T> r;
-	r.resize(2);
-	r[0] = arg0;
-	r[1] = arg1;
+	args_to_arr(r, args...);
 	return r;
 }
 
@@ -311,43 +309,38 @@ TypedArray<T> PG_Arr::args_to_arr(const T &arg0, const T &arg1) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
+
 void PG_Arr::_bind_methods() {
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("is_arr", "v"), &PG_Arr::is_arr);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("is_arr_of_str", "v"), &PG_Arr::is_arr_of_str);
+#ifdef PG_GD_FNS
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("is_arr", "v"), &PG_Arr::is_arr);
 
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("to_arr", "v"), &PG_Arr::to_arr);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("to_arr_of_int", "a"), &PG_Arr::to_arr_of_int);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("to_arr_of_v2", "a"), &PG_Arr::to_arr_of_v2);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("to_arr_of_v3", "a"), &PG_Arr::to_arr_of_v3);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("to_arr_of_str", "a"), &PG_Arr::to_arr_of_str);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("to_arr_of_node_3d", "a"), &PG_Arr::to_arr_of_node_3d);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("to_arr", "v"), &PG_Arr::to_arr);
 
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("get_by_idx", "a", "idx", "def"), &PG_Arr::_gd_get_by_idx, DEFVAL(Variant::NIL));
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("get_by_idx_wrap", "a", "idx", "def"), &PG_Arr::_gd_get_by_idx_wrap, DEFVAL(Variant::NIL));
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("get_by_idx", "a", "idx", "def"), &PG_Arr::get_by_idx, DEFVAL(Variant::NIL));
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("get_by_idx_wrap", "a", "idx", "def"), &PG_Arr::get_by_idx_wrap, DEFVAL(Variant::NIL));
 
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("last", "a", "def"), &PG_Arr::_gd_last, DEFVAL(Variant::NIL));
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("penultimate", "a", "def"), &PG_Arr::_gd_penultimate, DEFVAL(Variant::NIL));
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("last", "a", "def"), &PG_Arr::last, DEFVAL(Variant::NIL));
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("penultimate", "a", "def"), &PG_Arr::penultimate, DEFVAL(Variant::NIL));
 
-	//// TODO: CHECK IF IT WORKS WITH THIS TEMPLATE. ADD OTHERS IF SO.
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("find_idxs", "a", "v"), &PG_Arr::find_idxs);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("find_idxs", "a", "v"), &PG_Arr::find_idxs);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("has_any_in_common", "a1", "a2"), &PG_Arr::has_any_in_common);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("get_approx_v_idx", "a", "v"), &PG_Arr::get_approx_v_idx);
 
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("has_any_in_common", "a1", "a2"), &PG_Arr::has_any_in_common);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("get_approx_v_idx", "a", "v"), &PG_Arr::get_approx_v_idx);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("set_last", "a", "v", "add_if_empty"), &PG_Arr::_gd_set_last, DEFVAL(true));
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("append_if_diff_from_last", "a", "v"), &PG_Arr::_gd_append_if_diff_from_last);
 
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("set_last", "a", "v", "add_if_empty"), &PG_Arr::set_last, DEFVAL(true));
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("append_if_diff_from_last", "a", "v"), &PG_Arr::append_if_diff_from_last);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("first_f", "a", "f", "def"), &PG_Arr::first_f, DEFVAL(Variant::NIL));
 
-	//// TODO: CHECK IF IT WORKS HERE, WHERE IT USES IMPLICIT TYPES IN TEMPLATE. ADD OTHERS IF SO.
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("first_f", "a", "f", "def"), &PG_Arr::_gd_first_f, DEFVAL(Variant::NIL));
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("rm_all_v", "a", "v"), &PG_Arr::_gd_rm_all_v);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("rm_adj_dupes", "a"), &PG_Arr::_gd_rm_adj_dupes);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("mk_unique", "a"), &PG_Arr::_gd_mk_unique);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("resize_until_item", "a", "item", "pop_found_item"), &PG_Arr::_gd_resize_until_item);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("assign", "from", "to"), &PG_Arr::_gd_assign);
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("assign2", "from"), &PG_Arr::_gd_assign);
 
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("rm_all_v", "a", "v"), &PG_Arr::rm_all_v);
-	////ClassDB::bind_static_method("PG_Arr", D_METHOD("rm_adj_dupes", "a"), &PG_Arr::rm_adj_dupes);
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("mk_unique", "a"), &PG_Arr::mk_unique);
-	////ClassDB::bind_static_method("PG_Arr", D_METHOD("resize_until_item", "a", "item", "pop_found_item"), &PG_Arr::_gd_resize_until_item);
-	////ClassDB::bind_static_method("PG_Arr", D_METHOD("assign", "from", "to"), &PG_Arr::_gd_assign);
-}
+	ClassDB::bind_static_method("PG_Arr", D_METHOD("get_interleaved", "a", "item", "also_if_empty"), &PG_Arr::get_interleaved, DEFVAL(false));
 #endif
+}
 
 
 //////////////////////////////////////////////////

@@ -66,35 +66,26 @@ public:
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
-	static Variant _gd_get_by_idx(const Array &a, int idx, const Variant &def = Variant::NIL);
-#endif
+public:
+	static Variant get_by_idx(const Array &a, int idx, const Variant &def = Variant::NIL);
 
-#ifdef PG_GD_FNS
-	static Variant _gd_get_by_idx_wrap(const Array &a, int idx, const Variant &def = Variant::NIL);
-#endif
+	static Variant get_by_idx_wrap(const Array &a, int idx, const Variant &def = Variant::NIL);
 
 
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
+public:
 	// DOC: Same as Array::back() except it doesn't generate an error if array is empty.
-	static Variant _gd_last(const Array &a, const Variant &def = Variant::NIL);
-#endif
+	static Variant last(const Array &a, const Variant &def = Variant::NIL);
 
-
-	template <class T>
-	PG_INLINE static T penultimate(const Array &v, T &def);
-
-#ifdef PG_GD_FNS
-	static Variant _gd_penultimate(const Array &a, const Variant &def = Variant::NIL);
-#endif
+	static Variant penultimate(const Array &a, const Variant &def = Variant::NIL);
 
 
 //////////////////////////////////////////////////
 
 
+public:
 	static TypedArray<int> find_idxs(const Array &a, const Variant &v);
 
 	static bool has_any_in_common(const Array &a1, const Array &a2);
@@ -109,16 +100,24 @@ public:
 public:
 	static bool set_last(Array &a, const Variant &v, bool add_if_empty = true);
 
+#ifdef PG_GD_FNS
+	// TODO: Add non-GD version that takes a ref to a (&a) instead.
+	// Ref to a is not accepted in GD functions by the compiler.
+	static bool _gd_set_last(Array a, const Variant &v, bool add_if_empty = true);
+#endif
+
 	static bool append_if_diff_from_last(Array &a, const Variant &v);
+
+#ifdef PG_GD_FNS
+	static bool _gd_append_if_diff_from_last(Array a, const Variant &v);
+#endif
 
 
 //////////////////////////////////////////////////
 
 
 public:
-#ifdef PG_GD_FNS
-	static Variant _gd_first_f(const Array &a, const Callable &f, const Variant &def = Variant::NIL);
-#endif
+	static Variant first_f(const Array &a, const Callable &f, const Variant &def = Variant::NIL);
 
 
 //////////////////////////////////////////////////
@@ -127,15 +126,29 @@ public:
 public:
 	static int rm_all_v(Array &a, const Variant &v);
 
+#ifdef PG_GD_FNS
+	static int _gd_rm_all_v(Array a, const Variant &v);
+#endif
+
 	static int rm_adj_dupes(Array &a);
+
+#ifdef PG_GD_FNS
+	static int _gd_rm_adj_dupes(Array a);
+#endif
 
 	// DOC: Returns the number of items removed.
 	static int mk_unique(Array &a);
 
-	// DOC: Has _gd prefix to differentiate from native method and to be able to bind to GD.
-	// DOC: It can still be used in C++.
+#ifdef PG_GD_FNS
+	static int _gd_mk_unique(Array a);
+#endif
+
 	// NOTE: Was 'pop_back_until_found()'.
-	static int _gd_resize_until_item(Array &a, const Variant &item, bool pop_found_item);
+	static int resize_until_item(Array &a, const Variant &item, bool pop_found_item);
+
+#ifdef PG_GD_FNS
+	static int _gd_resize_until_item(Array a, const Variant &item, bool pop_found_item);
+#endif
 
 
 //////////////////////////////////////////////////
@@ -152,35 +165,28 @@ public:
 
 	// DOC: Has _gd prefix to differentiate from native method and to be able to bind to GD.
 	// DOC: It can still be used in C++.
-	static Array _gd_assign(const Array &from, Array &to);
+	static Array _gd_assign(const Array &from, Array to);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	template <typename T>
-	static TypedArray<T> get_interleaved(const TypedArray<T> &a, const T &item, bool also_if_empty = false);
+	static Array get_interleaved(const Array &a, const Variant &item, bool also_if_empty = false);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	template <typename T>
-	static TypedArray<T> args_to_arr(const T &arg0, const T &arg1, const T &arg2, const T &arg3, const T &arg4, const T &arg5);
+	template <typename T, typename... P>
+	TypedArray<T> args_to_arr(TypedArray<T> &a, const T &v); 
 
-	template <typename T>
-	static TypedArray<T> args_to_arr(const T &arg0, const T &arg1, const T &arg2, const T &arg3, const T &arg4);
+	template <typename T, typename... P>
+	TypedArray<T> args_to_arr(TypedArray<T> &a, const T &v, P... args); 
 
-	template <typename T>
-	static TypedArray<T> args_to_arr(const T &arg0, const T &arg1, const T &arg2, const T &arg3);
-
-	template <typename T>
-	static TypedArray<T> args_to_arr(const T &arg0, const T &arg1, const T &arg2);
-
-	template <typename T>
-	static TypedArray<T> args_to_arr(const T &arg0, const T &arg1);
+	template <typename T, typename... P>
+	TypedArray<T> args_to_arr(P... args);
 };
 
 
