@@ -31,7 +31,7 @@ class PG_Node3D : public RefCounted {
 
 
 public:
-	static void sort_children(Node3D &p, const Callable &f);
+	static void sort_children(Node3D *p, const Callable &f);
 
 
 //////////////////////////////////////////////////

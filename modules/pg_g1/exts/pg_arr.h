@@ -180,13 +180,13 @@ public:
 
 public:
 	template <typename T, typename... P>
-	TypedArray<T> args_to_arr(TypedArray<T> &a, const T &v); 
+	static TypedArray<T> args_to_arr(TypedArray<T> &a, const T &v); 
 
 	template <typename T, typename... P>
-	TypedArray<T> args_to_arr(TypedArray<T> &a, const T &v, P... args); 
+	static TypedArray<T> args_to_arr(TypedArray<T> &a, const T &v, P... args); 
 
 	template <typename T, typename... P>
-	TypedArray<T> args_to_arr(P... args);
+	static TypedArray<T> args_to_arr(P... args);
 };
 
 

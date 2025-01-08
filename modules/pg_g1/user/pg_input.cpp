@@ -106,7 +106,7 @@ bool PG_Input::_try_read_file_and_load_binds() {
 	Error e = _file->load(fp->r());
 	if (e) {
 		if (FileAccess::exists(fp->r())) {
-			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_CFG_PARSE", e, PG_Str::mk_ta_str(fp->r())));
+			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_CFG_PARSE", e, PG_Str::mk_str_ta(fp->r())));
 		}
 		return false;
 	}
@@ -127,7 +127,7 @@ bool PG_Input::_try_create_file() {
 	}
 	if (FileAccess::exists(fp->r())) {
 		String nn = PG_Paths::add_ts_sfx(fp->r());
-		_st_(_msgr->bcast(PGE_MsgLevel::WARNING_VIP, "INPUT_CFG_RN_OR_RM", PG_Str::mk_ta_str(fp->r(), nn, fp->r())));
+		_st_(_msgr->bcast(PGE_MsgLevel::WARNING_VIP, "INPUT_CFG_RN_OR_RM", PG_Str::mk_str_ta(fp->r(), nn, fp->r())));
 		_if_st_(!_fs->rn_or_rm(fp->r(), nn)) {
 			return false;
 		}
@@ -286,7 +286,7 @@ void PG_Input::_load_keybind_set(StringName new_set) {
 void PG_Input::_unload_keybind_set(StringName cur_set) {
 	StringName back_set = PG_Vec::pop_back(_stack);
 	if (!cur_set.is_empty() && back_set != cur_set) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_WRONG_UNLOAD", PG_Str::mk_ta_str(back_set, cur_set)));
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_WRONG_UNLOAD", PG_Str::mk_str_ta(back_set, cur_set)));
 	}
 	StringName new_set = PG_Vec::last(_stack);
 	if (new_set == "") {

@@ -2,6 +2,7 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "core/string/ustring.h"
+#include "core/templates/vector.h"
 #include "core/variant/array.h"
 #include "core/variant/dictionary.h"
 #include "core/variant/typed_array.h"
@@ -119,6 +120,7 @@ template class PGW<String>;
 template class PGW<Array>;
 template class PGW<TypedArray<String>>;
 template class PGW<Dictionary>;
+template class PGW<Vector<String>>;
 
 
 //////////////////////////////////////////////////

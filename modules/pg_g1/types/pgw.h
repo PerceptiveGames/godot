@@ -29,6 +29,9 @@ template <typename T>
 class TypedArray;
 
 template <typename T>
+class Vector;
+
+template <typename T>
 class PGW;
 
 // DOC: For each specialization, add call to set_msgr() in PG_SceneTree.
@@ -38,6 +41,7 @@ typedef PGW<String> PGW_Str;
 typedef PGW<Array> PGW_Arr;
 typedef PGW<TypedArray<String>> PGW_ArrStr;
 typedef PGW<Dictionary> PGW_Dict;
+typedef PGW<Vector<String>> PGW_VecStr;
 
 
 //////////////////////////////////////////////////

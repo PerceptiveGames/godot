@@ -30,6 +30,8 @@ class PG_SN : public Object {
 
 
 public:
+	// TODO: Also create mk_arr_sn() if necessary,
+	// using PG_Arr::args_to_arr().
 	static Vector<StringName> mk_vec_sn(StringName sn0);
 	static Vector<StringName> mk_vec_sn(StringName sn0, StringName sn1);
 	static Vector<StringName> mk_vec_sn(StringName sn0, StringName sn1, StringName sn2);

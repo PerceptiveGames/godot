@@ -56,14 +56,35 @@ Vector3 PG_V3::set_xz_from_v2(Vector2 &xz, const float y) {
 }
 
 
+#ifdef PG_GD_FNS
+Vector3 PG_V3::_gd_set_xz_from_v2(Vector2 xz, const float y) {
+	return Vector3(xz.x, y, xz.y);
+}
+#endif
+
+
 Vector3 PG_V3::set_yz_from_v2(Vector2 &yz, const float x) {
 	return Vector3(x, yz.x, yz.y);
 }
 
 
+#ifdef PG_GD_FNS
+Vector3 PG_V3::_gd_set_yz_from_v2(Vector2 yz, const float x) {
+	return Vector3(x, yz.x, yz.y);
+}
+#endif
+
+
 Vector3 PG_V3::set_zy_from_v2(Vector2 &zy, const float x) {
 	return Vector3(x, zy.y, zy.x);
 }
+
+
+#ifdef PG_GD_FNS
+Vector3 PG_V3::_gd_set_zy_from_v2(Vector2 zy, const float x) {
+	return Vector3(x, zy.y, zy.x);
+}
+#endif
 
 
 //////////////////////////////////////////////////
@@ -114,18 +135,13 @@ TypedArray<Vector3> PG_V3::to_arr_of_v3(const Array &a) {
 
 void PG_V3::_bind_methods() {
 #ifdef PG_GD_FNS
-	// TODO: UNCOMMENT AND COMPILE.
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("set_x", "v", "x"), &PG_V3::set_x);
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("set_y", "v", "y"), &PG_V3::set_y);
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("set_z", "v", "z"), &PG_V3::set_z);
+	ClassDB::bind_static_method("PG_V3", D_METHOD("set_xz_from_v2", "xz", "y"), &PG_V3::_gd_set_xz_from_v2);
+	ClassDB::bind_static_method("PG_V3", D_METHOD("set_yz_from_v2", "yz", "x"), &PG_V3::_gd_set_yz_from_v2);
+	ClassDB::bind_static_method("PG_V3", D_METHOD("set_zy_from_v2", "zy", "x"), &PG_V3::_gd_set_zy_from_v2);
 
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("set_xz_from_v2", "xz", "y"), &PG_V3::set_xz_from_v2);
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("set_yz_from_v2", "yz", "x"), &PG_V3::set_yz_from_v2);
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("set_zy_from_v2", "zy", "x"), &PG_V3::set_zy_from_v2);
-
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("sum", "a"), &PG_V3::sum);
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("avg", "a"), &PG_V3::avg);
-	//ClassDB::bind_static_method("PG_V3", D_METHOD("nrm", "p0", "p1", "p2"), &PG_V3::nrm);
+	ClassDB::bind_static_method("PG_V3", D_METHOD("sum", "a"), &PG_V3::sum);
+	ClassDB::bind_static_method("PG_V3", D_METHOD("avg", "a"), &PG_V3::avg);
+	ClassDB::bind_static_method("PG_V3", D_METHOD("nrm", "p0", "p1", "p2"), &PG_V3::nrm);
 #endif
 }
 

@@ -49,8 +49,19 @@ public:
 
 public:
 	static Vector3 set_xz_from_v2(Vector2 &xz, const float y);
+#ifdef PG_GD_FNS
+	static Vector3 _gd_set_xz_from_v2(Vector2 xz, const float y);
+#endif
+
 	static Vector3 set_yz_from_v2(Vector2 &yz, const float x);
+#ifdef PG_GD_FNS
+	static Vector3 _gd_set_yz_from_v2(Vector2 yz, const float x);
+#endif
+
 	static Vector3 set_zy_from_v2(Vector2 &zy, const float x);
+#ifdef PG_GD_FNS
+	static Vector3 _gd_set_zy_from_v2(Vector2 zy, const float x);
+#endif
 
 
 //////////////////////////////////////////////////

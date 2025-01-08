@@ -189,19 +189,19 @@ Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id) {
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, String str) {
-	return bcast(build(lvl, Vector<StringName>(), id, Error::OK, PG_Str::mk_ta_str(str)));
+	return bcast(build(lvl, Vector<StringName>(), id, Error::OK, PG_Str::mk_str_ta(str)));
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, StringName id, Error e, String str) {
-	return bcast(build(lvl, Vector<StringName>(), id, e, PG_Str::mk_ta_str(str)));
+	return bcast(build(lvl, Vector<StringName>(), id, e, PG_Str::mk_str_ta(str)));
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, String tgt, StringName id, Error e, String str) {
-	return bcast(build(lvl, PG_SN::mk_vec_sn(tgt), id, e, PG_Str::mk_ta_str(str)));
+	return bcast(build(lvl, PG_SN::mk_vec_sn(tgt), id, e, PG_Str::mk_str_ta(str)));
 }
 
 Ref<PG_Msg> PG_Msgr::bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, String str) {
-	return bcast(build(lvl, tgts, id, e, PG_Str::mk_ta_str(str)));
+	return bcast(build(lvl, tgts, id, e, PG_Str::mk_str_ta(str)));
 }
 
 

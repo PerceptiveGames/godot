@@ -31,7 +31,7 @@ class PG_Vec : public Object {
 
 public:
 	template <typename T>
-	PG_INLINE static bool idx_ok(const Vector<T> &v, int i);
+	PG_INLINE static bool idx_ok(const Vector<T> &v, int idx);
 
 
 //////////////////////////////////////////////////

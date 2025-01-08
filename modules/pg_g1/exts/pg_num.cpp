@@ -109,6 +109,11 @@ void PG_Num::_bind_methods() {
 	ClassDB::bind_static_method("PG_Num", D_METHOD("to_int_if_gte", "v", "i"), &PG_Num::to_int_if_gte);
 	ClassDB::bind_static_method("PG_Num", D_METHOD("to_int_if_bw", "v", "min_incl", "max_incl"), &PG_Num::to_int_if_bw);
 
+	ClassDB::bind_static_method("PG_Num", D_METHOD("is_i32vec", "v"), &PG_Num::is_i32vec);
+	ClassDB::bind_static_method("PG_Num", D_METHOD("is_i64vec", "v"), &PG_Num::is_i64vec);
+
+	ClassDB::bind_static_method("PG_Num", D_METHOD("to_arr_of_int", "a"), &PG_Num::to_arr_of_int);
+
 	ClassDB::bind_static_method("PG_Num", D_METHOD("get_rnd_int", "min_incl", "max_incl"), &PG_Num::get_rnd_int);
 #endif
 }

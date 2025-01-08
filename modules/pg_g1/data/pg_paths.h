@@ -3,9 +3,8 @@
 
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
-#include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
+#include "modules/pg_g1/types/pgw.h"
 
 
 //////////////////////////////////////////////////
@@ -15,6 +14,8 @@
 class String;
 class StringName;
 class Variant;
+
+class PG_FS;
 
 
 //////////////////////////////////////////////////
@@ -30,7 +31,7 @@ class PG_Paths : public RefCounted {
 
 
 protected:
-	inline static Ref<PG_FS> _fs;
+	static Ref<PG_FS> _fs;
 
 
 public:

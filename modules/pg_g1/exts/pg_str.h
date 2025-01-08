@@ -100,10 +100,19 @@ public:
 
 
 public:
-	static TypedArray<String> mk_ta_str(String s0);
-	static TypedArray<String> mk_ta_str(String s0, String s1);
-	static TypedArray<String> mk_ta_str(String s0, String s1, String s2);
-	static TypedArray<String> mk_ta_str(String s0, String s1, String s2, String s3);
+	// NOTE: Too complicated to turn into VarArgs template, because
+	// it needs explicit instantations in .cpp, but there are too many
+	// (combinations of variable numbers of String and StringName types).
+	// Maybe try to make it work? Maybe String args are enough, and conversions
+	// from StringNames and 'char const *' are implicit?
+	//template <typename... VarArgs>
+	//static TypedArray<String> mk_str_ta(VarArgs... args);
+
+	static TypedArray<String> mk_str_ta(String s0);
+	static TypedArray<String> mk_str_ta(String s0, String s1);
+	static TypedArray<String> mk_str_ta(String s0, String s1, String s2);
+	static TypedArray<String> mk_str_ta(String s0, String s1, String s2, String s3);
+
 };
 
 

@@ -3,6 +3,7 @@
 #include "core/io/file_access.h"
 #include "core/io/resource_loader.h"
 #include "core/object/callable_method_pointer.h"
+#include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
 #include "core/object/script_language.h"
 #include "core/os/os.h"
@@ -140,7 +141,6 @@ Ref<PGW_Str> PG_FS::mk_dir(String path) {
 	if (Error e = DirAccess::make_dir_recursive_absolute(r)) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "MK_DIR", e, r));
 		return PGW_Str::mk_nok();
-		//_return_st_(PGW_Str::mk_e(PGE_MsgLevel::ERROR, "MK_DIR", e, r)->bcast());
 	}
 	_return_st_(PGW_Str::mk_r(path));
 }
@@ -149,24 +149,24 @@ Ref<PGW_Str> PG_FS::mk_dir(String path) {
 //////////////////////////////////////////////////
 
 
-bool PG_FS::rn_or_rm(String fp, String nn) {
-	if (_open_files.has(fp)) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RN_FILE_OPEN", PG_Str::mk_ta_str(fp, nn)));
+bool PG_FS::rn_or_rm(String path, String new_name) {
+	if (_open_files.has(path)) {
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RN_FILE_OPEN", PG_Str::mk_str_ta(path, new_name)));
 		return false;
 	}
-	if (Error e = DirAccess::rename_absolute(fp, nn)) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RN_OR_TRASH_FILE", e, PG_Str::mk_ta_str(fp, nn)));
+	if (Error e = DirAccess::rename_absolute(path, new_name)) {
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RN_OR_TRASH_FILE", e, PG_Str::mk_str_ta(path, new_name)));
 		// DOC: move_to_trash() only returns a generic Error::FAILED, so no need to retrieve error to display it in error message.
-		if (e = PG_S(OS)->move_to_trash(fp)) {
-			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "TRASH_OR_RM_FILE", fp));
-			if (e = DirAccess::remove_absolute(fp)) {
-				_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RM_FILE", e, fp));
+		if (e = PG_S(OS)->move_to_trash(path)) {
+			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "TRASH_OR_RM_FILE", path));
+			if (e = DirAccess::remove_absolute(path)) {
+				_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RM_FILE", e, path));
 				return false;
 			} else {
-				_st_(_msgr->bcast(PGE_MsgLevel::INFO_VIP, "RM_FILE_OK", fp));
+				_st_(_msgr->bcast(PGE_MsgLevel::INFO_VIP, "RM_FILE_OK", path));
 			}
 		} else {
-			_st_(_msgr->bcast(PGE_MsgLevel::INFO_VIP, "TRASH_FILE_OK", fp));
+			_st_(_msgr->bcast(PGE_MsgLevel::INFO_VIP, "TRASH_FILE_OK", path));
 		}
 	}
 	return true;
@@ -177,20 +177,22 @@ bool PG_FS::rn_or_rm(String fp, String nn) {
 
 
 // DOC: Fallback is current time if modified date cannot be retrieved and 'cur_tm_if_none' is true.
-Ref<PGW_Dict> PG_FS::get_md_dt(String fp, bool cur_tm_if_none) {
-	if (!FileAccess::exists(fp)) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "FILE_NOT_EXIST", fp));
+// TODO: Either force 'path' to be a file, or consider both, or add bool or enum arg to choose,
+// or create two separate methods.
+Ref<PGW_Dict> PG_FS::get_md_dt(String path, bool cur_dt_if_none) {
+	if (!FileAccess::exists(path)) {
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "FILE_NOT_EXIST", path));
 		return PGW_Dict::mk_nok();
 	}
 	// DOC: There is no public non-static method to get modified time, so there is no point
 	// in creating a FileAccess instance manually to be used for both checking file existence
 	// and modified time.
-	int md_dt = FileAccess::get_modified_time(fp);
+	int md_dt = FileAccess::get_modified_time(path);
 	if (md_dt == 0) {
-		if (cur_tm_if_none) {
+		if (cur_dt_if_none) {
 			md_dt = int(PG_S(OS)->get_unix_time());
 		} else {
-			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "FILE_MD_DT", fp));
+			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "FILE_MD_DT", path));
 			return PGW_Dict::mk_nok();
 		}
 	}
@@ -202,8 +204,8 @@ Ref<PGW_Dict> PG_FS::get_md_dt(String fp, bool cur_tm_if_none) {
 }
 
 
-Ref<PGW_Str> PG_FS::get_fmt_md_dt(String fp, bool cur_tm_if_none) {
-	_st_(Ref<PGW_Dict> rf = get_md_dt(fp, cur_tm_if_none));
+Ref<PGW_Str> PG_FS::get_fmt_md_dt(String path, bool cur_dt_if_none) {
+	_st_(Ref<PGW_Dict> rf = get_md_dt(path, cur_dt_if_none));
 	if (rf->nok()) {
 		return PGW_Str::mk_nok();
 	}
@@ -215,32 +217,77 @@ Ref<PGW_Str> PG_FS::get_fmt_md_dt(String fp, bool cur_tm_if_none) {
 //////////////////////////////////////////////////
 
 
-bool PG_FS::get_file_paths(Vector<String> &arr, String root_dir_path, String rel_dir_path, const Callable &filter_f, bool recursive, bool abs_paths, bool sort, const Callable &sort_f) {
+//bool PG_FS::get_file_paths(Vector<String> &arr, String root_dir_path, String rel_dir_path, const Callable &filter_f, bool recursive, bool abs_paths, bool sort, const Callable &sort_f) {
+//	String abs_dir_path = root_dir_path.path_join(rel_dir_path);
+//	Error e = Error::OK;
+//	Ref<DirAccess> dir = DirAccess::open(abs_dir_path, &e);
+//	if (dir.is_null()) {
+//		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "OPEN_DIR", e, abs_dir_path));
+//		return false;
+//	}
+//	dir->set_include_navigational(false);
+//	if (Error e = dir->list_dir_begin()) {
+//		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RD_DIR", e, abs_dir_path));
+//		return false;
+//	}
+//	String file_name = dir->get_next();
+//	while (file_name != "") {
+//		String rel_file_path = rel_dir_path.path_join(file_name);
+//		if (dir->current_is_dir()) {
+//			if (recursive) {
+//				_if_st_(!get_file_paths(arr, root_dir_path, rel_file_path, filter_f, true, abs_paths, sort, sort_f)) {
+//					return false;
+//				}
+//			}
+//		} else {
+//			String file_path = abs_paths ? abs_dir_path.path_join(file_name) : rel_file_path;
+//			if (filter_f.call(file_path)) {
+//				arr.append(file_path);
+//			}
+//		}
+//		file_name = dir->get_next();
+//	}
+//	// DOC: Only executes sort_f at the end of the first iteration (i.e. at the end of execution).
+//	if (sort) {
+//		if (sort_f != nullptr && sort_f.is_valid()) {
+//			arr.sort_custom<CallableComparator, true>(sort_f);
+//		} else {
+//			arr.sort();
+//		}
+//	}
+//	return true;
+//}
+
+
+Ref<PGW_VecStr> PG_FS::get_file_paths(String root_dir_path, String rel_dir_path, const Callable &filter_f, bool recursive, bool abs_paths, bool sort, const Callable &sort_f) {
 	String abs_dir_path = root_dir_path.path_join(rel_dir_path);
 	Error e = Error::OK;
 	Ref<DirAccess> dir = DirAccess::open(abs_dir_path, &e);
 	if (dir.is_null()) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "OPEN_DIR", e, abs_dir_path));
-		return false;
+		return Ref<PGW_VecStr>()->mk_nok();
 	}
 	dir->set_include_navigational(false);
 	if (Error e = dir->list_dir_begin()) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RD_DIR", e, abs_dir_path));
-		return false;
+		return Ref<PGW_VecStr>()->mk_nok();
 	}
+	Ref<PGW_VecStr> v;
 	String file_name = dir->get_next();
 	while (file_name != "") {
 		String rel_file_path = rel_dir_path.path_join(file_name);
 		if (dir->current_is_dir()) {
 			if (recursive) {
-				_if_st_(!get_file_paths(arr, root_dir_path, rel_file_path, filter_f, true, abs_paths, sort, sort_f)) {
-					return false;
+				Ref<PGW_VecStr> v_rec = get_file_paths(root_dir_path, rel_file_path, filter_f, true, abs_paths, false, sort_f);
+				_if_st_(v_rec->nok()) {
+					return v_rec;
 				}
+				v->r().append_array(v_rec->r());
 			}
 		} else {
 			String file_path = abs_paths ? abs_dir_path.path_join(file_name) : rel_file_path;
 			if (filter_f.call(file_path)) {
-				arr.append(file_path);
+				v->r().append(file_path);
 			}
 		}
 		file_name = dir->get_next();
@@ -248,12 +295,12 @@ bool PG_FS::get_file_paths(Vector<String> &arr, String root_dir_path, String rel
 	// DOC: Only executes sort_f at the end of the first iteration (i.e. at the end of execution).
 	if (sort) {
 		if (sort_f != nullptr && sort_f.is_valid()) {
-			arr.sort_custom<CallableComparator, true>(sort_f);
+			v->r().sort_custom<CallableComparator, true>(sort_f);
 		} else {
-			arr.sort();
+			v->r().sort();
 		}
 	}
-	return true;
+	return v;
 }
 
 
@@ -275,6 +322,21 @@ Ref<Script> PG_FS::load_script(String path) {
 
 void PG_FS::_bind_methods() {
 #ifdef PG_GD_FNS
+	ClassDB::bind_method(D_METHOD("open_file", "path", "create_if_none", "auto_close_shortly", "truncate"), &PG_FS::open_file, DEFVAL(true), DEFVAL(true), DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("close_file", "path"), &PG_FS::close_file);
+	ClassDB::bind_method(D_METHOD("create_file_if_none", "path"), &PG_FS::create_file_if_none);
+
+	ClassDB::bind_method(D_METHOD("mk_dir", "path"), &PG_FS::mk_dir);
+
+	ClassDB::bind_method(D_METHOD("rn_or_rm", "path", "new_name"), &PG_FS::rn_or_rm);
+
+	ClassDB::bind_method(D_METHOD("get_md_dt", "path", "cur_dt_if_none"), &PG_FS::get_md_dt);
+	ClassDB::bind_method(D_METHOD("get_fmt_md_dt", "path", "cur_dt_if_none"), &PG_FS::get_fmt_md_dt);
+
+	ClassDB::bind_method(D_METHOD("get_file_paths", "root_dir_path", "rel_dir_path", "filter_f", "recursive", "abs_paths", "sort", "sort_f"), &PG_FS::get_file_paths, DEFVAL(Variant::NIL));
+
+	ClassDB::bind_method(D_METHOD("load_packed_scene", "path"), &PG_FS::load_packed_scene);
+	ClassDB::bind_method(D_METHOD("load_script", "path"), &PG_FS::load_script);
 #endif
 }
 
@@ -315,12 +377,16 @@ bool PG_FileLogger::_old_logs_fn_filter(String st) {
 
 void PG_FileLogger::_delete_old_logs() {
 	_st_(Ref<PGW_Str> d = PG_Paths::log_dir_path());
-	Vector<String> arr;
-	_if_st_(d->ok() && _fs->get_file_paths(arr, d->r(), "", callable_mp(this, &PG_FileLogger::_old_logs_fn_filter), false, true, true)) {
-		for (int i = 0; i < arr.size() - pg_max_log_files; ++i) {
-			if (Error e = DirAccess::remove_absolute(arr[i])) {
-				_st_(_msgr->bcast(PGE_MsgLevel::WARNING, "RM_FILE", e, arr[i]));
-			}
+	if (!d->ok()) {
+		return;
+	}
+	_st_(Ref<PGW_VecStr> paths = _fs->get_file_paths(d->r(), "", callable_mp(this, &PG_FileLogger::_old_logs_fn_filter), false, true, true));
+	if (!paths->ok()) {
+		return;
+	}
+	for (int i = 0; i < paths->r().size() - pg_max_log_files; ++i) {
+		if (Error e = DirAccess::remove_absolute(paths->r()[i])) {
+			_st_(_msgr->bcast(PGE_MsgLevel::WARNING, "RM_FILE", e, paths->r()[i]));
 		}
 	}
 }
@@ -328,12 +394,12 @@ void PG_FileLogger::_delete_old_logs() {
 
 // TODO: trim_prefix
 void PG_FileLogger::_write(Ref<PG_Msg> msg) {
-	_st_(Ref<PGW_Str> fp = PG_Paths::log_file_path());
-	if (!fp->ok()) {
+	_st_(Ref<PGW_Str> path = PG_Paths::log_file_path());
+	if (!path->ok()) {
 		// TODO: Bcast error everywhere but file.
 		return;
 	}
-	_st_(Ref<FileAccess> f = _fs->open_file(fp->r()));
+	_st_(Ref<FileAccess> f = _fs->open_file(path->r()));
 	if (!f.is_valid()) {
 		// TODO: Bcast error everywhere but file.
 		return;
@@ -360,19 +426,19 @@ Ref<PG_FileLogger> PG_FileLogger::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs) {
 PG_FileLogger::PG_FileLogger(Ref<PG_Msgr> msgr, Ref<PG_FS> fs) {
 	_fs = fs;
 	_msgr = msgr;
-	_st_(Ref<PGW_Str> fp = PG_Paths::log_file_path());
-	if (fp->ok()) { // TODO CHANGE TO NEG, ONLY HERE TO CHECK ERROR HANDLING
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "START_LOG", fp->r()));
+	_st_(Ref<PGW_Str> path = PG_Paths::log_file_path());
+	if (path->ok()) { // TODO CHANGE TO NEG, ONLY HERE TO CHECK ERROR HANDLING
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "START_LOG", path->r()));
 		return;
 	}
-	_st_(Ref<PGW_Str> md_dt = _fs->get_fmt_md_dt(fp->r(), true));
+	_st_(Ref<PGW_Str> md_dt = _fs->get_fmt_md_dt(path->r(), true));
 
 	// DOC: No need to check for validity of 'md_dt' since we always get
 	// a return value thanks to get_fmt_md_dt()'s second argument set to true.
-	_st_(Ref<PGW_Str> nn = PG_Paths::old_log_file_path(md_dt->r()));
+	_st_(Ref<PGW_Str> new_name = PG_Paths::old_log_file_path(md_dt->r()));
 
-	_if_st_(!_fs->rn_or_rm(fp->r(), nn->r())) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "START_LOG", fp->r()));
+	_if_st_(!_fs->rn_or_rm(path->r(), new_name->r())) {
+		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "START_LOG", path->r()));
 		return;
 	}
 

@@ -1,12 +1,13 @@
 #include "core/error/error_list.h"
 #include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
+#include "core/string/string_name.h"
+#include "core/string/ustring.h"
+#include "core/templates/vector.h"
 #include "core/templates/vmap.h"
 #include "modules/pg_g1/core/pg_msgr.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_rgx.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "modules/regex/regex.h"
 
 

@@ -4,6 +4,7 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "core/templates/vmap.h"
+#include "modules/pg_g1/data/pg_macros.h"
 
 
 //////////////////////////////////////////////////
@@ -30,6 +31,7 @@ class PG_Cmd;
 
 class PG_Cmds : public RefCounted {
 	GDCLASS(PG_Cmds, RefCounted);
+	PG_BIND;
 
 
 //////////////////////////////////////////////////
@@ -65,6 +67,13 @@ public:
 
 class PG_Cmd : public RefCounted {
 	GDCLASS(PG_Cmd, RefCounted);
+	PG_BIND;
+
+
+//////////////////////////////////////////////////
+
+
+	friend PG_Cmds;
 
 
 //////////////////////////////////////////////////
@@ -83,7 +92,7 @@ protected:
 	Callable _f_get;
 
 
-public:
+protected:
 	void call_send(const Vector<String> &args) const;
 	Variant call_receive() const;
 

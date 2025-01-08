@@ -2,6 +2,7 @@
 #include "core/object/ref_counted.h"
 #include "core/templates/pair.h"
 #include "core/templates/vmap.h"
+#include "core/variant/array.h"
 #include "core/variant/callable.h"
 #include "core/variant/dictionary.h"
 #include "core/variant/variant.h"
@@ -9,7 +10,6 @@
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_dict.h"
 #include "modules/pg_g1/types/pg_pair.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 
 
 //////////////////////////////////////////////////
@@ -74,21 +74,21 @@ bool PG_Dict::idx_ok(const Dictionary &a, int i) {
 
 
 template <typename K, typename V>
-Pair<K, V> PG_Dict::get_by_idx(const TypedDictionary<K, V> &d, int idx) {
-	if (!idx_ok(d, idx)) {
+Pair<K, V> PG_Dict::get_by_idx(const TypedDictionary<K, V> &d, int i) {
+	if (!idx_ok(d, i)) {
 		return nullptr;
 	}
-	return Pair<K, V>(d.get_key_at_index(idx), d.get_value_at_index(idx));
+	return Pair<K, V>(d.get_key_at_index(i), d.get_value_at_index(i));
 }
 
 
 #ifdef PG_GD_FNS
-Dictionary PG_Dict::_gd_get_by_idx(const Dictionary &d, int idx) {
-	if (!idx_ok(d, idx)) {
+Dictionary PG_Dict::_gd_get_by_idx(const Dictionary &d, int i) {
+	if (!idx_ok(d, i)) {
 		return Dictionary();
 	}
 	Dictionary r;
-	r[d.get_key_at_index(idx)] = d.get_value_at_index(idx);
+	r[d.get_key_at_index(i)] = d.get_value_at_index(i);
 	return r;
 }
 #endif
@@ -129,8 +129,14 @@ Dictionary PG_Dict::_gd_filter(const Dictionary &d, const Callable &f) {
 
 #ifdef PG_GD_FNS
 void PG_Dict::_bind_methods() {
+	ClassDB::bind_static_method("PG_Dict", D_METHOD("is_dict", "v"), &PG_Dict::is_dict);
+
+	ClassDB::bind_static_method("PG_Dict", D_METHOD("to_dict", "v"), &PG_Dict::to_dict);
 	ClassDB::bind_static_method("PG_Dict", D_METHOD("from_arr", "a", "f"), &PG_Dict::_gd_from_arr);
+
+	ClassDB::bind_static_method("PG_Dict", D_METHOD("idx_ok", "a", "i"), &PG_Dict::idx_ok);
 	ClassDB::bind_static_method("PG_Dict", D_METHOD("get_by_idx", "a", "idx"), &PG_Dict::_gd_get_by_idx);
+
 	ClassDB::bind_static_method("PG_Dict", D_METHOD("filter", "d", "f"), &PG_Dict::_gd_filter);
 }
 #endif

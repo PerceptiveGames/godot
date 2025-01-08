@@ -48,8 +48,19 @@ public:
 
 public:
 	static Vector2 set_from_v3_xy(Vector3 &xy);
+#ifdef PG_GD_FNS
+	static Vector2 _gd_set_from_v3_xy(Vector3 xy);
+#endif
+
 	static Vector2 set_from_v3_xz(Vector3 &xz);
+#ifdef PG_GD_FNS
+	static Vector2 _gd_set_from_v3_xz(Vector3 xz);
+#endif
+
 	static Vector2 set_from_v3_yz(Vector3 &yz);
+#ifdef PG_GD_FNS
+	static Vector2 _gd_set_from_v3_yz(Vector3 yz);
+#endif
 
 
 //////////////////////////////////////////////////
@@ -64,7 +75,7 @@ public:
 
 
 public:
-	PG_INLINE static TypedArray<Vector2> to_arr_of_v2(const Array &a);
+	PG_INLINE static TypedArray<Vector2> to_v2_arr(const Array &a);
 };
 
 

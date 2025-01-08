@@ -81,15 +81,15 @@ public:
 
 public:
 	// TODO: Maybe add bool arg for putting into recycle bin.
-	bool rn_or_rm(String fp, String nn);
+	bool rn_or_rm(String path, String new_name);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	Ref<PGW_Dict> get_md_dt(String fp, bool cur_tm_if_none);
-	Ref<PGW_Str> get_fmt_md_dt(String fp, bool cur_tm_if_none);
+	Ref<PGW_Dict> get_md_dt(String path, bool cur_dt_if_none);
+	Ref<PGW_Str> get_fmt_md_dt(String path, bool cur_dt_if_none);
 
 
 //////////////////////////////////////////////////
@@ -97,7 +97,9 @@ public:
 
 public:
 	// DOC: sort_f takes a reference to the array 'arr'.
-	bool get_file_paths(Vector<String> &arr, String root_dir_path, String rel_dir_path, const Callable &filter_f, bool recursive, bool abs_paths, bool sort, const Callable &sort_f = nullptr);
+	// TODO: Use of 'sort' bool arg? If 'sort_f' is nullptr, is it not enough?
+	//bool get_file_paths(Vector<String> &arr, String root_dir_path, String rel_dir_path, const Callable &filter_f, bool recursive, bool abs_paths, bool sort, const Callable &sort_f = nullptr);
+	Ref<PGW_VecStr> get_file_paths(String root_dir_path, String rel_dir_path, const Callable &filter_f, bool recursive, bool abs_paths, bool sort, const Callable &sort_f = nullptr);
 
 
 //////////////////////////////////////////////////

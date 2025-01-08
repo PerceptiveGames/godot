@@ -4,7 +4,6 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 
 
 //////////////////////////////////////////////////
@@ -69,10 +68,10 @@ public:
 
 	// NOTE: There was also get_key_by_idx() and get_value_by_idx().
 	template <typename K, typename V>
-	static Pair<K, V> get_by_idx(const TypedDictionary<K, V> &d, int idx);
+	static Pair<K, V> get_by_idx(const TypedDictionary<K, V> &d, int i);
 
 #ifdef PG_GD_FNS
-	static Dictionary _gd_get_by_idx(const Dictionary &d, int idx);
+	static Dictionary _gd_get_by_idx(const Dictionary &d, int i);
 #endif
 
 

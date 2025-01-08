@@ -32,7 +32,7 @@ int PG_Time::get_delta_usec() const {
 Error PG_Time::connect_to_ticker(const Callable &f) {
 	Error e = connect("process", f);
 	if (e) {
-		_st_(_stree->get_PG_Msgr()->bcast(PGE_MsgLevel::ERROR, "SGN_CONNECT", e, PG_Str::mk_ta_str(f.get_method(), "process")));
+		_st_(_stree->get_PG_Msgr()->bcast(PGE_MsgLevel::ERROR, "SGN_CONNECT", e, PG_Str::mk_str_ta(f.get_method(), "process")));
 	}
 	return e;
 }

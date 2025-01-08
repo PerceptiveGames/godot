@@ -16,6 +16,17 @@
 //////////////////////////////////////////////////
 
 
+// NOTE: See comment in .h before deleting.
+//template TypedArray<String> PG_Str::mk_str_ta(String s0);
+//template TypedArray<String> PG_Str::mk_str_ta(String s0, String s1);
+//template TypedArray<String> PG_Str::mk_str_ta(String s0, String s1, String s2);
+//template TypedArray<String> PG_Str::mk_str_ta(String s0, String s1, String s2, String s3);
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
 bool PG_Str::is_str(const Variant &v) {
 	return v.get_type() == Variant::STRING;
 }
@@ -134,14 +145,20 @@ TypedArray<String> PG_Str::to_arr_of_str(const Array &a) {
 //////////////////////////////////////////////////
 
 
-TypedArray<String> PG_Str::mk_ta_str(String s0) {
+//template <typename... VarArgs>
+//TypedArray<String> PG_Str::mk_str_ta(VarArgs... args) {
+//	return PG_Arr::args_to_arr<String>(args...);
+//}
+
+
+TypedArray<String> PG_Str::mk_str_ta(String s0) {
 	TypedArray<String> a;
 	a.append(s0);
 	return a;
 }
 
 
-TypedArray<String> PG_Str::mk_ta_str(String s0, String s1) {
+TypedArray<String> PG_Str::mk_str_ta(String s0, String s1) {
 	TypedArray<String> a;
 	a.append(s0);
 	a.append(s1);
@@ -149,7 +166,7 @@ TypedArray<String> PG_Str::mk_ta_str(String s0, String s1) {
 }
 
 
-TypedArray<String> PG_Str::mk_ta_str(String s0, String s1, String s2) {
+TypedArray<String> PG_Str::mk_str_ta(String s0, String s1, String s2) {
 	TypedArray<String> a;
 	a.append(s0);
 	a.append(s1);
@@ -158,7 +175,7 @@ TypedArray<String> PG_Str::mk_ta_str(String s0, String s1, String s2) {
 }
 
 
-TypedArray<String> PG_Str::mk_ta_str(String s0, String s1, String s2, String s3) {
+TypedArray<String> PG_Str::mk_str_ta(String s0, String s1, String s2, String s3) {
 	TypedArray<String> a;
 	a.append(s0);
 	a.append(s1);
@@ -173,11 +190,6 @@ TypedArray<String> PG_Str::mk_ta_str(String s0, String s1, String s2, String s3)
 
 void PG_Str::_bind_methods() {
 #ifdef PG_GD_FNS
-
-
-	//ClassDB::bind_static_method("PG_Arr", D_METHOD("is_arr_of_str", "v"), &PG_Arr::is_arr_of_str);
-
-
 	ClassDB::bind_static_method("PG_Str", D_METHOD("is_str", "v"), &PG_Str::is_str);
 
 	ClassDB::bind_static_method("PG_Str", D_METHOD("to_str", "v"), &PG_Str::to_str);
@@ -190,6 +202,12 @@ void PG_Str::_bind_methods() {
 	ClassDB::bind_static_method("PG_Str", D_METHOD("rm_bbcode", "st"), &PG_Str::rm_bbcode);
 
 	ClassDB::bind_static_method("PG_Str", D_METHOD("join_non_empty", "a", "sep"), &PG_Str::join_non_empty);
+
+	ClassDB::bind_static_method("PG_Str", D_METHOD("is_arr_of_str", "v"), &PG_Str::is_arr_of_str);
+
+	ClassDB::bind_static_method("PG_Str", D_METHOD("to_arr_of_str", "a"), &PG_Str::to_arr_of_str);
+
+	//ClassDB::bind_static_method("PG_Str", D_METHOD("mk_str_ta", "a"), &PG_Str::mk_str_ta);
 #endif
 }
 

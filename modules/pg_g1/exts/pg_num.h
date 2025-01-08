@@ -34,9 +34,7 @@ class PG_Num : public Object {
 public:
 	PG_INLINE static bool is_int(const Variant &v);
 
-
 	static bool is_only_digits(String s);
-
 
 	static bool is_int_in_rng(Variant v, int min_incl, int max_incl);
 
@@ -47,10 +45,8 @@ public:
 public:
 	PG_INLINE static int to_int(const Variant &v);
 
-
 	// DOC: Returns -1 if v is not greater than or equal to i.
 	PG_INLINE static int to_int_if_gte(const Variant &v, const int i);
-
 
 	// DOC: Returns -1 if v is not between min_incl and max_incl, inclusive.
 	PG_INLINE static int to_int_if_bw(const Variant &v, const int min_incl, const int max_incl);
@@ -60,8 +56,10 @@ public:
 	
 
 public:
+	// DOC: Named so because PackedInt32Array is a Vector<int32> internally.
 	PG_INLINE static bool is_i32vec(const Variant &v);
 
+	// DOC: Named so because PackedInt64Array is a Vector<int64> internally.
 	PG_INLINE static bool is_i64vec(const Variant &v);
 
 
@@ -81,7 +79,6 @@ protected:
 
 public:
 	static Ref<RandomNumberGenerator> const get_rng();
-
 
 	static int get_rnd_int(int min_incl, int max_incl);
 

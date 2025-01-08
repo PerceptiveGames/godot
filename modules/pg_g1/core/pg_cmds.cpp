@@ -1,3 +1,4 @@
+#include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
 #include "core/string/string_name.h"
 #include "core/string/ustring.h"
@@ -6,6 +7,7 @@
 #include "core/variant/callable.h"
 #include "core/variant/variant.h"
 #include "modules/pg_g1/core/pg_cmds.h"
+#include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/types/pg_types.h"
 
 
@@ -65,6 +67,19 @@ Ref<PG_Cmds> PG_Cmds::mk() {
 
 
 //////////////////////////////////////////////////
+
+
+void PG_Cmds::_bind_methods() {
+#ifdef PG_GD_FNS
+	ClassDB::bind_method(D_METHOD("mk_cmd", "id", "f_send", "f_get"), &PG_Cmds::mk_cmd);
+
+	ClassDB::bind_method(D_METHOD("send", "cmd"), &PG_Cmds::send);
+	ClassDB::bind_method(D_METHOD("receive", "id"), &PG_Cmds::receive);
+#endif
+}
+
+
+//////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
 
@@ -90,6 +105,17 @@ PG_Cmd::PG_Cmd(String id, const Callable &f_send, const Callable &f_get) :
 	_f_send(f_send),
 	_f_get(f_get),
 	_case_sensitive(false) {}
+
+
+//////////////////////////////////////////////////
+
+
+void PG_Cmd::_bind_methods() {
+#ifdef PG_GD_FNS
+	ClassDB::bind_method(D_METHOD("call_send", "args"), &PG_Cmd::call_send);
+	ClassDB::bind_method(D_METHOD("call_receive"), &PG_Cmd::call_receive);
+#endif
+}
 
 
 //////////////////////////////////////////////////
