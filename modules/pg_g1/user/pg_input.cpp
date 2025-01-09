@@ -4,6 +4,7 @@
 #include "core/input/input_map.h"
 #include "core/io/config_file.h"
 #include "core/io/file_access.h"
+#include "core/object/class_db.h"
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "core/os/keyboard.h"
@@ -43,7 +44,6 @@
 
 // TODO: Rename methods.
 
-
 //#DOC : Loads custom values.
 //#DOC : The.cfg file may not contain custom values for EVERY keybind.
 //#NOTE : Deletes any binds not used in the game(could be a bind that was renamed by dev)
@@ -60,13 +60,39 @@
 //#TODO: Add signal that executes when config changes are validated(i.e.OK button clicked)
 
 
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+//template<> int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
+//extern template int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
+
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
 
-template<> int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
-extern template int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
+PG_InputBind::PG_InputBind() :
+		device(StringName()),
+		key(Key::NONE) {}
+
+
+PG_InputBind::PG_InputBind(StringName n_device, Key n_key) :
+		device(n_device),
+		key(n_key) {}
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+PG_InputParams::PG_InputParams() :
+		mouse_vis(false) {}
+
+
+PG_InputParams::PG_InputParams(bool _mouse_vis) {
+		mouse_vis = _mouse_vis;
+}
 
 
 //////////////////////////////////////////////////
@@ -110,7 +136,7 @@ bool PG_Input::_try_read_file_and_load_binds() {
 		}
 		return false;
 	}
-	int ver = PG_Num::to_int_if_bw(_file->get_value("meta", "parser_version", -1), 1, pg_config_file_parser_version);
+	int ver = PG_Num::to_int_if_bw(_file->get_value("meta", "parser_version", -1), 1, PG_Const::config_file_parser_version);
 	if (ver < 0) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_PARSER_VER", fp->r()));
 		return false;
@@ -240,6 +266,7 @@ void PG_Input::_set_default_binds() {
 
 //////////////////////////////////////////////////
 
+
 Array PG_Input::_get_keys_as_vec(Vector<PG_InputBind> v) {
 	Array r;
 	for (PG_InputBind b : v) {
@@ -253,7 +280,7 @@ Array PG_Input::_get_keys_as_vec(Vector<PG_InputBind> v) {
 void PG_Input::_filter_out_invalid_binds() {
 	_file->clear();
 	// TODO: If parser version ever gets upgraded, do not forget data conversion.
-	_file->set_value("meta", "parser_version", pg_config_file_parser_version);
+	_file->set_value("meta", "parser_version", PG_Const::config_file_parser_version);
 	for (int i = 0; i < _binds.size(); ++i) {
 		_file->set_value("keyboard", _binds.getk(i), _get_keys_as_vec(_binds.getv(i)));
 	}
@@ -312,14 +339,14 @@ void PG_Input::_clear_system_input_map() {
 //////////////////////////////////////////////////
 
 
-void PG_Input::set_cursor_visible(bool v) {
-	PG_S(Input)->set_mouse_mode(v ? Input::MOUSE_MODE_VISIBLE : Input::MOUSE_MODE_CAPTURED);
-}
-
-
 bool PG_Input::get_cursor_visible() {
 	return (PG_S(Input)->get_mouse_mode() == Input::MOUSE_MODE_VISIBLE ||
 			PG_S(Input)->get_mouse_mode() == Input::MOUSE_MODE_CONFINED);
+}
+
+
+void PG_Input::set_cursor_visible(bool v) {
+	PG_S(Input)->set_mouse_mode(v ? Input::MOUSE_MODE_VISIBLE : Input::MOUSE_MODE_CAPTURED);
 }
 
 
@@ -338,11 +365,12 @@ void PG_Input::input(const Ref<InputEvent> &e) {
 //////////////////////////////////////////////////
 
 
-#ifdef PG_GD_FNS
 void PG_Input::_bind_methods() {
-	//ADD_SIGNAL(MethodInfo("console_show_pressed"));
-}
+#ifdef PG_GD_FNS
+	ClassDB::bind_method(D_METHOD("get_cursor_visible"), &PG_Input::get_cursor_visible);
+	ClassDB::bind_method(D_METHOD("set_cursor_visible", "v"), &PG_Input::set_cursor_visible);
 #endif
+}
 
 
 PG_Input *PG_Input::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {

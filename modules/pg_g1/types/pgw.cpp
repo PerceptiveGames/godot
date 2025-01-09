@@ -83,30 +83,24 @@ PGW<T>::operator bool() const {
 template <class T>
 void PGW<T>::_bind_methods() {
 #ifdef PG_GD_FNS
-//#define PG_BIND_TPL(tdef)                                                    \
-//	ClassDB::bind_method(D_METHOD("ok"), &##tdef::ok);                       \
-//	ClassDB::bind_method(D_METHOD("r"), &##tdef::r);                         \
-//                                                                             \
-//	ClassDB::bind_static_method(#tdef, D_METHOD("mk_ok"), &##tdef::mk_ok);   \
-//	ClassDB::bind_static_method(#tdef, D_METHOD("mk_nok"), &##tdef::mk_nok); \
-//	ClassDB::bind_static_method(#tdef, D_METHOD("mk_r", "r"), &##tdef::mk_r);
-//
-//	//ClassDB::bind_method(D_METHOD("msg"), &##tdef::msg); \
-//		// TODO: Check args order
-//	//ClassDB::bind_static_method(#tdef, D_METHOD("mk_e", "lvl", "id", "details", "e"), &##tdef::_gd_mk_e, DEFVAL(""), DEFVAL(Error::OK)); //\
-////\
-////		ClassDB::bind_method(D_METHOD("bcast"), &##tdef::bcast); //\
-////\
-//		//ClassDB::bind_method(D_METHOD("to_str"), &##tdef::to_str); \
-//		//ClassDB::bind_method(D_METHOD("to_dict"), &##tdef::to_dict);
-//
-//	// TODO: Add macro exec for each template/typedef type.
-//	PG_BIND_TPL(PGW_Vrt);
-//	PG_BIND_TPL(PGW_Str);
-//	PG_BIND_TPL(PGW_Arr);
-//	PG_BIND_TPL(PGW_ArrStr);
-//	//PG_BIND_TPL(PGW_Void);
-//#undef PG_BIND_TPL
+#define PG_BIND_TPL(cls)                                                    \
+	ClassDB::bind_method(D_METHOD("ok"), &##cls::ok);                       \
+	ClassDB::bind_method(D_METHOD("nok"), &##cls::nok);                     \
+	ClassDB::bind_method(D_METHOD("r"), &##cls::r);                         \
+                                                                            \
+	ClassDB::bind_static_method(#cls, D_METHOD("mk_ok"), &##cls::mk_ok);    \
+	ClassDB::bind_static_method(#cls, D_METHOD("mk_nok"), &##cls::mk_nok);  \
+	ClassDB::bind_static_method(#cls, D_METHOD("mk_r", "r"), &##cls::mk_r);
+
+	// TODO: Add macro exec for each template/typedef type.
+	PG_BIND_TPL(PGW_Vrt);
+	PG_BIND_TPL(PGW_Int);
+	PG_BIND_TPL(PGW_Str);
+	PG_BIND_TPL(PGW_Arr);
+	PG_BIND_TPL(PGW_ArrStr);
+	PG_BIND_TPL(PGW_Dict);
+	PG_BIND_TPL(PGW_VecStr);
+#undef PG_BIND_TPL
 #endif
 }
 

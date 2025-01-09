@@ -30,6 +30,9 @@ struct Pair;
 template <typename T>
 class TypedArray;
 
+template <typename T>
+class Vector;
+
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
@@ -54,6 +57,9 @@ public:
 	PG_INLINE static Array to_arr(const Variant &v);
 
 	PG_INLINE static Array from_pair(const Pair<Variant, Variant> &v);
+
+	template <typename T>
+	static TypedArray<T> from_vec(Vector<T> v);
 
 
 //////////////////////////////////////////////////

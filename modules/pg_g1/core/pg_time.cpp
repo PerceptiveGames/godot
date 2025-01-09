@@ -1,5 +1,6 @@
 #include "core/config/engine.h"
 #include "core/error/error_list.h"
+#include "core/object/class_db.h"
 #include "core/object/object.h"
 #include "core/os/time.h"
 #include "core/string/string_name.h"
@@ -96,8 +97,12 @@ void PG_Time::_notification(int p_what) {
 
 
 void PG_Time::_bind_methods() {
-	ADD_SIGNAL(MethodInfo("process", PropertyInfo(Variant::INT, "delta")));
+	ClassDB::bind_method(D_METHOD("get_delta_usec"), &PG_Time::get_delta_usec);
+	ClassDB::bind_method(D_METHOD("connect_to_ticker", "f"), &PG_Time::connect_to_ticker);
+	ClassDB::bind_method(D_METHOD("get_time_scale", "id"), &PG_Time::get_time_scale);
+	ClassDB::bind_method(D_METHOD("set_time_scale", "id", "v"), &PG_Time::set_time_scale);
 
+	ADD_SIGNAL(MethodInfo("process", PropertyInfo(Variant::INT, "delta")));
 	//ADD_SIGNAL(MethodInfo("frame_started_0"));
 	//ADD_SIGNAL(MethodInfo("frame_started_1"));
 	//ADD_SIGNAL(MethodInfo("frame_started_2"));

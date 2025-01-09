@@ -10,9 +10,23 @@
 //////////////////////////////////////////////////
 
 
+class Variant;
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
 class PG_Pair : public RefCounted {
 	GDCLASS(PG_Pair, RefCounted);
 	PG_BIND;
+
+
+//////////////////////////////////////////////////
+
+
+	template <typename T>
+	friend class Ref;
 
 
 //////////////////////////////////////////////////
@@ -32,19 +46,15 @@ public:
 
 
 public:
-	static Ref<PG_Pair> r(const Variant &v1, const Variant &v2);
+	static Ref<PG_Pair> mk(const Variant &v1, const Variant &v2);
 
 
-//////////////////////////////////////////////////
-
-
-public:
+protected:
 	PG_Pair();
-
-
 	PG_Pair(const Variant &v1, const Variant &v2);
 
 
+public:
 	~PG_Pair();
 };
 

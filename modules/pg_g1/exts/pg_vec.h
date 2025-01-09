@@ -14,6 +14,9 @@ enum class Key;
 class Variant;
 
 template <typename T>
+class TypedArray;
+
+template <typename T>
 class Vector;
 
 
@@ -94,6 +97,9 @@ public:
 public:
 	template <typename T>
 	static int resize_until_item(Vector<T> &v, const T &item, bool pop_found_item);
+
+	template <typename T>
+	static Vector<T> from_typed_arr(TypedArray<T> a);
 
 
 //////////////////////////////////////////////////

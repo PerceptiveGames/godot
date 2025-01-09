@@ -34,7 +34,7 @@ class Vector;
 template <typename T>
 class PGW;
 
-// DOC: For each specialization, add call to set_msgr() in PG_SceneTree.
+
 typedef PGW<Variant> PGW_Vrt;
 typedef PGW<int> PGW_Int;
 typedef PGW<String> PGW_Str;
@@ -85,7 +85,6 @@ public:
 
 	static Ref<PGW<T>> mk_nok();
 
-	// DOC: Keep arg to remove item from array. It helps keep everything on one line.
 	static Ref<PGW<T>> mk_r(T r);
 
 

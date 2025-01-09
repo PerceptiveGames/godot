@@ -34,6 +34,13 @@ class PG_Profile : public RefCounted {
 //////////////////////////////////////////////////
 
 
+	template <typename T>
+	friend class Ref;
+
+
+//////////////////////////////////////////////////
+
+
 protected:
 	String _name; // DOC: Displayed name.
 	StringName _id; // DOC: Folder name, snake_case and sanitized.
@@ -57,8 +64,13 @@ protected:
 public:
 	static Ref<PG_Profile> mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
 
+
+protected:
 	PG_Profile();
 	PG_Profile(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
+
+
+public:
 	~PG_Profile();
 };
 

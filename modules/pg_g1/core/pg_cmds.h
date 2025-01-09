@@ -42,7 +42,7 @@ protected:
 
 
 public:
-	Ref<PG_Cmd> mk_cmd(String id, const Callable &f_send, const Callable &f_get);
+	Ref<PG_Cmd> mk_cmd(String id, const Callable &f_send, const Callable &f_recv);
 
 
 //////////////////////////////////////////////////
@@ -89,7 +89,7 @@ protected:
 	bool _case_sensitive;
 
 	Callable _f_send;
-	Callable _f_get;
+	Callable _f_recv;
 
 
 protected:
@@ -102,7 +102,7 @@ protected:
 
 public:
 	PG_Cmd();
-	PG_Cmd(String id, const Callable &f_send, const Callable &f_get);
+	PG_Cmd(String id, const Callable &f_send, const Callable &f_recv);
 };
 
 

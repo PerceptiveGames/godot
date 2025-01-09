@@ -87,8 +87,6 @@ public:
 public:
 	static Ref<PGW_Str> input_file_path(StringName profile_id);
 
-	static Ref<PGW_Str> _gd_input_file_path(StringName profile_id);
-
 
 //////////////////////////////////////////////////
 

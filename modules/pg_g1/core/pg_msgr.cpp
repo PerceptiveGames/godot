@@ -1,6 +1,7 @@
 #include "core/error/error_list.h"
 #include "core/io/dir_access.h"
 #include "core/io/file_access.h"
+#include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
 #include "core/string/string_name.h"
 #include "core/string/ustring.h"
@@ -13,8 +14,9 @@
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_sn.h"
-#include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/exts/pg_str.h"
+#include "modules/pg_g1/exts/pg_vec.h"
+#include "modules/pg_g1/types/pg_types.h"
 
 
 //////////////////////////////////////////////////
@@ -243,8 +245,8 @@ Ref<PG_Msg> PG_Msgr::bcast(Ref<PG_Msg> msg) {
 
 
 #ifdef PG_GD_FNS
-Ref<PG_Msg> PG_Msgr::_gd_bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs) {
-	return bcast(lvl, tgts, id, e, strs);
+Ref<PG_Msg> PG_Msgr::_gd_bcast(PGE_MsgLevel lvl, TypedArray<StringName> tgts, StringName id, Error e, TypedArray<String> strs) {
+	return bcast(lvl, PG_Vec::from_typed_arr<StringName>(tgts), id, e, strs);
 }
 #endif
 
@@ -254,8 +256,19 @@ Ref<PG_Msg> PG_Msgr::_gd_bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, String
 
 void PG_Msgr::_bind_methods() {
 #ifdef PG_GD_FNS
-	// TODO: UNCOMMENT AND FIX.
-	//ClassDB::bind_static_method("PG_Msgr", D_METHOD("bcast", "lvl", "id", "str", "e", "vrt"), &PG_Msgr::_gd_bcast, DEFVAL(""), DEFVAL(Error::OK), DEFVAL(Variant::NIL));
+	ClassDB::bind_method(D_METHOD("bcast", "lvl", "tgts", "id", "e", "strs"), &PG_Msgr::_gd_bcast);
+	//, DEFVAL(""), DEFVAL(Error::OK), DEFVAL(Variant::NIL)
+
+
+	BIND_ENUM_CONSTANT(NONE);
+	BIND_ENUM_CONSTANT(INPUT);
+	BIND_ENUM_CONSTANT(INFO);
+	BIND_ENUM_CONSTANT(WARNING);
+	BIND_ENUM_CONSTANT(ERROR);
+	BIND_ENUM_CONSTANT(INPUT_VIP);
+	BIND_ENUM_CONSTANT(INFO_VIP);
+	BIND_ENUM_CONSTANT(WARNING_VIP);
+	BIND_ENUM_CONSTANT(FATAL);
 #endif
 }
 
@@ -267,7 +280,6 @@ Ref<PG_Msgr> PG_Msgr::mk() {
 
 PG_Msgr::PG_Msgr() {
 	_msgs = PG_Msgs::mk();
-
 }
 
 

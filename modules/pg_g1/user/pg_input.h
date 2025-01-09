@@ -3,10 +3,7 @@
 
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
-#include "core/os/keyboard.h"
-#include "core/templates/vmap.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 #include "scene/main/node.h"
 
 
@@ -21,12 +18,21 @@
 //////////////////////////////////////////////////
 
 
+class Array;
+class ConfigFile;
+enum class Key;
+class InputEvent;
+class StringName;
+
+template <typename T>
+class Vector;
+
+template <typename K, typename V>
+class VMap;
+
 class PG_FS;
 class PG_Msgr;
 class PG_Profile;
-
-class ConfigFile;
-class InputEvent;
 
 
 //////////////////////////////////////////////////
@@ -37,28 +43,20 @@ struct PG_InputBind {
 	StringName device;
 	Key key;
 
-
-	PG_InputBind() :
-			device(StringName()),
-			key(Key::NONE) {}
-
-
-	PG_InputBind(StringName n_device, Key n_key) :
-			device(n_device),
-			key(n_key) {}
+	PG_InputBind();
+	PG_InputBind(StringName n_device, Key n_key);
 };
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 
 struct PG_InputParams {
 	bool mouse_vis;
 
-
-	PG_InputParams() : mouse_vis(false) {}
-
-
-	PG_InputParams(bool _mouse_vis) {
-		mouse_vis = _mouse_vis;
-	}
+	PG_InputParams();
+	PG_InputParams(bool _mouse_vis);
 };
 
 
@@ -106,23 +104,33 @@ protected:
 
 
 protected:
+	void _set_actions();
+
+	void _set_params();
+
+
+//////////////////////////////////////////////////
+
+
+protected:
 	bool _file_disabled;
 
 	bool _try_read_file_and_load_binds();
 
 	bool _try_create_file();
 
+	bool _read_file_and_load_binds();
+
+	bool _write_file();
+
+
+//////////////////////////////////////////////////
+
+
+protected:
 	Vector<Key> _get_keycodes(StringName act);
 
 	void _add_to_binds(StringName act, StringName dev, Key k);
-
-	bool _read_file_and_load_binds();
-
-	Array _get_keys_as_vec(Vector<PG_InputBind> v);
-
-	void _filter_out_invalid_binds();
-
-	bool _write_file();
 
 	void _set_custom_binds();
 
@@ -138,16 +146,9 @@ protected:
 
 
 protected:
-	void _set_actions();
+	Array _get_keys_as_vec(Vector<PG_InputBind> v);
 
-	void _set_params();
-
-
-//////////////////////////////////////////////////
-
-
-public:
-	virtual void input(const Ref<InputEvent> &e) override;
+	void _filter_out_invalid_binds();
 
 
 //////////////////////////////////////////////////
@@ -174,10 +175,22 @@ public:
 
 
 public:
+	virtual void input(const Ref<InputEvent> &e) override;
+
+
+//////////////////////////////////////////////////
+
+
+public:
 	static PG_Input *mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf);
 
+
+protected:
 	PG_Input();
 	PG_Input(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf);
+
+
+public:
 	~PG_Input();
 };
 

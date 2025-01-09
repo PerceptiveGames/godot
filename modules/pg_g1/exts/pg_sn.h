@@ -12,6 +12,9 @@
 class StringName;
 
 template <typename T>
+class TypedArray;
+
+template <typename T>
 class Vector;
 
 class PG_Vec;
@@ -24,6 +27,13 @@ class PG_Vec;
 class PG_SN : public Object {
 	GDCLASS(PG_SN, Object);
 	PG_BIND;
+
+
+//////////////////////////////////////////////////
+
+
+//public:
+//	TypedArray<StringName> to_sn_arr(const Vector<StringName> &v);
 
 
 //////////////////////////////////////////////////

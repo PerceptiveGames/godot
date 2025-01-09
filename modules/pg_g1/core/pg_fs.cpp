@@ -89,7 +89,7 @@ Ref<FileAccess> PG_FS::open_file(String path, bool create_if_none, bool auto_clo
 			timer = _open_files_timers[path];
 			_st_(timer->restart());
 		} else {
-			timer = _timers->simple(nullptr, pg_file_auto_close_delay, callable_mp(this, &PG_FS::close_file).unbind(1).bind(path));
+			timer = _timers->simple(nullptr, PG_Const::file_auto_close_delay, callable_mp(this, &PG_FS::close_file).unbind(1).bind(path));
 			_st_(timer->start());
 		}
 	}
@@ -384,7 +384,7 @@ void PG_FileLogger::_delete_old_logs() {
 	if (!paths->ok()) {
 		return;
 	}
-	for (int i = 0; i < paths->r().size() - pg_max_log_files; ++i) {
+	for (int i = 0; i < paths->r().size() - PG_Const::max_log_files; ++i) {
 		if (Error e = DirAccess::remove_absolute(paths->r()[i])) {
 			_st_(_msgr->bcast(PGE_MsgLevel::WARNING, "RM_FILE", e, paths->r()[i]));
 		}

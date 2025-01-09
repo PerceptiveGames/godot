@@ -27,6 +27,8 @@ template bool PG_Vec::idx_ok(const Vector<Node3D *> &v, int i);
 // DOC: As example. Remove later if not needed.
 template Node3D *PG_Vec::get_by_idx<Node3D *>(const Vector<Node3D *> &a, int idx, Node3D *&def);
 
+template Vector<StringName> PG_Vec::from_typed_arr(TypedArray<StringName> a);
+
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
@@ -135,12 +137,25 @@ int PG_Vec::resize_until_item(Vector<T> &v, const T &item, bool pop_found_item) 
 //////////////////////////////////////////////////
 
 
+template <typename T>
+Vector<T> PG_Vec::from_typed_arr(TypedArray<T> a) {
+	Vector<T> r;
+	for (T e : a) {
+		r.append(e);
+	}
+	return r;
+}
+
+
+//////////////////////////////////////////////////
+
+
 Vector<Key> PG_Vec::to_arr_of_valid_keycodes(const Variant &v) {
 	Vector<Key> r;
-	if (!PG_Str::is_arr_of_str(v)) {
+	if (!PG_Str::is_str_arr(v)) {
 		return r;
 	}
-	for (const String &s : PG_Str::to_arr_of_str(v)) {
+	for (const String &s : PG_Str::to_str_arr(v)) {
 		Key k = find_keycode(s);
 		if (k != Key::NONE) {
 			r.append(k);

@@ -2,6 +2,7 @@
 #include "modules/pg_g1/core/pg_cmds.h"
 #include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/core/pg_msgr.h"
+#include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/user/pg_profile.h"
 #include "modules/pg_g1/user/pg_session.h"

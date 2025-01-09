@@ -3,6 +3,7 @@
 #include "modules/pg_g1/core/pg_sys.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "scene/main/node.h"
+#include "core/object/class_db.h"
 
 
 //////////////////////////////////////////////////
@@ -26,9 +27,8 @@ void PG_Sys::force_quit() {
 
 void PG_Sys::_bind_methods() {
 #ifdef PG_GD_FNS
-	// TODO: Not static anymore
-	//ClassDB::bind_static_method("PG_Sys", D_METHOD("quit"), &PG_Sys::quit);
-	//ClassDB::bind_static_method("PG_Sys", D_METHOD("force_quit"), &PG_Sys::force_quit);
+	ClassDB::bind_method(D_METHOD("quit"), &PG_Sys::quit);
+	ClassDB::bind_method(D_METHOD("force_quit"), &PG_Sys::force_quit);
 #endif
 }
 

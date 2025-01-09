@@ -2,6 +2,7 @@
 #include "core/string/string_name.h"
 #include "core/templates/vector.h"
 #include "modules/pg_g1/data/pg_macros.h"
+#include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_sn.h"
 #include "pg_vec.h"
 
@@ -9,6 +10,10 @@
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
+
+//TypedArray<StringName> PG_SN::to_sn_arr(const Vector<StringName> &v) {
+//	return PG_Arr::assign<StringName>(v);
+//}
 
 Vector<StringName> PG_SN::mk_vec_sn(StringName sn0) {
 	Vector<StringName> v;

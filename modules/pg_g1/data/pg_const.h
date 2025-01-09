@@ -1,6 +1,9 @@
 #ifndef PG_CONST_H
 #define PG_CONST_H
 
+#include "core/object/object.h"
+#include "modules/pg_g1/data/pg_macros.h"
+
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
@@ -10,43 +13,58 @@
 
 
 //////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 
-const static float pg_file_auto_close_delay = 30.0;
+class PG_Const : public Object {
+	GDCLASS(PG_Const, Object);
+	PG_BIND;
 
 
 //////////////////////////////////////////////////
 
 
-const static int pg_max_log_files = 10;
+public:
+	const static float file_auto_close_delay;
 
 
 //////////////////////////////////////////////////
 
 
-const static int pg_config_file_parser_version = 1;
+public:
+	const static int max_log_files;
 
 
 //////////////////////////////////////////////////
 
 
-const static float pg_interact_raycast_length = 1.0;
+public:
+	const static int config_file_parser_version;
 
 
 //////////////////////////////////////////////////
 
 
-const static int pg_while_loop_low_limit = 100;
-const static int pg_while_loop_mid_limit = 1000;
-const static int pg_while_loop_high_limit = 10000;
+public:
+	const static float interact_raycast_length;
 
 
 //////////////////////////////////////////////////
 
 
-// DOC: Used as a default ID value in files containing translatable strings.
-const static int DEFAULT_PO_ID = 0;
+public:
+	const static int while_loop_low_limit;
+	const static int while_loop_mid_limit;
+	const static int while_loop_high_limit;
 
+
+//////////////////////////////////////////////////
+
+
+public:
+	// DOC: Used as a default ID value in files containing translatable strings.
+	const static int default_po_id;
+};
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////

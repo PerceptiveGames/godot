@@ -1,4 +1,5 @@
 #include "core/object/callable_method_pointer.h"
+#include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
 #include "core/templates/vector.h"
 #include "core/variant/callable.h"
@@ -75,31 +76,31 @@ bool PG_TimerUnit::_update(PG_Time *time, int delta) {
 //////////////////////////////////////////////////
 
 
-Ref<PG_Timer> PG_Timer::initial_delay(float initial_delay) {
-	_initial_delay = initial_delay;
+Ref<PG_Timer> PG_Timer::set_initial_delay(const float d) {
+	_initial_delay = d;
 	return this;
 }
 
 
-Ref<PG_Timer> PG_Timer::time_scale_id(Variant time_scale_id) {
-	_time_scale_id = time_scale_id;
+Ref<PG_Timer> PG_Timer::set_time_scale_id(const Variant &id) {
+	_time_scale_id = id;
 	return this;
 }
 
 
-Ref<PG_Timer> PG_Timer::process_mode(Node::ProcessMode process_mode) {
+Ref<PG_Timer> PG_Timer::set_process_mode(const Node::ProcessMode m) {
 #if PG_BUILD_LEVEL < PG_RELEASE
-	if (process_mode == Node::PROCESS_MODE_INHERIT && !_process_mode_parent) {
+	if (m == Node::PROCESS_MODE_INHERIT && !_process_mode_parent) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "TIMER_INSTANCE_PROCESS_MODE", to_string()));
 	}
-#endif // DEBUG_PUBLIC
+#endif // PG_BUILD_LEVEL < PG_RELEASE
 
-	_process_mode = process_mode;
+	_process_mode = m;
 	return this;
 }
 
 
-const bool PG_Timer::is_persistent() const {
+bool PG_Timer::is_persistent() const {
 	return _persistent;
 }
 
@@ -286,11 +287,27 @@ void PG_Timer::_setup_process_mode(Node *process_mode_parent) {
 		_process_mode_parent = process_mode_parent;
 		_process_mode = Node::PROCESS_MODE_INHERIT;
 	}
-	// DOC: Else: Keep default, which is 'PROCESS_MODE_PAUSABLE'.
+	// DOC: Else: Keeps default, which is 'PROCESS_MODE_PAUSABLE'.
 }
 
 
 //////////////////////////////////////////////////
+
+
+void PG_Timer::_bind_methods() {
+#ifdef PG_GD_FNS
+	ClassDB::bind_method(D_METHOD("set_initial_delay", "d"), &PG_Timer::set_initial_delay);
+	ClassDB::bind_method(D_METHOD("set_time_scale_id", "id"), &PG_Timer::set_time_scale_id);
+	ClassDB::bind_method(D_METHOD("set_process_mode", "m"), &PG_Timer::set_process_mode);
+	ClassDB::bind_method(D_METHOD("is_persistent"), &PG_Timer::is_persistent);
+
+	ClassDB::bind_method(D_METHOD("start"), &PG_Timer::start);
+	ClassDB::bind_method(D_METHOD("pause"), &PG_Timer::pause);
+	ClassDB::bind_method(D_METHOD("resume"), &PG_Timer::resume);
+	ClassDB::bind_method(D_METHOD("restart"), &PG_Timer::restart);
+	ClassDB::bind_method(D_METHOD("cancel"), &PG_Timer::cancel);
+#endif
+}
 
 
 PG_Timer::PG_Timer() {
@@ -462,6 +479,17 @@ void PG_Timers::process(int delta) {
 
 void PG_Timers::_bind_methods() {
 #ifdef PG_GD_FNS
+	ClassDB::bind_method(D_METHOD("simple", "process_mode_parent", "finish_delay", "finish_f"), &PG_Timers::simple);
+	ClassDB::bind_method(D_METHOD("simple_pulse", "process_mode_parent", "pulse_count", "pulse_f", "finish_delay", "finish_f"), &PG_Timers::simple_pulse);
+	ClassDB::bind_method(D_METHOD("pulse", "process_mode_parent", "pulse_interval", "pulse_count", "pulse_f", "finish_f"), &PG_Timers::pulse);
+	ClassDB::bind_method(D_METHOD("infinite", "process_mode_parent", "pulse_interval", "pulse_f"), &PG_Timers::infinite);
+
+	ClassDB::bind_method(D_METHOD("simple_persistent", "process_mode_parent", "finish_delay", "finish_f"), &PG_Timers::simple_persistent);
+	ClassDB::bind_method(D_METHOD("simple_pulse_persistent", "process_mode_parent", "pulse_count", "pulse_f", "finish_delay", "finish_f"), &PG_Timers::simple_pulse_persistent);
+	ClassDB::bind_method(D_METHOD("pulse_persistent", "process_mode_parent", "pulse_interval", "pulse_count", "pulse_f", "finish_f"), &PG_Timers::pulse_persistent);
+	ClassDB::bind_method(D_METHOD("infinite_persistent", "process_mode_parent", "pulse_interval", "pulse_f"), &PG_Timers::infinite_persistent);
+
+	ClassDB::bind_method(D_METHOD("deferred_one_shot", "process_mode_parent", "f"), &PG_Timers::deferred_one_shot);
 #endif
 }
 

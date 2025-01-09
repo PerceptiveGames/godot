@@ -86,14 +86,14 @@ public:
 
 
 public:
-	PG_INLINE static bool is_arr_of_str(const Variant &v);
+	PG_INLINE static bool is_str_arr(const Variant &v);
 
 
 //////////////////////////////////////////////////
 
 
 public:
-	PG_INLINE static TypedArray<String> to_arr_of_str(const Array &a);
+	PG_INLINE static TypedArray<String> to_str_arr(const Array &a);
 
 
 //////////////////////////////////////////////////

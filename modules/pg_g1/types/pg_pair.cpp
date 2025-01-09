@@ -22,7 +22,7 @@ Variant PG_Pair::v2() {
 //////////////////////////////////////////////////
 
 
-Ref<PG_Pair> PG_Pair::r(const Variant &v1, const Variant &v2) {
+Ref<PG_Pair> PG_Pair::mk(const Variant &v1, const Variant &v2) {
 	Ref<PG_Pair> r;
 	r.instantiate(v1, v2);
 	return r;
@@ -34,7 +34,7 @@ Ref<PG_Pair> PG_Pair::r(const Variant &v1, const Variant &v2) {
 
 #ifdef PG_GD_FNS
 void PG_Pair::_bind_methods() {
-	ClassDB::bind_static_method("PG_Pair", D_METHOD("r", "v1", "v2"), &PG_Pair::r);
+	ClassDB::bind_static_method("PG_Pair", D_METHOD("mk", "v1", "v2"), &PG_Pair::mk);
 }
 #endif
 
@@ -50,7 +50,6 @@ PG_Pair::PG_Pair(const Variant &v1, const Variant &v2) :
 
 
 PG_Pair::~PG_Pair() {}
-
 
 
 //////////////////////////////////////////////////

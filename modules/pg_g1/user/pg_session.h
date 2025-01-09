@@ -38,6 +38,13 @@ class PG_Session : public RefCounted {
 //////////////////////////////////////////////////
 
 
+	template <typename T>
+	friend class Ref;
+
+
+//////////////////////////////////////////////////
+
+
 protected:
 	Ref<PG_FS> _fs;
 	Ref<PG_Msgr> _msgr;
@@ -57,14 +64,17 @@ public:
 
 //////////////////////////////////////////////////
 
-//////////////////////////////////////////////////
-
 
 public:
 	static Ref<PG_Session> mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
 
+
+protected:
 	PG_Session();
 	PG_Session(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
+
+
+public:
 	~PG_Session();
 };
 

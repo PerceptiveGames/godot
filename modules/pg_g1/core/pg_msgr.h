@@ -4,6 +4,7 @@
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
 #include "core/templates/vmap.h"
+#include "core/variant/binder_common.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/types/pg_typedefs.h"
 
@@ -141,7 +142,7 @@ public:
 	Ref<PG_Msg> bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs);
 
 #ifdef PG_GD_FNS
-	Ref<PG_Msg> _gd_bcast(PGE_MsgLevel lvl, Vector<StringName> tgts, StringName id, Error e, TypedArray<String> strs);
+	Ref<PG_Msg> _gd_bcast(PGE_MsgLevel lvl, TypedArray<StringName> tgts, StringName id, Error e, TypedArray<String> strs);
 #endif
 
 
@@ -228,6 +229,13 @@ public:
 public:
 	PG_Msg();
 };
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+VARIANT_ENUM_CAST(PGE_MsgLevel);
 
 
 //////////////////////////////////////////////////

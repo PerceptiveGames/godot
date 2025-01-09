@@ -1,3 +1,4 @@
+#include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
 #include "core/os/memory.h"
 #include "editor/editor_interface.h"
@@ -124,17 +125,28 @@ Vector2 PG_SceneTree::get_mouse_pos(int ed_idx) {
 
 void PG_SceneTree::_bind_methods() {
 #ifdef PG_GD_FNS
-	// TODO: No longer static.
-	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("pg_get_viewport", "ed_idx"), &PG_SceneTree::pg_get_viewport, DEFVAL(0));
-	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_world_3d", "ed_idx"), &PG_SceneTree::get_world_3d, DEFVAL(0));
-	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_main_cam", "ed_idx"), &PG_SceneTree::get_main_cam, DEFVAL(0));
-	//ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_mouse_pos", "ed_idx"), &PG_SceneTree::get_mouse_pos, DEFVAL(0));
+	ClassDB::bind_static_method("PG_SceneTree", D_METHOD("get_pg_scene_tree"), &PG_SceneTree::get_PG_SceneTree);
+	ClassDB::bind_method(D_METHOD("get_pg_sys"), &PG_SceneTree::get_PG_Sys);
+	ClassDB::bind_method(D_METHOD("get_pg_fs"), &PG_SceneTree::get_PG_FS);
+	ClassDB::bind_method(D_METHOD("get_pg_time"), &PG_SceneTree::get_PG_Time);
+	ClassDB::bind_method(D_METHOD("get_pg_timers"), &PG_SceneTree::get_PG_Timers);
+	ClassDB::bind_method(D_METHOD("get_pg_msgr"), &PG_SceneTree::get_PG_Msgr);
+	ClassDB::bind_method(D_METHOD("get_pg_cmds"), &PG_SceneTree::get_PG_Cmds);
+	ClassDB::bind_method(D_METHOD("get_pg_"), &PG_SceneTree::get_PG_SgnsUser);
+
+	ClassDB::bind_method(D_METHOD("pg_get_root"), &PG_SceneTree::pg_get_root);
+	ClassDB::bind_method(D_METHOD("pg_is_paused"), &PG_SceneTree::pg_is_paused);
+
+	ClassDB::bind_method(D_METHOD("pg_get_viewport", "ed_idx"), &PG_SceneTree::pg_get_viewport, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("get_world_3d", "ed_idx"), &PG_SceneTree::get_world_3d, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("get_main_cam", "ed_idx"), &PG_SceneTree::get_main_cam, DEFVAL(0));
+	ClassDB::bind_method(D_METHOD("get_mouse_pos", "ed_idx"), &PG_SceneTree::get_mouse_pos, DEFVAL(0));
 #endif
 }
 
 
 PG_SceneTree::PG_SceneTree() {
-	// TODO:
+	// TODO (OLD?):
 	// For each singleton s below
 	//   If in-editor singleton 'es' inheriting from s exists
 	//     Get singleton 'es' and assign it to the field assigned to s
@@ -144,7 +156,7 @@ PG_SceneTree::PG_SceneTree() {
 	// Since 'es' does not exist at this point in the ctor, either (1) defer assignment of 'es' to s,
 	// or (2) init below, and then init 'es' and assign vars from s to 'es', and then get rid of s.
 
-	// TODO: Maybe have sys, fs, time, timers, msgr, cmds not be singletons and be members of 'sys' or new 'core'
+	// TODO (OLD?): Maybe have sys, fs, time, timers, msgr, cmds not be singletons and be members of 'sys' or new 'core'
 	// singleton instead. rgx, num can be members of a new exts singleton.
 
 	_singleton = this;

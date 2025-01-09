@@ -1,8 +1,10 @@
 #include "core/math/math_funcs.h"
 #include "core/object/class_db.h"
 #include "core/os/keyboard.h"
+#include "core/string/string_name.h"
 #include "core/string/ustring.h"
 #include "core/templates/pair.h"
+#include "core/templates/vector.h"
 #include "core/variant/array.h"
 #include "core/variant/callable.h"
 #include "core/variant/typed_array.h"
@@ -27,6 +29,13 @@
 //////////////////////////////////////////////////
 
 
+template TypedArray<StringName> PG_Arr::from_vec(Vector<StringName> v);
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
 bool PG_Arr::is_arr(const Variant &v) {
 	return v.get_type() == Variant::ARRAY;
 }
@@ -44,6 +53,16 @@ Array PG_Arr::from_pair(const Pair<Variant, Variant> &v) {
 	Array r;
 	r.append(v.first);
 	r.append(v.second);
+	return r;
+}
+
+
+template <typename T>
+TypedArray<T> PG_Arr::from_vec(Vector<T> v) {
+	TypedArray<T> r;
+	for (T e : v) {
+		r.append(e);
+	}
 	return r;
 }
 

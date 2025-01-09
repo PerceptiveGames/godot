@@ -121,7 +121,7 @@ VMap<String, String> PG_Str::parse_kv_pairs(String st, String kv_sep, String pai
 //////////////////////////////////////////////////
 
 
-bool PG_Str::is_arr_of_str(const Variant &v) {
+bool PG_Str::is_str_arr(const Variant &v) {
 	if (!PG_Arr::is_arr(v)) {
 		return false;
 	}
@@ -137,7 +137,7 @@ bool PG_Str::is_arr_of_str(const Variant &v) {
 //////////////////////////////////////////////////
 
 
-TypedArray<String> PG_Str::to_arr_of_str(const Array &a) {
+TypedArray<String> PG_Str::to_str_arr(const Array &a) {
 	return PG_Arr::assign<String>(a);
 }
 
@@ -203,9 +203,9 @@ void PG_Str::_bind_methods() {
 
 	ClassDB::bind_static_method("PG_Str", D_METHOD("join_non_empty", "a", "sep"), &PG_Str::join_non_empty);
 
-	ClassDB::bind_static_method("PG_Str", D_METHOD("is_arr_of_str", "v"), &PG_Str::is_arr_of_str);
+	ClassDB::bind_static_method("PG_Str", D_METHOD("is_str_arr", "v"), &PG_Str::is_str_arr);
 
-	ClassDB::bind_static_method("PG_Str", D_METHOD("to_arr_of_str", "a"), &PG_Str::to_arr_of_str);
+	ClassDB::bind_static_method("PG_Str", D_METHOD("to_str_arr", "a"), &PG_Str::to_str_arr);
 
 	//ClassDB::bind_static_method("PG_Str", D_METHOD("mk_str_ta", "a"), &PG_Str::mk_str_ta);
 #endif

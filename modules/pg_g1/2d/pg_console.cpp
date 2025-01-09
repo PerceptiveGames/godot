@@ -12,7 +12,7 @@
 #include "modules/pg_g1/2d/pg_console.h"
 #include "modules/pg_g1/core/pg_cmds.h"
 #include "modules/pg_g1/core/pg_msgr.h"
-#include "modules/pg_g1/core/pg_scene_tree.h"
+#include "modules/pg_g1/core/pg_scene_tree.h" // NOTE: Is used.
 #include "modules/pg_g1/core/pg_timers.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_str.h"

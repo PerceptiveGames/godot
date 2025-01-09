@@ -29,6 +29,13 @@ class PG_Config : public RefCounted {
 //////////////////////////////////////////////////
 
 
+	template <typename T>
+	friend class Ref;
+
+
+//////////////////////////////////////////////////
+
+
 protected:
 	Ref<PG_FS> _fs;
 	Ref<PG_Msgr> _msgr;
@@ -48,8 +55,13 @@ protected:
 public:
 	static Ref<PG_Config> mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf);
 
-	PG_Config() : _input(nullptr) {}
+
+protected:
+	PG_Config();
 	PG_Config(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf);
+
+
+public:
 	~PG_Config();
 };
 

@@ -1,6 +1,7 @@
 #include "core/object/ref_counted.h"
 #include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/core/pg_msgr.h"
+#include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/user/pg_config.h"
 #include "modules/pg_g1/user/pg_input.h"
@@ -20,6 +21,10 @@ void PG_Config::_bind_methods() {
 Ref<PG_Config> PG_Config::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
 	return PG_Types::mk_ref<PG_Config>(msgr, fs, prf);
 }
+
+
+PG_Config::PG_Config() :
+	_input(nullptr) {}
 
 
 PG_Config::PG_Config(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {

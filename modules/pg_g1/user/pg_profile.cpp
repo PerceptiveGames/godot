@@ -1,3 +1,4 @@
+#include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
 #include "core/string/string_name.h"
 #include "modules/pg_g1/core/pg_cmds.h"
@@ -24,6 +25,7 @@ StringName PG_Profile::get_id() {
 
 void PG_Profile::_bind_methods() {
 #ifdef PG_GD_FNS
+	ClassDB::bind_method(D_METHOD("get_id"), &PG_Profile::get_id);
 #endif
 }
 

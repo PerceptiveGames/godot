@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////
 
 
-Ref<PG_Cmd> PG_Cmds::mk_cmd(String id, const Callable &f_send, const Callable &f_get) {
-	_commands[id] = PG_Types::mk_ref<PG_Cmd>(id, f_send, f_get);
+Ref<PG_Cmd> PG_Cmds::mk_cmd(String id, const Callable &f_send, const Callable &f_recv) {
+	_commands[id] = PG_Types::mk_ref<PG_Cmd>(id, f_send, f_recv);
 	return _commands[id];
 }
 
@@ -71,7 +71,7 @@ Ref<PG_Cmds> PG_Cmds::mk() {
 
 void PG_Cmds::_bind_methods() {
 #ifdef PG_GD_FNS
-	ClassDB::bind_method(D_METHOD("mk_cmd", "id", "f_send", "f_get"), &PG_Cmds::mk_cmd);
+	ClassDB::bind_method(D_METHOD("mk_cmd", "id", "f_send", "f_recv"), &PG_Cmds::mk_cmd);
 
 	ClassDB::bind_method(D_METHOD("send", "cmd"), &PG_Cmds::send);
 	ClassDB::bind_method(D_METHOD("receive", "id"), &PG_Cmds::receive);
@@ -89,7 +89,7 @@ void PG_Cmd::call_send(const Vector<String> &args) const {
 
 
 Variant PG_Cmd::call_receive() const {
-	return _f_get.call();
+	return _f_recv.call();
 }
 
 
@@ -100,10 +100,10 @@ PG_Cmd::PG_Cmd() :
 	_case_sensitive(false) {}
 
 
-PG_Cmd::PG_Cmd(String id, const Callable &f_send, const Callable &f_get) :
+PG_Cmd::PG_Cmd(String id, const Callable &f_send, const Callable &f_recv) :
 	_id(id),
 	_f_send(f_send),
-	_f_get(f_get),
+	_f_recv(f_recv),
 	_case_sensitive(false) {}
 
 

@@ -20,11 +20,14 @@
 //////////////////////////////////////////////////
 
 
+class Callable;
+
+template <typename T>
+class Vector;
+
 class PG_Msgr;
 class PG_SceneTree;
 class PG_Time;
-
-class Callable;
 
 
 //////////////////////////////////////////////////
@@ -32,6 +35,10 @@ class Callable;
 
 class PG_TimerUnit : public RefCounted {
 	GDCLASS(PG_TimerUnit, RefCounted);
+
+
+//////////////////////////////////////////////////
+
 
 	friend class PG_Timer;
 
@@ -72,6 +79,11 @@ protected:
 
 class PG_Timer : public RefCounted {
 	GDCLASS(PG_Timer, RefCounted);
+	PG_BIND;
+
+
+//////////////////////////////////////////////////
+
 
 	friend class PG_Timers;
 
@@ -100,6 +112,8 @@ protected:
 
 	Variant _time_scale_id;
 
+	// TODO: Any way to forward-declare?
+	// That'd mean we can remove #include Node.h.
 	Node::ProcessMode _process_mode;
 	Node *_process_mode_parent;
 
@@ -115,13 +129,13 @@ protected:
 
 
 public:
-	Ref<PG_Timer> initial_delay(float initial_delay);
+	Ref<PG_Timer> set_initial_delay(const float d);
 
-	Ref<PG_Timer> time_scale_id(Variant time_scale_id);
+	Ref<PG_Timer> set_time_scale_id(const Variant &id);
 
-	Ref<PG_Timer> process_mode(Node::ProcessMode process_mode);
+	Ref<PG_Timer> set_process_mode(const Node::ProcessMode m);
 
-	const bool is_persistent() const;
+	bool is_persistent() const;
 
 
 //////////////////////////////////////////////////
@@ -172,6 +186,10 @@ protected:
 class PG_TimerSimple : public PG_Timer {
 	GDCLASS(PG_TimerSimple, PG_Timer);
 
+
+//////////////////////////////////////////////////
+
+
 	friend class PG_Timers;
 
 
@@ -196,6 +214,10 @@ protected:
 
 class PG_TimerSimplePulse : public PG_Timer {
 	GDCLASS(PG_TimerSimplePulse, PG_Timer);
+
+
+//////////////////////////////////////////////////
+
 
 	friend class PG_Timers;
 
@@ -222,6 +244,10 @@ protected:
 class PG_TimerPulse : public PG_Timer {
 	GDCLASS(PG_TimerPulse, PG_Timer);
 
+
+//////////////////////////////////////////////////
+
+
 	friend class PG_Timers;
 
 
@@ -247,6 +273,10 @@ protected:
 class PG_TimerInfinitePulse : public PG_Timer {
 	GDCLASS(PG_TimerInfinitePulse, PG_Timer);
 
+
+//////////////////////////////////////////////////
+
+
 	friend class PG_Timers;
 
 
@@ -271,6 +301,10 @@ protected:
 
 class PG_TimerDeferredOneShot : public PG_Timer {
 	GDCLASS(PG_TimerDeferredOneShot, PG_Timer);
+
+
+//////////////////////////////////////////////////
+
 
 	friend class PG_Timers;
 
