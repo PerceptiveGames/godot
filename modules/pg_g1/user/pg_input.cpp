@@ -28,7 +28,7 @@
 #include "modules/pg_g1/exts/pg_sn.h" // DOC: Used by template instantiation.
 #include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/exts/pg_vec.h"
-#include "modules/pg_g1/sgns/pg_sgns_user.h"
+#include "modules/pg_g1/signals/pg_signals_user.h"
 #include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/types/pgw.h"
 #include "modules/pg_g1/user/pg_input.h"
@@ -355,7 +355,7 @@ void PG_Input::set_cursor_visible(bool v) {
 
 void PG_Input::input(const Ref<InputEvent> &e) {
 	if (e->is_action_pressed("console_show")) {
-		PG_I(PG_SgnsUser)->emit_signal("console_show_pressed");
+		PG_I(PG_SignalsUser)->emit_signal("console_show_pressed");
 		get_viewport()->set_input_as_handled();
 		// TODO: Add "show pause menu", etc.. here
 	}

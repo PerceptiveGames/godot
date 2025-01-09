@@ -19,13 +19,18 @@
 // TODO: Prefer to put these in classes corresponding to the template type,
 // e.g. pg_sn.cpp for PG_Vec::last<StringName>(). Look up "extern template".
 // It's better to include just PG_Vec in each of those files, rather than include them ALL in PG_Vec.
-template StringName PG_Vec::last<StringName>(Vector<StringName> &v);
-template StringName PG_Vec::pop_back<StringName>(Vector<StringName> &v);
-template int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
-
 template bool PG_Vec::idx_ok(const Vector<Node3D *> &v, int i);
+
 // DOC: As example. Remove later if not needed.
 template Node3D *PG_Vec::get_by_idx<Node3D *>(const Vector<Node3D *> &a, int idx, Node3D *&def);
+
+template StringName PG_Vec::last<StringName>(Vector<StringName> &v);
+
+template StringName PG_Vec::pop_back<StringName>(Vector<StringName> &v);
+
+template int PG_Vec::rm_adj_dupes<String>(Vector<String> &v);
+
+template int PG_Vec::resize_until_item<StringName>(Vector<StringName> &v, const StringName &item, bool pop_found_item);
 
 template Vector<StringName> PG_Vec::from_typed_arr(TypedArray<StringName> a);
 

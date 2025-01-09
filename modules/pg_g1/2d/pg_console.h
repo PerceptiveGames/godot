@@ -82,6 +82,7 @@ protected:
 
 
 public:
+	PG_Console();
 	PG_Console(Ref<PG_Msgr> msgr, Ref<PG_Timers> timers, Ref<PG_Cmds> cmds);
 	~PG_Console();
 };

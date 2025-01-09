@@ -14,7 +14,7 @@
 #include "modules/pg_g1/exts/pg_num.h"
 #include "modules/pg_g1/exts/pg_raycast.h"
 #include "modules/pg_g1/exts/pg_rgx.h"
-#include "modules/pg_g1/sgns/pg_sgns_user.h"
+#include "modules/pg_g1/signals/pg_signals_user.h"
 #include "modules/pg_g1/user/pg_session.h"
 #include "scene/3d/camera_3d.h"
 #include "scene/main/node.h"
@@ -69,7 +69,7 @@ Ref<PG_Cmds> PG_SceneTree::get_PG_Cmds() {
 }
 
 
-Ref<PG_SgnsUser> PG_SceneTree::get_PG_SgnsUser() {
+Ref<PG_SignalsUser> PG_SceneTree::get_PG_SignalsUser() {
 	return _pg_sgns_user;
 }
 
@@ -132,7 +132,7 @@ void PG_SceneTree::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_pg_timers"), &PG_SceneTree::get_PG_Timers);
 	ClassDB::bind_method(D_METHOD("get_pg_msgr"), &PG_SceneTree::get_PG_Msgr);
 	ClassDB::bind_method(D_METHOD("get_pg_cmds"), &PG_SceneTree::get_PG_Cmds);
-	ClassDB::bind_method(D_METHOD("get_pg_"), &PG_SceneTree::get_PG_SgnsUser);
+	ClassDB::bind_method(D_METHOD("get_pg_"), &PG_SceneTree::get_PG_SignalsUser);
 
 	ClassDB::bind_method(D_METHOD("pg_get_root"), &PG_SceneTree::pg_get_root);
 	ClassDB::bind_method(D_METHOD("pg_is_paused"), &PG_SceneTree::pg_is_paused);
@@ -169,7 +169,7 @@ PG_SceneTree::PG_SceneTree() {
 	_pg_fs = PG_FS::mk(_pg_msgr, _pg_timers);
 	_pg_cmds = PG_Cmds::mk();
 	_pg_session = PG_Session::mk(_pg_msgr, _pg_fs, _pg_cmds);
-	_pg_sgns_user = PG_SgnsUser::mk();
+	_pg_sgns_user = PG_SignalsUser::mk();
 
 
 	// DOC: It's more logical to me to call a function that is setting 'msgr' from here,

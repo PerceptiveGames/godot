@@ -26,7 +26,7 @@ class PG_FS;
 class PG_Msgr;
 class PG_SceneTree;
 class PG_Session;
-class PG_SgnsUser;
+class PG_SignalsUser;
 class PG_Sys;
 class PG_Time;
 class PG_Timers;
@@ -68,7 +68,7 @@ protected:
 	Ref<PG_Msgr> _pg_msgr;
 	Ref<PG_Cmds> _pg_cmds;
 	Ref<PG_Session> _pg_session;
-	Ref<PG_SgnsUser> _pg_sgns_user;
+	Ref<PG_SignalsUser> _pg_sgns_user;
 
 
 //////////////////////////////////////////////////
@@ -90,7 +90,7 @@ public:
 
 	Ref<PG_Cmds> get_PG_Cmds();
 
-	Ref<PG_SgnsUser> get_PG_SgnsUser();
+	Ref<PG_SignalsUser> get_PG_SignalsUser();
 
 
 //////////////////////////////////////////////////

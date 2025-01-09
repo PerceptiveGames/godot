@@ -1,5 +1,5 @@
-#ifndef PG_SGNS_USER_H
-#define PG_SGNS_USER_H
+#ifndef PG_SIGNALS_USER_H
+#define PG_SIGNALS_USER_H
 
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
@@ -10,8 +10,8 @@
 //////////////////////////////////////////////////
 
 
-class PG_SgnsUser : public RefCounted {
-	GDCLASS(PG_SgnsUser, RefCounted);
+class PG_SignalsUser : public RefCounted {
+	GDCLASS(PG_SignalsUser, RefCounted);
 	PG_BIND;
 
 
@@ -19,11 +19,11 @@ class PG_SgnsUser : public RefCounted {
 
 
 public:
-	static Ref<PG_SgnsUser> mk();
+	static Ref<PG_SignalsUser> mk();
 
-	PG_SgnsUser();
+	PG_SignalsUser();
 
-	~PG_SgnsUser();
+	~PG_SignalsUser();
 };
 
 
@@ -31,4 +31,4 @@ public:
 //////////////////////////////////////////////////
 
 
-#endif // PG_SGNS_USER_H
+#endif // PG_SIGNALS_USER_H

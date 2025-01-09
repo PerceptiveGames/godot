@@ -17,7 +17,7 @@
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/exts/pg_vec.h"
-#include "modules/pg_g1/sgns/pg_sgns_user.h"
+#include "modules/pg_g1/signals/pg_signals_user.h"
 #include "scene/gui/line_edit.h"
 #include "scene/gui/rich_text_label.h"
 
@@ -126,6 +126,15 @@ void PG_Console::_bind_methods() {
 }
 
 
+PG_Console::PG_Console() :
+		_msgr(nullptr),
+		_timers(nullptr),
+		_cmds(nullptr),
+		_input(nullptr),
+		_output(nullptr),
+		_history_idx(0) {}
+
+
 PG_Console::PG_Console(Ref<PG_Msgr> msgr, Ref<PG_Timers> timers, Ref<PG_Cmds> cmds) {
 	_msgr = msgr;
 	_timers = timers;
@@ -133,7 +142,7 @@ PG_Console::PG_Console(Ref<PG_Msgr> msgr, Ref<PG_Timers> timers, Ref<PG_Cmds> cm
 
 	set_process_input(false);
 
-	PG_I(PG_SgnsUser)->connect("console_show_pressed", callable_mp(this, &PG_Console::_show_console));
+	PG_I(PG_SignalsUser)->connect("console_show_pressed", callable_mp(this, &PG_Console::_show_console));
 
 	//_output->set_unique_name_in_owner(true);
 	//_input->set_unique_name_in_owner(true);
