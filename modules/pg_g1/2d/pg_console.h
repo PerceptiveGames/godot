@@ -11,6 +11,16 @@
 //////////////////////////////////////////////////
 
 
+// TODO: Add bbcode. Maybe in messages that appear directly over game too.
+// https://docs.godotengine.org/en/latest/tutorials/ui/bbcode_in_richtextlabel.html
+//String c = trn_eq(msg->lvl, PGE_MsgLevel::WARNING, "yellow", PGE_MsgLevel::ERROR, "red", PGE_MsgLevel::FATAL, "red", "white");
+//String s = vformat("[color=aquamarine]%s[/color][color=%s]%s[/color]", pfx, c, msg->txt);
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
 // TODO: Init as early as possible, just after file logger.
 class InputEvent;
 class LineEdit;

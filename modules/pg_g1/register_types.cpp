@@ -42,6 +42,7 @@
 
 // TODO: If class is only used internally (e.g. PG_FileLogger),
 // need to register still?
+// TODO: Use GDREGISTER_CLASS(cls) format instead?
 
 
 //////////////////////////////////////////////////
@@ -50,9 +51,6 @@
 
 void initialize_pg_g1_module(ModuleInitializationLevel p_level) {
 	if (p_level == MODULE_INITIALIZATION_LEVEL_CORE) {
-
-		// NOTE: 2d folder
-		ClassDB::register_class<PG_Console>();
 
 		// NOTE: core folder
 		ClassDB::register_class<PG_Cmds>();
@@ -137,7 +135,8 @@ void initialize_pg_g1_module(ModuleInitializationLevel p_level) {
 		ClassDB::register_class<PG_UI>();
 	}
 	if (p_level == MODULE_INITIALIZATION_LEVEL_SCENE) {
-		//ClassDB::register_class<PGV<TypedArray<String>>();
+		// NOTE: 2d folder
+		ClassDB::register_class<PG_Console>();
 	}
 }
 

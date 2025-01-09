@@ -406,11 +406,6 @@ void PG_FileLogger::_write(Ref<PG_Msg> msg) {
 	}
 	String t = uitos(Time::get_singleton()->get_ticks_usec());
 	String pfx = vformat("%s: %s:", t.lpad(9, "0").insert(6, "."), PGE_MsgLevelStr(msg->lvl)).rpad(50);
-	// TODO: For other types that use bbcode.
-	// https://docs.godotengine.org/en/latest/tutorials/ui/bbcode_in_richtextlabel.html
-	//String c = trn_eq(msg->lvl, PGE_MsgLevel::WARNING, "yellow", PGE_MsgLevel::ERROR, "red", PGE_MsgLevel::FATAL, "red", "white");
-	//String s = vformat("[color=aquamarine]%s[/color][color=%s]%s[/color]", pfx, c, msg->txt);
-	//f->store_string(s);
 	f->store_string(pfx + msg->txt);
 }
 
