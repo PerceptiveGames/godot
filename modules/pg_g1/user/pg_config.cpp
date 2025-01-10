@@ -31,6 +31,7 @@ PG_Config::PG_Config(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
 	_msgr = msgr;
 	_fs = fs;
 	_prf = prf;
+
 	_input = PG_Input::mk(msgr, fs, prf);
 	// TODO: Add other settings, graphics, audio, etc. maybe each is its own class.
 }

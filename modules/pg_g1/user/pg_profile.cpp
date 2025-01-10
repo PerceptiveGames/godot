@@ -20,25 +20,39 @@ StringName PG_Profile::get_id() {
 }
 
 
+bool PG_Profile::is_transient() const {
+	return _transient;
+}
+
+
 //////////////////////////////////////////////////
 
 
 void PG_Profile::_bind_methods() {
 #ifdef PG_GD_FNS
 	ClassDB::bind_method(D_METHOD("get_id"), &PG_Profile::get_id);
+	ClassDB::bind_method(D_METHOD("is_transient"), &PG_Profile::is_transient);
 #endif
 }
 
 
-Ref<PG_Profile> PG_Profile::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds) {
+Ref<PG_Profile> PG_Profile::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds, String prf_id) {
+	return PG_Types::mk_ref<PG_Profile>(msgr, fs, cmds);
+}
+
+Ref<PG_Profile> PG_Profile::mk_transient(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds) {
 	return PG_Types::mk_ref<PG_Profile>(msgr, fs, cmds);
 }
 
 
-PG_Profile::PG_Profile() {}
+PG_Profile::PG_Profile() :
+		_transient(false) {}
 
 
-PG_Profile::PG_Profile(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds) {
+PG_Profile::PG_Profile(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds, String prf_id) {
+	_transient = !prf_id.is_empty();
+
+	_id = prf_id;
 	_config = PG_Config::mk(msgr, fs, this);
 	_cheats = PG_Cheats::mk(cmds);
 }

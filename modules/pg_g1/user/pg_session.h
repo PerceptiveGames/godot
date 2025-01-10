@@ -19,6 +19,8 @@
 //////////////////////////////////////////////////
 
 
+class String;
+
 class PG_Cmds;
 class PG_FS;
 class PG_Msgr;
@@ -59,7 +61,7 @@ protected:
 
 
 public:
-	void mk_profile();
+	void mk_profile(String id);
 
 
 //////////////////////////////////////////////////

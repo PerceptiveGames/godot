@@ -126,7 +126,7 @@ bool PG_Input::_try_read_file_and_load_binds() {
 		return false;
 	}
 	_st_(Ref<PGW_Str> fp = PG_Paths::input_file_path(_prf->get_id()));
-	if (fp->nok()) {
+	if (!fp->ok()) {
 		return false;
 	}
 	Error e = _file->load(fp->r());
@@ -267,6 +267,8 @@ void PG_Input::_set_default_binds() {
 //////////////////////////////////////////////////
 
 
+// TODO: Replace calls with PG_Arr::from_vec<T>().
+// Also, fn name is wrong. Should be _get_keys_as_arr().
 Array PG_Input::_get_keys_as_vec(Vector<PG_InputBind> v) {
 	Array r;
 	for (PG_InputBind b : v) {
@@ -274,7 +276,6 @@ Array PG_Input::_get_keys_as_vec(Vector<PG_InputBind> v) {
 	}
 	return r;
 }
-
 
 
 void PG_Input::_filter_out_invalid_binds() {
@@ -387,8 +388,11 @@ PG_Input::PG_Input(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
 	_msgr = msgr;
 	_fs = fs;
 	_prf = prf;
+	_file = PG_Types::mk_ref<ConfigFile>();
+
 	_set_actions();
 	_set_params();
+
 	_if_st_(_read_file_and_load_binds()) {
 		_set_custom_binds();
 	}

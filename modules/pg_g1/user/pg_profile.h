@@ -44,10 +44,13 @@ class PG_Profile : public RefCounted {
 protected:
 	String _name; // DOC: Displayed name.
 	StringName _id; // DOC: Folder name, snake_case and sanitized.
+	bool _transient; // DOC: Temporary profile used before Profile selection screen.
 
 
 public:
 	StringName get_id();
+
+	bool is_transient() const;
 
 
 //////////////////////////////////////////////////
@@ -62,12 +65,13 @@ protected:
 
 
 public:
-	static Ref<PG_Profile> mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
+	static Ref<PG_Profile> mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds, String prf_id);
+	static Ref<PG_Profile> mk_transient(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
 
 
 protected:
 	PG_Profile();
-	PG_Profile(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds);
+	PG_Profile(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds, String prf_id = "");
 
 
 public:
