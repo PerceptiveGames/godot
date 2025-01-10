@@ -6,7 +6,6 @@
 #include "core/templates/vmap.h"
 #include "core/variant/binder_common.h"
 #include "modules/pg_g1/data/pg_macros.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
 
 
 //////////////////////////////////////////////////

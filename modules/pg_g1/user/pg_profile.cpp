@@ -1,6 +1,7 @@
 #include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
 #include "core/string/string_name.h"
+#include "core/string/ustring.h"
 #include "modules/pg_g1/core/pg_cmds.h"
 #include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/core/pg_msgr.h"
@@ -46,7 +47,7 @@ Ref<PG_Profile> PG_Profile::mk_transient(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<P
 
 
 PG_Profile::PG_Profile() :
-		_transient(false) {}
+		_transient(true) {}
 
 
 PG_Profile::PG_Profile(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds, String prf_id) {

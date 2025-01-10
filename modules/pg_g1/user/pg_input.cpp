@@ -11,21 +11,21 @@
 #include "core/os/memory.h"
 #include "core/string/string_name.h"
 #include "core/string/ustring.h"
-#include "core/templates/list.h"
+//#include "core/templates/list.h"
 #include "core/templates/vector.h"
 #include "core/templates/vmap.h"
-#include "core/variant/array.h"
-#include "core/variant/typed_dictionary.h"
+//#include "core/variant/array.h"
+//#include "core/variant/typed_dictionary.h"
 #include "core/variant/variant.h"
 #include "modules/pg_g1/core/pg_fs.h"
 #include "modules/pg_g1/core/pg_msgr.h"
-#include "modules/pg_g1/core/pg_scene_tree.h"
+#include "modules/pg_g1/core/pg_scene_tree.h" // NOTE: Is used.
 #include "modules/pg_g1/data/pg_const.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/data/pg_paths.h"
 #include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_num.h"
-#include "modules/pg_g1/exts/pg_sn.h" // DOC: Used by template instantiation.
+#include "modules/pg_g1/exts/pg_sn.h" // NOTE: Is used by template instantiation.
 #include "modules/pg_g1/exts/pg_str.h"
 #include "modules/pg_g1/exts/pg_vec.h"
 #include "modules/pg_g1/signals/pg_signals_user.h"
@@ -34,7 +34,7 @@
 #include "modules/pg_g1/user/pg_input.h"
 #include "modules/pg_g1/user/pg_profile.h"
 #include "scene/main/viewport.h"
-#include <initializer_list>
+#include "core/variant/array.h"
 
 
 
@@ -72,26 +72,47 @@
 //////////////////////////////////////////////////
 
 
-PG_InputBind::PG_InputBind() :
-		device(StringName()),
-		key(Key::NONE) {}
+StringName PG_InputBind::get_device() {
+	return _device;
+}
 
 
-PG_InputBind::PG_InputBind(StringName n_device, Key n_key) :
-		device(n_device),
-		key(n_key) {}
+Key PG_InputBind::get_key() {
+	return _key;
+}
 
 
 //////////////////////////////////////////////////
+
+
+PG_InputBind::PG_InputBind() :
+		_device(StringName()),
+		_key(Key::NONE) {}
+
+
+PG_InputBind::PG_InputBind(StringName device, Key key) :
+		_device(device),
+		_key(key) {}
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+
+bool PG_InputParams::get_mouse_vis() {
+	return _mouse_vis;
+}
+
+
 //////////////////////////////////////////////////
 
 
 PG_InputParams::PG_InputParams() :
-		mouse_vis(false) {}
+		_mouse_vis(false) {}
 
 
-PG_InputParams::PG_InputParams(bool _mouse_vis) {
-		mouse_vis = _mouse_vis;
+PG_InputParams::PG_InputParams(bool mouse_vis) {
+		_mouse_vis = mouse_vis;
 }
 
 
@@ -111,79 +132,85 @@ void PG_Input::_set_actions() {
 
 
 void PG_Input::_set_params() {
-	_params["game"] = PG_InputParams(false);
-	_params["main_menu"] = PG_InputParams(true);
-	_params["pause_menu"] = PG_InputParams(true);
-	_params["console"] = PG_InputParams(true);
+	_params["game"] = PG_Types::mk_ref<PG_InputParams>(false);
+	_params["main_menu"] = PG_Types::mk_ref<PG_InputParams>(true);
+	_params["pause_menu"] = PG_Types::mk_ref<PG_InputParams>(true);
+	_params["console"] = PG_Types::mk_ref<PG_InputParams>(true);
 }
 
 
 //////////////////////////////////////////////////
 
 
-bool PG_Input::_try_read_file_and_load_binds() {
-	if (_file_disabled) { //  TODO: Remove if not needed.
-		return false;
+Ref<ConfigFile> PG_Input::_try_load_cfg() { 
+	if (_cfg_disabled) { // TODO: Remove if not needed.
+		return nullptr;
 	}
 	_st_(Ref<PGW_Str> fp = PG_Paths::input_file_path(_prf->get_id()));
 	if (!fp->ok()) {
-		return false;
+		return nullptr;
 	}
-	Error e = _file->load(fp->r());
+	Ref<ConfigFile> cfg = PG_Types::mk_ref<ConfigFile>();
+	Error e = cfg->load(fp->r());
 	if (e) {
 		if (FileAccess::exists(fp->r())) {
 			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_CFG_PARSE", e, PG_Str::mk_str_ta(fp->r())));
 		}
-		return false;
+		return nullptr;
 	}
-	int ver = PG_Num::to_int_if_bw(_file->get_value("meta", "parser_version", -1), 1, PG_Const::config_file_parser_version);
+	int ver = PG_Num::to_int_if_bw(cfg->get_value("meta", "parser_version", -1), 1, PG_Const::config_file_parser_version);
 	if (ver < 0) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_PARSER_VER", fp->r()));
-		return false;
+		return nullptr;
 	}
 	// ....
-	return true;
+	return cfg;
 }
 
 
-bool PG_Input::_try_create_file() {
+Ref<ConfigFile> PG_Input::_try_mk_file() {
 	_st_(Ref<PGW_Str> fp = PG_Paths::input_file_path(_prf->get_id()));
-	if (fp->nok()) {
-		return false;
+	if (!fp->ok()) {
+		return nullptr;
 	}
 	if (FileAccess::exists(fp->r())) {
+		// DOC: File exists, but cannot be read.
 		String nn = PG_Paths::add_ts_sfx(fp->r());
 		_st_(_msgr->bcast(PGE_MsgLevel::WARNING_VIP, "INPUT_CFG_RN_OR_RM", PG_Str::mk_str_ta(fp->r(), nn, fp->r())));
 		_if_st_(!_fs->rn_or_rm(fp->r(), nn)) {
-			return false;
+			return nullptr;
 		}
 	}
 	_if_st_(!_fs->create_file_if_none(fp->r())) {
-		return false;
+		return nullptr;
 	}
-	Error e = _file->load(fp->r());
+	Ref<ConfigFile> cfg = PG_Types::mk_ref<ConfigFile>();
+	Error e = cfg->load(fp->r());
 	if (e) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_CFG_LOAD", e, fp->r()));
-		return false;
+		return nullptr;
 	}
-	return true;
+	return cfg;
 }
 
 
-bool PG_Input::_read_file_and_load_binds() {
-	_if_st_(!_try_read_file_and_load_binds() && !_try_create_file()) {
-		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_CFG_DISABLED"));
-		return false;
+Ref<ConfigFile> PG_Input::_load_cfg() {
+	_st_(Ref<ConfigFile> cfg = _try_load_cfg());
+	if (cfg.is_null()) {
+		_st_(cfg = _try_mk_file());
+		if (cfg.is_null()) {
+			_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "INPUT_CFG_DISABLED"));
+		}
 	}
-	return true;
+	return cfg;
 }
 
 
-bool PG_Input::_write_file() {
+bool PG_Input::_write_file(Ref<ConfigFile> cfg) {
 	_st_(Ref<PGW_Str> fp = PG_Paths::input_file_path(_prf->get_id()));
 	Error e;
 	if (fp->ok()) {
-		e = _file->save(fp->r());
+		e = cfg->save(fp->r());
 		if (!e) {
 			return true;
 		}
@@ -197,8 +224,8 @@ bool PG_Input::_write_file() {
 //////////////////////////////////////////////////
 
 
-Vector<Key> PG_Input::_get_keycodes(StringName act) {
-	Variant v = _file->get_value("keyboard", act, false);
+Vector<Key> PG_Input::_get_keycodes(Ref<ConfigFile> cfg, StringName act) {
+	Variant v = cfg->get_value("keyboard", act, false);
 	if (!v) {
 		return Vector<Key>();
 	}
@@ -208,23 +235,25 @@ Vector<Key> PG_Input::_get_keycodes(StringName act) {
 
 void PG_Input::_add_to_binds(StringName act, StringName dev, Key k) {
 	if (!_binds.has(act)) {
-		_binds[act] = Vector<PG_InputBind>();
+		_binds[act] = Vector<Ref<PG_InputBind>>();
 	}
-	_binds[act].append(PG_InputBind(dev, k));
+	_binds[act].append(PG_Types::mk_ref<PG_InputBind>(dev, k));
 }
 
 
-void PG_Input::_set_custom_binds() {
+bool PG_Input::_add_custom_keybinds(Ref<ConfigFile> cfg) {
 	// DOC: Default value case already handled previously.
-	// TODO: Do something with it.
-	int ver = PG_Num::to_int(_file->get_value("meta", "parser_version", -1));
+	// TODO: Do something with line below.
+	//int ver = PG_Num::to_int(cfg->get_value("meta", "parser_version", -1));
 
+	bool r = false;
 	for (StringName act : _actions["bindable"]) {
-		for (Key k : _get_keycodes(act)) {
+		for (Key k : _get_keycodes(cfg, act)) {
 			_add_to_binds(act, "keyboard", k);
+			r = true;
 		}
 	}
-	// TODO: Add mouse binds. Later gamepad.
+	return r;
 }
 
 
@@ -232,7 +261,7 @@ void PG_Input::_set_custom_binds() {
 
 
 // DOC: Run this after reading and parsing from config file.
-void PG_Input::_set_default_binds() {
+void PG_Input::_set_default_keybinds() {
 	VMap<StringName, Key> kb;
 
 	kb["menu_up"] = Key::UP;
@@ -258,7 +287,7 @@ void PG_Input::_set_default_binds() {
 
 	for (int i = 0; i < kb.size(); ++i) {
 		//if (!_binds.has(kv.key)) {
-		_binds[kb.getk(i)] = { PG_InputBind("keyboard", kb.getv(i)) };
+		_binds[kb.getk(i)] = { PG_Types::mk_ref<PG_InputBind>("keyboard", kb.getv(i)) };
 		//}
 	}
 }
@@ -267,23 +296,21 @@ void PG_Input::_set_default_binds() {
 //////////////////////////////////////////////////
 
 
-// TODO: Replace calls with PG_Arr::from_vec<T>().
-// Also, fn name is wrong. Should be _get_keys_as_arr().
-Array PG_Input::_get_keys_as_vec(Vector<PG_InputBind> v) {
+Array PG_Input::_get_keys_as_arr(Vector<Ref<PG_InputBind>> v) {
 	Array r;
-	for (PG_InputBind b : v) {
-		r.append(b.key);
+	for (Ref<PG_InputBind> b : v) {
+		r.append(b->get_key());
 	}
 	return r;
 }
 
 
-void PG_Input::_filter_out_invalid_binds() {
-	_file->clear();
+void PG_Input::_cleanup_cfg(Ref<ConfigFile> cfg) {
+	cfg->clear();
 	// TODO: If parser version ever gets upgraded, do not forget data conversion.
-	_file->set_value("meta", "parser_version", PG_Const::config_file_parser_version);
+	cfg->set_value("meta", "parser_version", PG_Const::config_file_parser_version);
 	for (int i = 0; i < _binds.size(); ++i) {
-		_file->set_value("keyboard", _binds.getk(i), _get_keys_as_vec(_binds.getv(i)));
+		cfg->set_value("keyboard", _binds.getk(i), _get_keys_as_arr(_binds.getv(i)));
 	}
 }
 
@@ -295,15 +322,15 @@ void PG_Input::_load_keybind_set(StringName new_set) {
 	Vector<StringName> as = _actions[new_set];
 	for (StringName a : as) {
 		PG_S(InputMap)->add_action(a); // TODO: add optional deadzone
-		for (PG_InputBind b : _binds[a]) {
-			if (b.device == "keyboard") {
+		for (Ref<PG_InputBind> b : _binds[a]) {
+			if (b->get_device() == "keyboard") {
 				Ref<InputEventKey> e = PG_Types::mk_ref<InputEventKey>();
-				e->set_key_label(b.key);
+				e->set_key_label(b->get_key());
 				PG_S(InputMap)->action_add_event(a, e);
 			}
 		}
 	}
-	set_cursor_visible(_params[new_set].mouse_vis);
+	set_cursor_visible(_params[new_set]->get_mouse_vis());
 	PG_Vec::resize_until_item(_stack, new_set, true);
 	_stack.append(new_set);
 }
@@ -381,37 +408,41 @@ PG_Input *PG_Input::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
 
 
 PG_Input::PG_Input() :
-	_file_disabled(true) {}
+	_cfg_disabled(true) {}
 
 
 PG_Input::PG_Input(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
 	_msgr = msgr;
 	_fs = fs;
 	_prf = prf;
-	_file = PG_Types::mk_ref<ConfigFile>();
 
 	_set_actions();
 	_set_params();
 
-	_if_st_(_read_file_and_load_binds()) {
-		_set_custom_binds();
-	}
-	List<String> ks;
-	if (_file->has_section("keyboard")) {
-		_file->get_section_keys("keyboard", &ks);
-	}
-	if (ks.size() == 0) {
-		// DOC: Default binds are added only if config file is empty
-		// or had only invalid entries in the "keyboard" section.
-		_set_default_binds();
-	}
-
-	_file->clear();
-	_filter_out_invalid_binds();
-
-	_st_(_write_file());
-
 	_clear_system_input_map();
+
+	if (prf->is_transient()) {
+		_set_default_keybinds();
+		_load_keybind_set("game"); // TODO: TEMP.
+		return;
+	}
+
+	_st_(Ref<ConfigFile> cfg = _load_cfg());
+	bool ok_kb = false;
+	if (cfg.is_valid()) {
+		// TODO: Add mouse binds. Later gamepad.
+		ok_kb = _add_custom_keybinds(cfg);
+	}
+	if (!ok_kb) {
+		// DOC: Default keybinds are added only if config file is empty
+		// or had only invalid entries in the "keyboard" section.
+		_set_default_keybinds();
+	}
+
+	_cleanup_cfg(cfg);
+
+	_st_(_write_file(cfg));
+
 	_load_keybind_set("game"); // TODO: TEMP.
 }
 

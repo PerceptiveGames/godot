@@ -10,6 +10,8 @@
 //////////////////////////////////////////////////
 
 
+// DOC: This system should maybe not be used with Ref<> types;
+// returning nullptr in those cases should be enough.
 // TODO: Maybe add a "processed" bool variable if the error has already been processed.
 // It could be useful when returning from multiple nested PGWs.
 // TODO: Find a way to return r() already cast (int, stringname, obj, node, etc.).
@@ -21,6 +23,7 @@
 
 
 class Array;
+class ConfigFile;
 class Dictionary;
 class String;
 class Variant;
@@ -42,6 +45,9 @@ typedef PGW<Array> PGW_Arr;
 typedef PGW<TypedArray<String>> PGW_ArrStr;
 typedef PGW<Dictionary> PGW_Dict;
 typedef PGW<Vector<String>> PGW_VecStr;
+
+//typedef PGW<Ref<ConfigFile>> PGW_Cfg2;
+//typedef PGW<ConfigFile> PGW_Cfg;
 
 
 //////////////////////////////////////////////////
@@ -86,6 +92,8 @@ public:
 	static Ref<PGW<T>> mk_nok();
 
 	static Ref<PGW<T>> mk_r(T r);
+
+	//static Ref<PGW<T>> mk_r_ref(T r);
 
 
 //////////////////////////////////////////////////

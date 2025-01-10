@@ -13,7 +13,7 @@
 #include "modules/pg_g1/data/pg_macros.h"
 #include "modules/pg_g1/exts/pg_arr.h"
 #include "modules/pg_g1/exts/pg_str.h"
-#include "modules/pg_g1/types/pg_typedefs.h"
+#include "modules/pg_g1/user/pg_input.h"
 #include "scene/3d/node_3d.h"
 
 
@@ -23,13 +23,6 @@
 
 // DOC: GD functions cannot take 'Array &a' as argument.
 // Needs to be either 'const Array &a' or 'Array a'.
-
-
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
-
-
-template TypedArray<StringName> PG_Arr::from_vec(Vector<StringName> v);
 
 
 //////////////////////////////////////////////////
@@ -58,8 +51,8 @@ Array PG_Arr::from_pair(const Pair<Variant, Variant> &v) {
 
 
 template <typename T>
-TypedArray<T> PG_Arr::from_vec(Vector<T> v) {
-	TypedArray<T> r;
+Array PG_Arr::from_vec(Vector<T> v) {
+	Array r;
 	for (T e : v) {
 		r.append(e);
 	}
@@ -302,31 +295,6 @@ Array PG_Arr::get_interleaved(const Array &a, const Variant &item, bool also_if_
 
 
 //////////////////////////////////////////////////
-
-
-template <typename T, typename... P>
-TypedArray<T> PG_Arr::args_to_arr(TypedArray<T> &a, const T &v) {
-	a.append(v);
-}
-
-
-template <typename T, typename... P>
-TypedArray<T> PG_Arr::args_to_arr(TypedArray<T> &a, const T &v, P... args) {
-	a.append(v);
-	args_to_arr(a, args);
-}
-
-
-template <typename T, typename... P>
-TypedArray<T> PG_Arr::args_to_arr(P... args) {
-	TypedArray<T> r;
-	args_to_arr(r, args...);
-	return r;
-}
-
-
-//////////////////////////////////////////////////
-
 
 
 void PG_Arr::_bind_methods() {

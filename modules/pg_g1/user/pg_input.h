@@ -3,6 +3,7 @@
 
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
+#include "core/templates/vmap.h"
 #include "modules/pg_g1/data/pg_macros.h"
 #include "scene/main/node.h"
 
@@ -39,12 +40,39 @@ class PG_Profile;
 //////////////////////////////////////////////////
 
 
-struct PG_InputBind {
-	StringName device;
-	Key key;
+class PG_InputBind : public RefCounted {
+	GDCLASS(PG_InputBind, RefCounted);
 
+
+//////////////////////////////////////////////////
+
+
+	template <typename T>
+	friend class Ref;
+
+
+//////////////////////////////////////////////////
+
+
+protected:
+	StringName _device;
+	Key _key;
+
+
+public:
+	StringName get_device();
+	Key get_key();
+
+
+//////////////////////////////////////////////////
+
+
+protected:
 	PG_InputBind();
-	PG_InputBind(StringName n_device, Key n_key);
+
+
+public:
+	PG_InputBind(StringName device, Key key);
 };
 
 
@@ -52,11 +80,37 @@ struct PG_InputBind {
 //////////////////////////////////////////////////
 
 
-struct PG_InputParams {
-	bool mouse_vis;
+class PG_InputParams : public RefCounted {
+	GDCLASS(PG_InputParams, RefCounted);
+	
 
+//////////////////////////////////////////////////
+
+
+	template <typename T>
+	friend class Ref;
+
+
+//////////////////////////////////////////////////
+
+
+protected:
+	bool _mouse_vis;
+
+
+public:
+	bool get_mouse_vis();
+
+
+//////////////////////////////////////////////////
+
+
+protected:
 	PG_InputParams();
-	PG_InputParams(bool _mouse_vis);
+
+
+public:
+	PG_InputParams(bool mouse_vis);
 };
 
 
@@ -84,18 +138,11 @@ protected:
 
 
 protected:
-	Ref<ConfigFile> _file;
-
-
-//////////////////////////////////////////////////
-
-
-protected:
-	VMap<StringName, Vector<PG_InputBind>> _binds;
+	VMap<StringName, Vector<Ref<PG_InputBind>>> _binds;
 
 	VMap<StringName, Vector<StringName>> _actions;
 
-	VMap<StringName, PG_InputParams> _params;
+	VMap<StringName, Ref<PG_InputParams>> _params;
 
 	Vector<StringName> _stack;
 
@@ -113,42 +160,42 @@ protected:
 
 
 protected:
-	bool _file_disabled;
+	bool _cfg_disabled;
 
-	bool _try_read_file_and_load_binds();
+	Ref<ConfigFile> _try_load_cfg();
 
-	bool _try_create_file();
+	Ref<ConfigFile> _try_mk_file();
 
-	bool _read_file_and_load_binds();
+	Ref<ConfigFile> _load_cfg();
 
-	bool _write_file();
+	bool _write_file(Ref<ConfigFile> cfg);
 
 
 //////////////////////////////////////////////////
 
 
 protected:
-	Vector<Key> _get_keycodes(StringName act);
+	Vector<Key> _get_keycodes(Ref<ConfigFile> cfg, StringName act);
 
 	void _add_to_binds(StringName act, StringName dev, Key k);
 
-	void _set_custom_binds();
+	bool _add_custom_keybinds(Ref<ConfigFile> cfg);
 
 
 //////////////////////////////////////////////////
 
 
 protected:
-	void _set_default_binds();
+	void _set_default_keybinds();
 
 
 //////////////////////////////////////////////////
 
 
 protected:
-	Array _get_keys_as_vec(Vector<PG_InputBind> v);
+	Array _get_keys_as_arr(Vector<Ref<PG_InputBind>> v);
 
-	void _filter_out_invalid_binds();
+	void _cleanup_cfg(Ref<ConfigFile> cfg);
 
 
 //////////////////////////////////////////////////

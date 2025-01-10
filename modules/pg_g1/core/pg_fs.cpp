@@ -265,14 +265,14 @@ Ref<PGW_VecStr> PG_FS::get_file_paths(String root_dir_path, String rel_dir_path,
 	Ref<DirAccess> dir = DirAccess::open(abs_dir_path, &e);
 	if (dir.is_null()) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "OPEN_DIR", e, abs_dir_path));
-		return Ref<PGW_VecStr>()->mk_nok();
+		return PGW_VecStr::mk_nok();
 	}
 	dir->set_include_navigational(false);
 	if (Error e = dir->list_dir_begin()) {
 		_st_(_msgr->bcast(PGE_MsgLevel::ERROR, "RD_DIR", e, abs_dir_path));
-		return Ref<PGW_VecStr>()->mk_nok();
+		return PGW_VecStr::mk_nok();
 	}
-	Ref<PGW_VecStr> v;
+	Ref<PGW_VecStr> v; // TODO: Needs instantiation? If so, do PG_Types::mk_ref(). If not, remove instantiation elsewhere it's not needed.
 	String file_name = dir->get_next();
 	while (file_name != "") {
 		String rel_file_path = rel_dir_path.path_join(file_name);

@@ -1,3 +1,4 @@
+#include "core/io/config_file.h"
 #include "core/object/class_db.h"
 #include "core/object/object.h"
 #include "core/object/ref_counted.h"
@@ -8,6 +9,7 @@
 #include "core/variant/typed_array.h"
 #include "core/variant/variant.h"
 #include "modules/pg_g1/data/pg_macros.h"
+#include "modules/pg_g1/types/pg_types.h"
 #include "modules/pg_g1/types/pgw.h"
 
 
@@ -64,6 +66,21 @@ Ref<PGW<T>> PGW<T>::mk_r(T r) {
 }
 
 
+//template <class T>
+//Ref<PGW<T>> PGW<T>::mk_r_ref(T r) {
+//	Ref<T> ref = PG_Types::mk_ref<T>();
+//	ref.instantiate();
+//
+//
+//
+//	Ref<PGW<T>> inst;
+//	inst.instantiate();
+//	inst->_ok = true;
+//	inst->_r = r;
+//	return inst;
+//}
+
+
 template <class T>
 PGW<T>::PGW() : _r(T()) {}
 
@@ -100,6 +117,8 @@ void PGW<T>::_bind_methods() {
 	PG_BIND_TPL(PGW_ArrStr);
 	PG_BIND_TPL(PGW_Dict);
 	PG_BIND_TPL(PGW_VecStr);
+
+	//PG_BIND_TPL(PGW_Cfg);
 #undef PG_BIND_TPL
 #endif
 }
@@ -115,6 +134,9 @@ template class PGW<Array>;
 template class PGW<TypedArray<String>>;
 template class PGW<Dictionary>;
 template class PGW<Vector<String>>;
+
+template class PGW<Ref<ConfigFile>>;
+//template class PGW<ConfigFile>;
 
 
 //////////////////////////////////////////////////

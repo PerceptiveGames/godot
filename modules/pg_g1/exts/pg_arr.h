@@ -59,7 +59,7 @@ public:
 	PG_INLINE static Array from_pair(const Pair<Variant, Variant> &v);
 
 	template <typename T>
-	static TypedArray<T> from_vec(Vector<T> v);
+	static Array from_vec(Vector<T> v);
 
 
 //////////////////////////////////////////////////
@@ -143,6 +143,7 @@ public:
 #endif
 
 	// DOC: Returns the number of items removed.
+	// TODO: Rename, because mk is used when creating something new. This is just in-place.
 	static int mk_unique(Array &a);
 
 #ifdef PG_GD_FNS
@@ -179,20 +180,6 @@ public:
 
 public:
 	static Array get_interleaved(const Array &a, const Variant &item, bool also_if_empty = false);
-
-
-//////////////////////////////////////////////////
-
-
-public:
-	template <typename T, typename... P>
-	static TypedArray<T> args_to_arr(TypedArray<T> &a, const T &v); 
-
-	template <typename T, typename... P>
-	static TypedArray<T> args_to_arr(TypedArray<T> &a, const T &v, P... args); 
-
-	template <typename T, typename... P>
-	static TypedArray<T> args_to_arr(P... args);
 };
 
 
