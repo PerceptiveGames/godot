@@ -90,9 +90,12 @@ protected:
 
 //////////////////////////////////////////////////
 
+protected:
+	PG_Time *_init(PG_SceneTree *stree);
+
 
 public:
-	PG_Time *init(PG_SceneTree *stree);
+	static PG_Time *mk(PG_SceneTree *stree);
 
 	PG_Time();
 	~PG_Time();

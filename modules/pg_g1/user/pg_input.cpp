@@ -142,7 +142,7 @@ void PG_Input::_set_params() {
 //////////////////////////////////////////////////
 
 
-Ref<ConfigFile> PG_Input::_try_load_cfg() { 
+Ref<ConfigFile> PG_Input::_try_load_cfg() {
 	if (_cfg_disabled) { // TODO: Remove if not needed.
 		return nullptr;
 	}
@@ -330,7 +330,7 @@ void PG_Input::_load_keybind_set(StringName new_set) {
 			}
 		}
 	}
-	set_cursor_visible(_params[new_set]->get_mouse_vis());
+	// set_cursor_visible(_params[new_set]->get_mouse_vis());
 	PG_Vec::resize_until_item(_stack, new_set, true);
 	_stack.append(new_set);
 }
@@ -384,6 +384,7 @@ void PG_Input::set_cursor_visible(bool v) {
 void PG_Input::input(const Ref<InputEvent> &e) {
 	if (e->is_action_pressed("console_show")) {
 		PG_I(PG_SignalsUser)->emit_signal("console_show_pressed");
+		print_line("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
 		get_viewport()->set_input_as_handled();
 		// TODO: Add "show pause menu", etc.. here
 	}
@@ -402,8 +403,9 @@ void PG_Input::_bind_methods() {
 
 
 PG_Input *PG_Input::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
-	return memnew(PG_Input(msgr, fs, prf));
-		//pg_mk_ref<PG_Input>(msgr);
+	PG_Input *input = memnew(PG_Input(msgr, fs, prf));
+	PG_I(PG_SceneTree)->pg_get_root()->add_child(input);
+	return input;
 }
 
 
@@ -412,6 +414,8 @@ PG_Input::PG_Input() :
 
 
 PG_Input::PG_Input(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
+
+	set_process_input(true);
 	_msgr = msgr;
 	_fs = fs;
 	_prf = prf;
@@ -432,16 +436,16 @@ PG_Input::PG_Input(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Profile> prf) {
 	if (cfg.is_valid()) {
 		// TODO: Add mouse binds. Later gamepad.
 		ok_kb = _add_custom_keybinds(cfg);
+
+		_cleanup_cfg(cfg);
+
+		_st_(_write_file(cfg));
 	}
 	if (!ok_kb) {
 		// DOC: Default keybinds are added only if config file is empty
 		// or had only invalid entries in the "keyboard" section.
 		_set_default_keybinds();
 	}
-
-	_cleanup_cfg(cfg);
-
-	_st_(_write_file(cfg));
 
 	_load_keybind_set("game"); // TODO: TEMP.
 }

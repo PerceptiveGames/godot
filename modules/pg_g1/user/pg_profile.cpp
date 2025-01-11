@@ -38,7 +38,7 @@ void PG_Profile::_bind_methods() {
 
 
 Ref<PG_Profile> PG_Profile::mk(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds, String prf_id) {
-	return PG_Types::mk_ref<PG_Profile>(msgr, fs, cmds);
+	return PG_Types::mk_ref<PG_Profile>(msgr, fs, cmds, prf_id);
 }
 
 Ref<PG_Profile> PG_Profile::mk_transient(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds) {
@@ -51,7 +51,7 @@ PG_Profile::PG_Profile() :
 
 
 PG_Profile::PG_Profile(Ref<PG_Msgr> msgr, Ref<PG_FS> fs, Ref<PG_Cmds> cmds, String prf_id) {
-	_transient = !prf_id.is_empty();
+	_transient = prf_id.is_empty();
 
 	_id = prf_id;
 	_config = PG_Config::mk(msgr, fs, this);

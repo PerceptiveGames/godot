@@ -111,11 +111,20 @@ void PG_Time::_bind_methods() {
 }
 
 
-PG_Time *PG_Time::init(PG_SceneTree *stree) {
+PG_Time *PG_Time::_init(PG_SceneTree *stree) {
 	_stree = stree;
 	//stree->connect("process_frame", callable_mp(this, &PG_Time::emit_signals));
 	return this;
 }
+
+
+
+PG_Time *PG_Time::mk(PG_SceneTree *stree) {
+	PG_Time *time = memnew(PG_Time)->_init(stree);
+	stree->pg_get_root()->add_child(time);
+	return time;
+}
+
 
 
 PG_Time::PG_Time() {

@@ -1,3 +1,4 @@
+#include "core/config/engine.h"
 #include "core/object/class_db.h"
 #include "core/object/ref_counted.h"
 #include "core/os/memory.h"
@@ -152,18 +153,22 @@ PG_SceneTree::PG_SceneTree() {
 	//     Get singleton 'es' and assign it to the field assigned to s
 	//   Else
 	//     Assign s like below
-	// 
+	//
 	// Since 'es' does not exist at this point in the ctor, either (1) defer assignment of 'es' to s,
 	// or (2) init below, and then init 'es' and assign vars from s to 'es', and then get rid of s.
 
 	// TODO (OLD?): Maybe have sys, fs, time, timers, msgr, cmds not be singletons and be members of 'sys' or new 'core'
 	// singleton instead. rgx, num can be members of a new exts singleton.
 
+	if (PG_S(Engine)->is_editor_hint()) {
+		return;
+	}
+
 	_singleton = this;
 
 	// DOC: Keep as high in the list as possible because it needs to run signals as early as possible.
 	_pg_sys = PG_Sys::mk(this);
-	_pg_time = memnew(PG_Time)->init(this); // TODO: Attach node to ST
+	_pg_time = PG_Time::mk(this);
 	_pg_msgr = PG_Msgr::mk();
 	_pg_timers = PG_Timers::mk(this, _pg_time, _pg_msgr);
 	_pg_fs = PG_FS::mk(_pg_msgr, _pg_timers);
@@ -178,6 +183,13 @@ PG_SceneTree::PG_SceneTree() {
 	PG_Paths::set_fs(_pg_fs);
 	PG_Rgx::set_msgr(_pg_msgr);
 	PG_Raycast::set_stree(this);
+
+	for (Variant v : pg_get_root()->get_children(true)) {
+		Node *n = Object::cast_to<Node>(v);
+		// ERR_PRINT(vformat("%s\n", n->get_name()));
+		// ERR_PRINT(n->get_name());
+		print_line(n->get_name());
+	}
 }
 
 
